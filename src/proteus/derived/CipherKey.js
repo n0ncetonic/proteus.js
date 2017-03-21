@@ -35,9 +35,7 @@ class CipherKey {
   constructor(key) {
     TypeUtil.assert_is_instance(Uint8Array, key);
 
-    /** @type {Uint8Array} */
     this.key = key;
-
     return this;
   }
 
@@ -53,6 +51,11 @@ class CipherKey {
     }
 
     return sodium.crypto_stream_chacha20_xor(plaintext, nonce, this.key, 'uint8array');
+  }
+
+  /** @type {Uint8Array} */
+  get key() {
+    return this.key;
   }
 
   /**

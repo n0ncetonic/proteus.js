@@ -37,13 +37,8 @@ class IdentityKeyPair {
   constructor() {
     const key_pair = new KeyPair();
 
-    /** @type {number} */
     this.version = 1;
-
-    /** @type {number} */
     this.secret_key = key_pair.secret_key;
-
-    /** @type {keys.IdentityKey} */
     this.public_key = new IdentityKey(key_pair.public_key);
 
     return this;
@@ -54,6 +49,21 @@ class IdentityKeyPair {
     const e = new CBOR.Encoder();
     this.encode(e);
     return e.get_buffer();
+  }
+
+  /** @type {number} */
+  get version() {
+    return this.version;
+  }
+
+  /** @type {number} */
+  get secret_key() {
+    return this.secret_key;
+  }
+
+  /** @type {keys.IdentityKey} */
+  get public_key() {
+    return this.public_key;
   }
 
   /**

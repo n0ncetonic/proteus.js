@@ -50,25 +50,12 @@ const PreKeyStore = require('./PreKeyStore');
  */
 class Session {
   constructor() {
-    /** @type {number} */
     this.counter = 0;
-
-    /** @type {keys.IdentityKeyPair} */
     this.local_identity = null;
-
-    /** @type {Array<number,keys.PublicKey>} */
     this.pending_prekey = null;
-
-    /** @type {keys.IdentityKey} */
     this.remote_identity = null;
-
-    /** @type {Array<session.SessionState} */
     this.session_states = null;
-
-    /** @type {message.SessionTag} */
     this.session_tag = null;
-
-    /** @type {number} */
     this.version = 1;
   }
 
@@ -80,6 +67,41 @@ class Session {
   /** @type {number} */
   static get MAX_SESSION_STATES() {
     return 100;
+  }
+
+  /** @type {number} */
+  get counter() {
+    return this.counter;
+  }
+
+  /** @type {keys.IdentityKeyPair} */
+  get local_identity() {
+    return this.local_identity;
+  }
+
+  /** @type {Array<(number|keys.PublicKey)>} */
+  get pending_prekey() {
+    return this.pending_prekey;
+  }
+
+  /** @type {keys.IdentityKey} */
+  get remote_identity() {
+    return this.remote_identity;
+  }
+
+  /** @type {Array<session.SessionState>} */
+  get session_states() {
+    return this.session_states;
+  }
+
+  /** @type {message.SessionTag} */
+  get session_tag() {
+    return this.session_tag;
+  }
+
+  /** @type {number} */
+  get version() {
+    return this.version;
   }
 
   /**

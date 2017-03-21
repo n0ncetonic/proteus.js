@@ -44,13 +44,8 @@ class PreKey {
       );
     }
 
-    /** @type {number} */
     this.version = 1;
-
-    /** @type {number} */
     this.key_id = pre_key_id;
-
-    /** @type {keys.KeyPair} */
     this.key_pair = new KeyPair();
 
     return this;
@@ -59,6 +54,21 @@ class PreKey {
   /** @type {number} */
   static get MAX_PREKEY_ID() {
     return 0xFFFF;
+  }
+
+  /** @type {number} */
+  get key_id() {
+    return this.key_id;
+  }
+
+  /** @type {number} */
+  get version() {
+    return this.version;
+  }
+
+  /** @type {keys.KeyPair} */
+  get key_pair() {
+    return this.key_pair;
   }
 
   /** @returns {PreKey} */
