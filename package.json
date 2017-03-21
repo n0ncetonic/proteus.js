@@ -18,9 +18,6 @@
   "license": "GPL-3.0",
   "main": "dist/commonjs/proteus.js",
   "name": "wire-webapp-proteus",
-  "optionalDependencies": {
-    "libsodium-neon": "2.0.4"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/wireapp/proteus.js.git"

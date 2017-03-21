@@ -22,12 +22,11 @@
 const CBOR = require('wire-webapp-cbor');
 const ed2curve = require('ed2curve');
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
 const ClassUtil = require('../util/ClassUtil');
 const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
-const ikp = require('./IdentityKeyPair');
+
 const PublicKey = require('./PublicKey');
 const SecretKey = require('./SecretKey');
 
