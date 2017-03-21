@@ -20,7 +20,6 @@
 'use strict';
 
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
 /** @module util */
 

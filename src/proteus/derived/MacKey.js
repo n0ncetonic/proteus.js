@@ -21,7 +21,6 @@
 
 const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
 const TypeUtil = require('../util/TypeUtil');
 

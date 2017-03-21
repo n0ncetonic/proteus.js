@@ -4,19 +4,18 @@ var webpack = require('webpack');
 module.exports = {
   devtool: 'source-map',
   entry: {
-    filename: './dist/commonjs/proteus.window.js'
+    filename: './dist/commonjs/proteus.window.js',
   },
   output: {
     filename: 'proteus.js',
-    path: './dist/window'
+    path: './dist/window',
   },
   node: {
     fs: 'empty',
-    crypto: 'empty'
+    crypto: 'empty',
   },
   externals: {
     'libsodium-wrappers-sumo': 'sodium',
-    'libsodium-neon': 'empty'
   },
   plugins: [
     new webpack.BannerPlugin(`${pkg.name} v${pkg.version}`)
@@ -24,6 +23,6 @@ module.exports = {
   performance: {
     maxAssetSize: 100,
     maxEntrypointSize: 300,
-    hints: 'warning'
-  }
+    hints: 'warning',
+  },
 };
