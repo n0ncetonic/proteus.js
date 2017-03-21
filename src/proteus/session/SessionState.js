@@ -22,8 +22,7 @@
 const CBOR = require('wire-webapp-cbor');
 
 const ArrayUtil = require('../util/ArrayUtil');
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
+
 const MemoryUtil = require('../util/MemoryUtil');
 const TypeUtil = require('../util/TypeUtil');
 
@@ -53,12 +52,17 @@ const Session = require('./Session');
 /** @class SessionState */
 class SessionState {
   constructor() {
+    /** @type {Array<session.RecvChain>} */
     this.recv_chains = null;
-    this.send_chain = null;
-    this.root_key = null;
-    this.prev_counter = null;
 
-    throw new DontCallConstructor(this);
+    /** @type {session.SendChain} */
+    this.send_chain = null;
+
+    /** @type {session.RootKey} */
+    this.root_key = null;
+
+    /** @type {number} */
+    this.prev_counter = null;
   }
 
   /**
@@ -84,13 +88,13 @@ class SessionState {
     const rootkey = RootKey.from_cipher_key(dsecs.cipher_key);
     const chainkey = ChainKey.from_mac_key(dsecs.mac_key, 0);
 
-    const recv_chains = [RecvChain.new(chainkey, bob_pkbundle.public_key)];
+    const recv_chains = [new RecvChain(chainkey, bob_pkbundle.public_key)];
 
-    const send_ratchet = KeyPair.new();
+    const send_ratchet = new KeyPair();
     const [rok, chk] = rootkey.dh_ratchet(send_ratchet, bob_pkbundle.public_key);
-    const send_chain = SendChain.new(chk, send_ratchet);
+    const send_chain = new SendChain(chk, send_ratchet);
 
-    const state = ClassUtil.new_instance(SessionState);
+    const state = new SessionState();
     state.recv_chains = recv_chains;
     state.send_chain = send_chain;
     state.root_key = rok;
@@ -122,9 +126,9 @@ class SessionState {
 
     const rootkey = RootKey.from_cipher_key(dsecs.cipher_key);
     const chainkey = ChainKey.from_mac_key(dsecs.mac_key, 0);
-    const send_chain = SendChain.new(chainkey, bob_prekey);
+    const send_chain = new SendChain(chainkey, bob_prekey);
 
-    const state = ClassUtil.new_instance(SessionState);
+    const state = new SessionState();
     state.recv_chains = [];
     state.send_chain = send_chain;
     state.root_key = rootkey;
@@ -137,7 +141,7 @@ class SessionState {
    * @returns {void}
    */
   ratchet(ratchet_key) {
-    const new_ratchet = KeyPair.new();
+    const new_ratchet = new KeyPair();
 
     const [recv_root_key, recv_chain_key] =
       this.root_key.dh_ratchet(this.send_chain.ratchet_key, ratchet_key);
@@ -145,8 +149,8 @@ class SessionState {
     const [send_root_key, send_chain_key] =
       recv_root_key.dh_ratchet(new_ratchet, ratchet_key);
 
-    const recv_chain = RecvChain.new(recv_chain_key, ratchet_key);
-    const send_chain = SendChain.new(send_chain_key, new_ratchet);
+    const recv_chain = new RecvChain(recv_chain_key, ratchet_key);
+    const send_chain = new SendChain(send_chain_key, new_ratchet);
 
     this.root_key = send_root_key;
     this.prev_counter = this.send_chain.chain_key.idx;
@@ -180,7 +184,7 @@ class SessionState {
 
     const msgkeys = this.send_chain.chain_key.message_keys();
 
-    let message = CipherMessage.new(
+    let message = new CipherMessage(
       tag,
       this.send_chain.chain_key.idx,
       this.prev_counter,
@@ -189,10 +193,10 @@ class SessionState {
     );
 
     if (pending) {
-      message = PreKeyMessage.new(pending[0], pending[1], identity_key, message);
+      message = new PreKeyMessage(pending[0], pending[1], identity_key, message);
     }
 
-    const env = Envelope.new(msgkeys.mac_key, message);
+    const env = new Envelope(msgkeys.mac_key, message);
     this.send_chain.chain_key = this.send_chain.chain_key.next();
     return env;
   }
@@ -282,7 +286,7 @@ class SessionState {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(SessionState);
+    const self = new SessionState();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

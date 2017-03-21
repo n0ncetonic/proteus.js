@@ -21,8 +21,7 @@
 
 const CBOR = require('wire-webapp-cbor');
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
+
 const TypeUtil = require('../util/TypeUtil');
 
 const MacKey = require('../derived/MacKey');
@@ -32,33 +31,35 @@ const Message = require('./Message');
 
 /**
  * @class Envelope
- * @throws {DontCallConstructor}
+ * @param {!derived.MacKey} mac_key
+ * @param {!message.Message} message
+ * @returns {Envelope}
  */
 class Envelope {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
+  constructor(mac_key, message) {
+    if (typeof mac_key !== 'undefined') {
+      TypeUtil.assert_is_instance(MacKey, mac_key);
+    }
+    if (typeof message !== 'undefined') {
+      TypeUtil.assert_is_instance(Message, message);
 
-  /**
-   * @param {!derived.MacKey} mac_key
-   * @param {!message.Message} message
-   * @returns {Envelope}
-   */
-  static new(mac_key, message) {
-    TypeUtil.assert_is_instance(MacKey, mac_key);
-    TypeUtil.assert_is_instance(Message, message);
+      const message_enc = new Uint8Array(message.serialise());
 
-    const message_enc = new Uint8Array(message.serialise());
+      /** @type {Uint8Array} */
+      this._message_enc = message_enc;
 
-    const env = ClassUtil.new_instance(Envelope);
+      /** @type {Uint8Array} */
+      this.mac = mac_key.sign(message_enc);
+    }
 
-    env.version = 1;
-    env.mac = mac_key.sign(message_enc);
-    env.message = message;
-    env._message_enc = message_enc;
+    /** @type {number} */
+    this.version = 1;
 
-    Object.freeze(env);
-    return env;
+    /** @type {message.Message} */
+    this.message = message;
+
+    //Object.freeze(this);
+    return this;
   }
 
   /**
@@ -113,7 +114,7 @@ class Envelope {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const env = ClassUtil.new_instance(Envelope);
+    const env = new Envelope();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

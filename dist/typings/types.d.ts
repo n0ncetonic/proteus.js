@@ -458,28 +458,35 @@ export module keys {
    type libsodium_keypair = Object;
 
    /**
+    * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
     * @class PreKey
     * @classdesc Pre-generated (and regularly refreshed) pre-keys.
-    * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
+    * @param {!number} pre_key_id
+    * @returns {PreKey} - `this`
     * @throws {DontCallConstructor}
     */
    class PreKey {
        /**
+        * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
         * @class PreKey
         * @classdesc Pre-generated (and regularly refreshed) pre-keys.
-        * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
+        * @param {!number} pre_key_id
+        * @returns {PreKey} - `this`
         * @throws {DontCallConstructor}
         */
-       constructor();
+       constructor(pre_key_id: number);
 
        /** @type {number} */
        static MAX_PREKEY_ID: number;
 
-       /**
-        * @param {!number} pre_key_id
-        * @returns {PreKey} - `this`
-        */
-       static new(pre_key_id: number): PreKey;
+       /** @type {number} */
+       static key_id: number;
+
+       /** @type {number} */
+       static version: number;
+
+       /** @type {keys.KeyPair} */
+       static key_pair: keys.KeyPair;
 
        /** @returns {PreKey} */
        static last_resort(): PreKey;

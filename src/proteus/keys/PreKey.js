@@ -20,37 +20,23 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
-
 const KeyPair = require('./KeyPair');
 
 /** @module keys **/
 
 /**
+ * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
  * @class PreKey
  * @classdesc Pre-generated (and regularly refreshed) pre-keys.
- * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
- * @throws {DontCallConstructor}
+ * @param {!number} pre_key_id
+ * @returns {PreKey} - `this`
  */
 class PreKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /** @type {number} */
-  static get MAX_PREKEY_ID() {
-    return 0xFFFF;
-  }
-
-  /**
-   * @param {!number} pre_key_id
-   * @returns {PreKey} - `this`
-   */
-  static new(pre_key_id) {
-    TypeUtil.assert_is_integer(pre_key_id);
+  constructor(pre_key_id) {
+    if (typeof pre_key_id !== 'undefined') {
+      TypeUtil.assert_is_integer(pre_key_id);
+    }
 
     if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
       throw new RangeError(
@@ -58,17 +44,26 @@ class PreKey {
       );
     }
 
-    const pk = ClassUtil.new_instance(PreKey);
+    /** @type {number} */
+    this.version = 1;
 
-    pk.version = 1;
-    pk.key_id = pre_key_id;
-    pk.key_pair = KeyPair.new();
-    return pk;
+    /** @type {number} */
+    this.key_id = pre_key_id;
+
+    /** @type {keys.KeyPair} */
+    this.key_pair = new KeyPair();
+
+    return this;
+  }
+
+  /** @type {number} */
+  static get MAX_PREKEY_ID() {
+    return 0xFFFF;
   }
 
   /** @returns {PreKey} */
   static last_resort() {
-    return PreKey.new(PreKey.MAX_PREKEY_ID);
+    return new PreKey(PreKey.MAX_PREKEY_ID);
   }
 
   /**
@@ -94,7 +89,7 @@ class PreKey {
       return [];
     }
 
-    return [...Array(size).keys()].map((x) => PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
+    return [...Array(size).keys()].map((x) => new PreKey((start + x) % PreKey.MAX_PREKEY_ID));
   }
 
   /** @returns {ArrayBuffer} */
@@ -135,7 +130,7 @@ class PreKey {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(PreKey);
+    const self = new PreKey();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

@@ -19,8 +19,6 @@
 
 'use strict';
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
 const KeyDerivationUtil = require('../util/KeyDerivationUtil');
 const MemoryUtil = require('../util/MemoryUtil');
 
@@ -31,13 +29,8 @@ const MacKey = require('./MacKey');
 
 /**
  * @class DerivedSecrets
- * @throws {DontCallConstructor}
  */
 class DerivedSecrets {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
   /**
    * @param {!Array<number>} input
    * @param {!Uint8Array} salt
@@ -54,11 +47,9 @@ class DerivedSecrets {
 
     MemoryUtil.zeroize(output_key_material.buffer);
 
-    const ds = ClassUtil.new_instance(DerivedSecrets);
-    /** @type {derived.CipherKey} */
-    ds.cipher_key = CipherKey.new(cipher_key);
-    /** @type {derived.MacKey} */
-    ds.mac_key = MacKey.new(mac_key);
+    const ds = new DerivedSecrets();
+    ds.cipher_key = new CipherKey(cipher_key);
+    ds.mac_key = new MacKey(mac_key);
     return ds;
   }
 

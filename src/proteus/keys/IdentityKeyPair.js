@@ -21,8 +21,6 @@
 
 const CBOR = require('wire-webapp-cbor');
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
 
 const IdentityKey = require('./IdentityKey');
@@ -33,24 +31,22 @@ const SecretKey = require('./SecretKey');
 
 /**
  * @class IdentityKeyPair
- * @throws {DontCallConstructor}
+ * @returns {IdentityKeyPair} - `this`
  */
 class IdentityKeyPair {
   constructor() {
-    throw new DontCallConstructor(this);
-  }
+    const key_pair = new KeyPair();
 
-  /** @returns {IdentityKeyPair} - `this` */
-  static new() {
-    const key_pair = KeyPair.new();
+    /** @type {number} */
+    this.version = 1;
 
-    /** @type {IdentityKeyPair} */
-    const ikp = ClassUtil.new_instance(IdentityKeyPair);
-    ikp.version = 1;
-    ikp.secret_key = key_pair.secret_key;
-    ikp.public_key = IdentityKey.new(key_pair.public_key);
+    /** @type {number} */
+    this.secret_key = key_pair.secret_key;
 
-    return ikp;
+    /** @type {keys.IdentityKey} */
+    this.public_key = new IdentityKey(key_pair.public_key);
+
+    return this;
   }
 
   /** @returns {ArrayBuffer} */
@@ -92,7 +88,7 @@ class IdentityKeyPair {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(IdentityKeyPair);
+    const self = new IdentityKeyPair();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

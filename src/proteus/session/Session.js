@@ -21,8 +21,7 @@
 
 const CBOR = require('wire-webapp-cbor');
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
+
 const MemoryUtil = require('../util/MemoryUtil');
 const TypeUtil = require('../util/TypeUtil');
 
@@ -48,19 +47,29 @@ const PreKeyStore = require('./PreKeyStore');
 
 /**
  * @class Session
- * @throws {DontCallConstructor}
  */
 class Session {
   constructor() {
+    /** @type {number} */
     this.counter = 0;
-    this.local_identity = null;
-    this.pending_prekey = null;
-    this.remote_identity = null;
-    this.session_states = null;
-    this.session_tag = null;
-    this.version = 1;
 
-    throw new DontCallConstructor(this);
+    /** @type {keys.IdentityKeyPair} */
+    this.local_identity = null;
+
+    /** @type {Array<number,keys.PublicKey>} */
+    this.pending_prekey = null;
+
+    /** @type {keys.IdentityKey} */
+    this.remote_identity = null;
+
+    /** @type {Array<session.SessionState} */
+    this.session_states = null;
+
+    /** @type {message.SessionTag} */
+    this.session_tag = null;
+
+    /** @type {number} */
+    this.version = 1;
   }
 
   /** @type {number} */
@@ -83,13 +92,13 @@ class Session {
       TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
       TypeUtil.assert_is_instance(PreKeyBundle, remote_pkbundle);
 
-      const alice_base = KeyPair.new();
+      const alice_base = new KeyPair();
 
       const state = SessionState.init_as_alice(local_identity, alice_base, remote_pkbundle);
 
-      const session_tag = SessionTag.new();
+      const session_tag = new SessionTag();
 
-      const session = ClassUtil.new_instance(this);
+      const session = new Session();
       session.session_tag = session_tag;
       session.local_identity = local_identity;
       session.remote_identity = remote_pkbundle.identity_key;
@@ -127,7 +136,7 @@ class Session {
         }
       })();
 
-      const session = ClassUtil.new_instance(Session);
+      const session = new Session();
       session.session_tag = pkmsg.message.session_tag;
       session.local_identity = our_identity;
       session.remote_identity = pkmsg.identity_key;
@@ -410,7 +419,7 @@ class Session {
     TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(this);
+    const self = new Session();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

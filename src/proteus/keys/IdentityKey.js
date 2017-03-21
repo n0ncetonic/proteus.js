@@ -23,8 +23,6 @@ const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
 if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
 
 const PublicKey = require('./PublicKey');
@@ -35,23 +33,17 @@ const PublicKey = require('./PublicKey');
  * Construct a long-term identity key pair.
  * @classdesc Every client has a long-term identity key pair.
  * Long-term identity keys are used to initialise "sessions" with other clients (triple DH).
- * @throws {DontCallConstructor}
+ * @param {!keys.PublicKey} public_key
+ * @returns {IdentityKey} - `this`
  */
 class IdentityKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!IdentityKey} public_key
-   * @returns {IdentityKey} - `this`
-   */
-  static new(public_key) {
+  constructor(public_key) {
     TypeUtil.assert_is_instance(PublicKey, public_key);
 
-    const key = ClassUtil.new_instance(IdentityKey);
-    key.public_key = public_key;
-    return key;
+    /** @type {keys.PublicKey} */
+    this.public_key = public_key;
+
+    return this;
   }
 
   /** @returns {string} */
@@ -94,7 +86,7 @@ class IdentityKey {
       }
     }
 
-    return IdentityKey.new(public_key);
+    return new IdentityKey(public_key);
   }
 }
 

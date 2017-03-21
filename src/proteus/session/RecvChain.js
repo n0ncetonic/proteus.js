@@ -21,8 +21,7 @@
 
 const CBOR = require('wire-webapp-cbor');
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
+
 const TypeUtil = require('../util/TypeUtil');
 
 const PublicKey = require('../keys/PublicKey');
@@ -40,27 +39,33 @@ const MessageKeys = require('./MessageKeys');
 
 /**
  * @class RecvChain
- * @throws {DontCallConstructor}
+ * @param {!session.ChainKey} chain_key
+ * @param {!keys.PublicKey} public_key
+ * @returns {message.PreKeyMessage} - `this`
  */
 class RecvChain {
-  constructor() {
-    throw new DontCallConstructor(this);
+  constructor(chain_key, public_key) {
+    if (typeof chain_key !== 'undefined') {
+      TypeUtil.assert_is_instance(ChainKey, chain_key);
+    }
+    if (typeof public_key !== 'undefined') {
+      TypeUtil.assert_is_instance(PublicKey, public_key);
+    }
+
+    /** @type {session.ChainKey} */
+    this.chain_key = chain_key;
+
+    /** @type {keys.PublicKey} */
+    this.ratchet_key = public_key;
+
+    /** @type {Array<message.Message>} */
+    this.message_keys = [];
+    return this;
   }
 
-  /**
-   * @param {!session.ChainKey} chain_key
-   * @param {!keys.PublicKey} public_key
-   * @returns {message.PreKeyMessage}
-   */
-  static new(chain_key, public_key) {
-    TypeUtil.assert_is_instance(ChainKey, chain_key);
-    TypeUtil.assert_is_instance(PublicKey, public_key);
-
-    const rc = ClassUtil.new_instance(RecvChain);
-    rc.chain_key = chain_key;
-    rc.ratchet_key = public_key;
-    rc.message_keys = [];
-    return rc;
+  /** @type {number} */
+  static get MAX_COUNTER_GAP() {
+    return 1000;
   }
 
   /**
@@ -164,7 +169,7 @@ class RecvChain {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(RecvChain);
+    const self = new RecvChain();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {
@@ -196,8 +201,5 @@ class RecvChain {
     return self;
   }
 }
-
-/** @type {number} */
-RecvChain.MAX_COUNTER_GAP = 1000;
 
 module.exports = RecvChain;

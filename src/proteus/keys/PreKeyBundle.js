@@ -23,46 +23,45 @@ const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
 if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
-const TypeUtil = require('../util/TypeUtil');
-
 const IdentityKey = require('./IdentityKey');
 const IdentityKeyPair = require('./IdentityKeyPair');
 const PreKey = require('./PreKey');
 const PreKeyAuth = require('./PreKeyAuth');
 const PublicKey = require('./PublicKey');
+const TypeUtil = require('../util/TypeUtil');
 
 /** @module keys */
 
 /**
  * @class PreKeyBundle
- * @throws {DontCallConstructor}
+ * @param {keys.IdentityKey} public_identity_key
+ * @param {keys.PreKey} prekey
+ * @returns {PreKeyBundle} - `this`
  */
 class PreKeyBundle {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
+  constructor(public_identity_key, prekey) {
+    if (typeof public_identity_key !== 'undefined') {
+      TypeUtil.assert_is_instance(IdentityKey, public_identity_key);
+    }
+    if (typeof prekey !== 'undefined') {
+      TypeUtil.assert_is_instance(PreKey, prekey);
+      /** @type {number} */
+      this.prekey_id = prekey.key_id;
 
-  /**
-   * @param {!keys.IdentityKey} public_identity_key
-   * @param {!keys.PreKey} prekey
-   * @returns {PreKeyBundle} - `this`
-   */
-  static new(public_identity_key, prekey) {
-    TypeUtil.assert_is_instance(IdentityKey, public_identity_key);
-    TypeUtil.assert_is_instance(PreKey, prekey);
+      /** @type {keys.PublicKey} */
+      this.public_key = prekey.key_pair.public_key;
+    }
 
-    /** @type {keys.PreyKeyBundle} */
-    const bundle = ClassUtil.new_instance(PreKeyBundle);
+    /** @type {number} */
+    this.version = 1;
 
-    bundle.version = 1;
-    bundle.prekey_id = prekey.key_id;
-    bundle.public_key = prekey.key_pair.public_key;
-    bundle.identity_key = public_identity_key;
-    bundle.signature = null;
+    /** @type {keys.IdentityKey} */
+    this.identity_key = public_identity_key;
 
-    return bundle;
+    /** @type {Uint8Array} */
+    this.signature = null;
+
+    return this;
   }
 
   /**
@@ -80,7 +79,7 @@ class PreKeyBundle {
     const signature = identity_pair.secret_key.sign(ratchet_key.pub_edward);
 
     /** @type {keys.PreyKeyBundle} */
-    const bundle = ClassUtil.new_instance(PreKeyBundle);
+    const bundle = new PreKeyBundle();
 
     bundle.version = 1;
     bundle.prekey_id = prekey.key_id;
@@ -164,7 +163,7 @@ class PreKeyBundle {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(PreKeyBundle);
+    const self = new PreKeyBundle();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

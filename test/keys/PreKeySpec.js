@@ -22,17 +22,16 @@
 describe('PreKey', () => {
   describe('Generation', () => {
     it('should generate new PreKeys', () => {
-      let pk = Proteus.keys.PreKey.new(0);
+      let pk = new Proteus.keys.PreKey(0);
       pk = Proteus.keys.PreKey.last_resort();
       assert(pk.key_id === Proteus.keys.PreKey.MAX_PREKEY_ID);
     });
 
     it('should reject invalid PreKey IDs', () => {
-      assert.throws(() => Proteus.keys.PreKey.new(undefined));
-      assert.throws(() => Proteus.keys.PreKey.new('foo'));
-      assert.throws(() => Proteus.keys.PreKey.new(-1));
-      assert.throws(() => Proteus.keys.PreKey.new(65537));
-      assert.throws(() => Proteus.keys.PreKey.new(4242.42));
+      assert.throws(() => new Proteus.keys.PreKey('foo'));
+      assert.throws(() => new Proteus.keys.PreKey(-1));
+      assert.throws(() => new Proteus.keys.PreKey(65537));
+      assert.throws(() => new Proteus.keys.PreKey(4242.42));
     });
 
     it('generates ranges of PreKeys', () => {
@@ -76,7 +75,7 @@ describe('PreKey', () => {
 
   describe('Serialisation', () => {
     it('should serialise and deserialise correctly', () => {
-      const pk = Proteus.keys.PreKey.new(0);
+      const pk = new Proteus.keys.PreKey(0);
       const pk_bytes = pk.serialise();
       const pk_copy = Proteus.keys.PreKey.deserialise(pk_bytes);
 

@@ -21,8 +21,7 @@
 
 const CBOR = require('wire-webapp-cbor');
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
+
 const TypeUtil = require('../util/TypeUtil');
 
 const PublicKey = require('../keys/PublicKey');
@@ -34,39 +33,40 @@ const SessionTag = require('./SessionTag');
 
 /**
  * @extends Message
- * @throws {DontCallConstructor}
+ * @param {!message.SessionTag} session_tag
+ * @param {!number} counter
+ * @param {!number} prev_counter
+ * @param {!keys.PublicKey} ratchet_key
+ * @param {!Uint8Array} cipher_text
+ * @returns {CipherMessage} - `this`
  */
 class CipherMessage extends Message {
-  constructor() {
-    super();
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!message.SessionTag} session_tag
-   * @param {!number} counter
-   * @param {!number} prev_counter
-   * @param {!keys.PublicKey} ratchet_key
-   * @param {!Uint8Array} cipher_text
-   * @returns {CipherMessage} - `this`
-   */
-  static new(session_tag, counter, prev_counter, ratchet_key, cipher_text) {
+  constructor(session_tag, counter, prev_counter, ratchet_key, cipher_text) {
     TypeUtil.assert_is_instance(SessionTag, session_tag);
     TypeUtil.assert_is_integer(counter);
     TypeUtil.assert_is_integer(prev_counter);
     TypeUtil.assert_is_instance(PublicKey, ratchet_key);
     TypeUtil.assert_is_instance(Uint8Array, cipher_text);
 
-    const cm = ClassUtil.new_instance(CipherMessage);
+    super();
 
-    cm.session_tag = session_tag;
-    cm.counter = counter;
-    cm.prev_counter = prev_counter;
-    cm.ratchet_key = ratchet_key;
-    cm.cipher_text = cipher_text;
+    /** @type {message.SessionTag} */
+    this.session_tag = session_tag;
 
-    Object.freeze(cm);
-    return cm;
+    /** @type {number} */
+    this.counter = counter;
+
+    /** @type {number} */
+    this.prev_counter = prev_counter;
+
+    /** @type {keys.PublicKey} */
+    this.ratchet_key = ratchet_key;
+
+    /** @type {Uint8Array} */
+    this.cipher_text = cipher_text;
+
+    Object.freeze(this);
+    return this;
   }
 
   /**
@@ -123,7 +123,7 @@ class CipherMessage extends Message {
       }
     }
 
-    return CipherMessage.new(session_tag, counter, prev_counter, ratchet_key, cipher_text);
+    return new CipherMessage(session_tag, counter, prev_counter, ratchet_key, cipher_text);
   }
 }
 

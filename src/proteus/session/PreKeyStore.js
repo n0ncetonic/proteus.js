@@ -24,7 +24,7 @@
 /** @class PreKeyStore */
 class PreKeyStore {
   constructor() {
-    /** @type {Array<number>} */
+    /** @type {Array<keys.PreKey>} */
     this.prekeys = [];
   }
 

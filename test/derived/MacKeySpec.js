@@ -23,7 +23,7 @@ describe('Mac Key', () => {
   it('encodes a message', () => {
     const key_material_buffer = new ArrayBuffer(32);
     const typed_key_material = new Uint8Array(key_material_buffer);
-    const mac_key = Proteus.derived.MacKey.new(typed_key_material);
+    const mac_key = new Proteus.derived.MacKey(typed_key_material);
     const message = sodium.from_string('hello');
 
     const authentication_code = mac_key.sign(message);

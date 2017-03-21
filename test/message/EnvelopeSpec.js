@@ -20,41 +20,41 @@
 'use strict';
 
 describe('Envelope', () => {
-  const mk = Proteus.derived.MacKey.new(new Uint8Array(32).fill(1));
-  const bk = Proteus.keys.KeyPair.new().public_key;
-  const ik = Proteus.keys.IdentityKey.new(Proteus.keys.KeyPair.new().public_key);
-  const rk = Proteus.keys.KeyPair.new().public_key;
+  const mk = new Proteus.derived.MacKey(new Uint8Array(32).fill(1));
+  const bk = new Proteus.keys.KeyPair().public_key;
+  const ik = new Proteus.keys.IdentityKey(new Proteus.keys.KeyPair().public_key);
+  const rk = new Proteus.keys.KeyPair().public_key;
 
-  const tg = Proteus.message.SessionTag.new();
+  const tg = new Proteus.message.SessionTag();
 
   it('should encapsulate a CipherMessage', () => {
-    const msg = Proteus.message.CipherMessage.new(tg, 42, 3, rk, new Uint8Array([1, 2, 3, 4, 5]));
-    const env = Proteus.message.Envelope.new(mk, msg);
+    const msg = new Proteus.message.CipherMessage(tg, 42, 3, rk, new Uint8Array([1, 2, 3, 4, 5]));
+    const env = new Proteus.message.Envelope(mk, msg);
 
     assert(env.verify(mk));
   });
 
   it('should encapsulate a PreKeyMessage', () => {
-    const msg = Proteus.message.PreKeyMessage.new(
+    const msg = new Proteus.message.PreKeyMessage(
       42, bk, ik,
-      Proteus.message.CipherMessage.new(
+      new Proteus.message.CipherMessage(
         tg, 42, 43, rk, new Uint8Array([1, 2, 3, 4])
       )
     );
 
-    const env = Proteus.message.Envelope.new(mk, msg);
+    const env = new Proteus.message.Envelope(mk, msg);
     assert(env.verify(mk));
   });
 
   it('should encode to and decode from CBOR', () => {
-    const msg = Proteus.message.PreKeyMessage.new(
+    const msg = new Proteus.message.PreKeyMessage(
       42, bk, ik,
-      Proteus.message.CipherMessage.new(
+      new Proteus.message.CipherMessage(
         tg, 42, 43, rk, new Uint8Array([1, 2, 3, 4])
       )
     );
 
-    const env = Proteus.message.Envelope.new(mk, msg);
+    const env = new Proteus.message.Envelope(mk, msg);
     assert(env.verify(mk));
 
     const env_bytes = env.serialise();

@@ -23,32 +23,23 @@ const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
 if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
 
 /** @module derived */
 
 /**
  * @class CipherKey
- * @throws {DontCallConstructor}
+ * @param {!Uint8Array} key
+ * @returns {CipherKey} - `this`
  */
 class CipherKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!Uint8Array} key
-   * @returns {CipherKey} - `this`
-   */
-  static new(key) {
+  constructor(key) {
     TypeUtil.assert_is_instance(Uint8Array, key);
 
-    const ck = ClassUtil.new_instance(CipherKey);
     /** @type {Uint8Array} */
-    ck.key = key;
-    return ck;
+    this.key = key;
+
+    return this;
   }
 
   /**
@@ -103,7 +94,7 @@ class CipherKey {
           d.skip();
       }
     }
-    return CipherKey.new(key_bytes);
+    return new CipherKey(key_bytes);
   }
 }
 

@@ -24,38 +24,32 @@ const ed2curve = require('ed2curve');
 const sodium = require('libsodium-wrappers-sumo');
 if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
 
 /** @module keys */
 
 /**
  * @class PublicKey
- * @throws {DontCallConstructor}
+ * @param {Uint8Array} [pub_edward]
+ * @param {Uint8Array} [pub_curve]
+ * @returns {PublicKey} - `this`
  */
 class PublicKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!Uint8Array} pub_edward
-   * @param {!Uint8Array} pub_curve
-   * @returns {PublicKey} - `this`
-   */
-  static new(pub_edward, pub_curve) {
-    TypeUtil.assert_is_instance(Uint8Array, pub_edward);
-    TypeUtil.assert_is_instance(Uint8Array, pub_curve);
-
-    /** @type {PublicKey} */
-    const pk = ClassUtil.new_instance(PublicKey);
+  constructor(pub_edward, pub_curve) {
+    if (typeof pub_edward !== 'undefined') {
+      TypeUtil.assert_is_instance(Uint8Array, pub_edward);
+    }
+    if (typeof pub_edward !== 'undefined') {
+      TypeUtil.assert_is_instance(Uint8Array, pub_curve);
+    }
 
     /** @type {Uint8Array} */
-    pk.pub_edward = pub_edward;
+    this.pub_edward = pub_edward;
+
     /** @type {Uint8Array} */
-    pk.pub_curve = pub_curve;
-    return pk;
+    this.pub_curve = pub_curve;
+
+    return this;
   }
 
   /**
@@ -92,7 +86,7 @@ class PublicKey {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(PublicKey);
+    const self = new PublicKey();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

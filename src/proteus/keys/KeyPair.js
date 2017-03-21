@@ -24,10 +24,8 @@ const ed2curve = require('ed2curve');
 const sodium = require('libsodium-wrappers-sumo');
 if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
-const ikp = require('./IdentityKeyPair');
+
 const PublicKey = require('./PublicKey');
 const SecretKey = require('./SecretKey');
 
@@ -36,22 +34,19 @@ const SecretKey = require('./SecretKey');
 /**
  * Construct an ephemeral key pair.
  * @class KeyPair
- * @throws {DontCallConstructor}
+ * @returns {KeyPair} - `this`
  */
 class KeyPair {
   constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /** @returns {KeyPair} - `this` */
-  static new() {
     const ed25519_key_pair = sodium.crypto_sign_keypair();
 
-    const kp = ClassUtil.new_instance(KeyPair);
-    kp.secret_key = KeyPair.prototype._construct_private_key(ed25519_key_pair);
-    kp.public_key = KeyPair.prototype._construct_public_key(ed25519_key_pair);
+    /** @type {keys.SecretKey} */
+    this.secret_key = this._construct_private_key(ed25519_key_pair);
 
-    return kp;
+    /** @type {keys.PublicKey} */
+    this.public_key = this._construct_public_key(ed25519_key_pair);
+
+    return this;
   }
 
   /**
@@ -65,7 +60,7 @@ class KeyPair {
   _construct_private_key(ed25519_key_pair) {
     const sk_ed25519 = ed25519_key_pair.privateKey;
     const sk_curve25519 = ed2curve.convertSecretKey(sk_ed25519);
-    return SecretKey.new(sk_ed25519, sk_curve25519);
+    return new SecretKey(sk_ed25519, sk_curve25519);
   }
 
   /**
@@ -82,7 +77,7 @@ class KeyPair {
   _construct_public_key(ed25519_key_pair) {
     const pk_ed25519 = ed25519_key_pair.publicKey;
     const pk_curve25519 = ed2curve.convertPublicKey(pk_ed25519);
-    return PublicKey.new(pk_ed25519, pk_curve25519);
+    return new PublicKey(pk_ed25519, pk_curve25519);
   }
 
   /**
@@ -106,7 +101,7 @@ class KeyPair {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(KeyPair);
+    const self = new KeyPair();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

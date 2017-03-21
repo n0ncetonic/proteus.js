@@ -24,8 +24,6 @@ const ed2curve = require('ed2curve');
 const sodium = require('libsodium-wrappers-sumo');
 if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
 const PublicKey = require('./PublicKey');
 const TypeUtil = require('../util/TypeUtil');
 
@@ -33,29 +31,26 @@ const TypeUtil = require('../util/TypeUtil');
 
 /**
  * @class SecretKey
- * @throws {DontCallConstructor}
+ * @param {!Uint8Array} sec_edward
+ * @param {!Uint8Array} sec_curve
+ * @returns {SecretKey} - `this`
  */
 class SecretKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!Uint8Array} sec_edward
-   * @param {!Uint8Array} sec_curve
-   * @returns {SecretKey} - `this`
-   */
-  static new(sec_edward, sec_curve) {
-    TypeUtil.assert_is_instance(Uint8Array, sec_edward);
-    TypeUtil.assert_is_instance(Uint8Array, sec_curve);
-
-    const sk = ClassUtil.new_instance(SecretKey);
+  constructor(sec_edward, sec_curve) {
+    if (typeof sec_edward !== 'undefined') {
+      TypeUtil.assert_is_instance(Uint8Array, sec_edward);
+    }
+    if (typeof sec_curve !== 'undefined') {
+      TypeUtil.assert_is_instance(Uint8Array, sec_curve);
+    }
 
     /** @type {Uint8Array} */
-    sk.sec_edward = sec_edward;
+    this.sec_edward = sec_edward;
+
     /** @type {Uint8Array} */
-    sk.sec_curve = sec_curve;
-    return sk;
+    this.sec_curve = sec_curve;
+
+    return this;
   }
 
   /**
@@ -96,7 +91,7 @@ class SecretKey {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(SecretKey);
+    const self = new SecretKey();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

@@ -23,9 +23,7 @@ const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
 if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
-const DontCallConstructor = require('../errors/DontCallConstructor');
 
-const ClassUtil = require('../util/ClassUtil');
 const TypeUtil = require('../util/TypeUtil');
 
 const DecodeError = require('../errors/DecodeError');
@@ -35,18 +33,13 @@ const RandomUtil = require('../util/RandomUtil');
 
 /**
  * @class SessionTag
- * @throws {DontCallConstructor}
+ * @returns {SessionTag} - `this`
  */
 class SessionTag {
   constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /** @returns {SessionTag} - `this` */
-  static new() {
-    const st = ClassUtil.new_instance(SessionTag);
-    st.tag = RandomUtil.random_bytes(16);
-    return st;
+    /** @type {Buffer} */
+    this.tag = RandomUtil.random_bytes(16);
+    return this;
   }
 
   /** @returns {string} */
@@ -76,7 +69,7 @@ class SessionTag {
       );
     }
 
-    const st = ClassUtil.new_instance(SessionTag);
+    const st = new SessionTag();
     st.tag = new Uint8Array(bytes);
     return st;
   }

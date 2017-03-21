@@ -21,8 +21,7 @@
 
 const CBOR = require('wire-webapp-cbor');
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
+
 const TypeUtil = require('../util/TypeUtil');
 
 const ChainKey = require('./ChainKey');
@@ -32,21 +31,24 @@ const KeyPair = require('../keys/KeyPair');
 
 /**
  * @class SendChain
- * @throws {DontCallConstructor}
+ * @param {session.ChainKey} chain_key
+ * @param {keys.KeyPair} keypair
  */
 class SendChain {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
+  constructor(chain_key, keypair) {
+    if (typeof chain_key !== 'undefined') {
+      TypeUtil.assert_is_instance(ChainKey, chain_key);
+    }
+    if (typeof chain_key !== 'undefined') {
+      TypeUtil.assert_is_instance(KeyPair, keypair);
+    }
 
-  static new(chain_key, keypair) {
-    TypeUtil.assert_is_instance(ChainKey, chain_key);
-    TypeUtil.assert_is_instance(KeyPair, keypair);
+    /** @type {session.ChainKey} */
+    this.chain_key = chain_key;
 
-    const sc = ClassUtil.new_instance(SendChain);
-    sc.chain_key = chain_key;
-    sc.ratchet_key = keypair;
-    return sc;
+    /** @type {keys.KeyPair} */
+    this.ratchet_key = keypair;
+    return this;
   }
 
   /**
@@ -67,7 +69,9 @@ class SendChain {
    */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
-    const self = ClassUtil.new_instance(SendChain);
+
+    const self = new SendChain();
+
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {
       switch (d.u8()) {
@@ -81,6 +85,7 @@ class SendChain {
           d.skip();
       }
     }
+
     TypeUtil.assert_is_instance(ChainKey, self.chain_key);
     TypeUtil.assert_is_instance(KeyPair, self.ratchet_key);
     return self;

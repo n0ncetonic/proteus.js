@@ -25,20 +25,20 @@ describe('Message', () => {
     pub_edward.fill(byte);
     const pub_curve = sodium.crypto_sign_ed25519_pk_to_curve25519(pub_edward);
 
-    return Proteus.keys.PublicKey.new(pub_edward, pub_curve);
+    return new Proteus.keys.PublicKey(pub_edward, pub_curve);
   };
 
   const bk = fake_pubkey(0xFF);
-  const ik = Proteus.keys.IdentityKey.new(fake_pubkey(0xA0));
+  const ik = new Proteus.keys.IdentityKey(fake_pubkey(0xA0));
   const rk = fake_pubkey(0xF0);
 
-  const st = Proteus.message.SessionTag.new();
+  const st = new Proteus.message.SessionTag();
   st.tag.fill(42);
 
   it('should serialise and deserialise a CipherMessage correctly', () => {
     const expected = '01a500502a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a010c020d03a1005820f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0044a0102030405060708090a';
 
-    const msg = Proteus.message.CipherMessage.new(
+    const msg = new Proteus.message.CipherMessage(
       st, 12, 13, rk, new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     );
 
@@ -53,10 +53,10 @@ describe('Message', () => {
   it('should serialise a PreKeyMessage correctly', () => {
     const expected = '02a400181801a1005820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff02a100a1005820a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a003a500502a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a010c020d03a1005820f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0044a0102030405060708090a';
 
-    const cmsg = Proteus.message.CipherMessage.new(
+    const cmsg = new Proteus.message.CipherMessage(
       st, 12, 13, rk, new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     );
-    const pkmsg = Proteus.message.PreKeyMessage.new(24, bk, ik, cmsg);
+    const pkmsg = new Proteus.message.PreKeyMessage(24, bk, ik, cmsg);
 
     const bytes = new Uint8Array(pkmsg.serialise());
     assert(expected === sodium.to_hex(bytes).toLowerCase());

@@ -21,8 +21,7 @@
 
 const CBOR = require('wire-webapp-cbor');
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
+
 const TypeUtil = require('../util/TypeUtil');
 
 const CipherKey = require('../derived/CipherKey');
@@ -32,29 +31,33 @@ const MacKey = require('../derived/MacKey');
 
 /**
  * @class MessageKeys
- * @throws {DontCallConstructor}
+ * @param {!derived.CipherKey} cipher_key
+ * @param {!derived.MacKey} mac_key
+ * @param {!number} counter
+ * @returns {MessageKeys} - `this`
  */
 class MessageKeys {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
+  constructor(cipher_key, mac_key, counter) {
+    if (typeof cipher_key !== 'undefined') {
+      TypeUtil.assert_is_instance(CipherKey, cipher_key);
+    }
+    if (typeof mac_key !== 'undefined') {
+      TypeUtil.assert_is_instance(MacKey, mac_key);
+    }
+    if (typeof counter !== 'undefined') {
+      TypeUtil.assert_is_integer(counter);
+    }
 
-  /**
-   * @param {!derived.CipherKey} cipher_key
-   * @param {!derived.MacKey} mac_key
-   * @param {!number} counter
-   * @returns {MessageKeys} - `this`
-   */
-  static new(cipher_key, mac_key, counter) {
-    TypeUtil.assert_is_instance(CipherKey, cipher_key);
-    TypeUtil.assert_is_instance(MacKey, mac_key);
-    TypeUtil.assert_is_integer(counter);
+    /** @type {derived.CipherKey} */
+    this.cipher_key = cipher_key;
 
-    const mk = ClassUtil.new_instance(MessageKeys);
-    mk.cipher_key = cipher_key;
-    mk.mac_key = mac_key;
-    mk.counter = counter;
-    return mk;
+    /** @type {derived.MacKey} */
+    this.mac_key = mac_key;
+
+    /** @type {number} */
+    this.counter = counter;
+
+    return this;
   }
 
   /**
@@ -104,7 +107,7 @@ class MessageKeys {
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
-    const self = ClassUtil.new_instance(MessageKeys);
+    const self = new MessageKeys();
 
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {

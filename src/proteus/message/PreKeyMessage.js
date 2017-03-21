@@ -21,8 +21,7 @@
 
 const CBOR = require('wire-webapp-cbor');
 
-const ClassUtil = require('../util/ClassUtil');
-const DontCallConstructor = require('../errors/DontCallConstructor');
+
 const TypeUtil = require('../util/TypeUtil');
 
 const IdentityKey = require('../keys/IdentityKey');
@@ -35,36 +34,35 @@ const Message = require('./Message');
 
 /**
  * @extends Message
- * @throws {DontCallConstructor}
+ * @param {!number} prekey_id
+ * @param {!keys.PublicKey} base_key
+ * @param {!keys.IdentityKey} identity_key
+ * @param {!message.CipherMessage} message
+ * @returns {PreKeyMessage}
  */
 class PreKeyMessage extends Message {
-  constructor() {
-    super();
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!number} prekey_id
-   * @param {!keys.PublicKey} base_key
-   * @param {!keys.IdentityKey} identity_key
-   * @param {!message.CipherMessage} message
-   * @returns {PreKeyMessage}
-   */
-  static new(prekey_id, base_key, identity_key, message) {
+  constructor(prekey_id, base_key, identity_key, message) {
     TypeUtil.assert_is_integer(prekey_id);
     TypeUtil.assert_is_instance(PublicKey, base_key);
     TypeUtil.assert_is_instance(IdentityKey, identity_key);
     TypeUtil.assert_is_instance(CipherMessage, message);
 
-    const pkm = ClassUtil.new_instance(PreKeyMessage);
+    super();
 
-    pkm.prekey_id = prekey_id;
-    pkm.base_key = base_key;
-    pkm.identity_key = identity_key;
-    pkm.message = message;
+    /** @type {number} */
+    this.prekey_id = prekey_id;
 
-    Object.freeze(pkm);
-    return pkm;
+    /** @type {keys.PublicKey} */
+    this.base_key = base_key;
+
+    /** @type {keys.IdentityKey} */
+    this.identity_key = identity_key;
+
+    /** @type {message.CipherMessage} */
+    this.message = message;
+
+    Object.freeze(this);
+    return this;
   }
 
   /**
@@ -116,7 +114,7 @@ class PreKeyMessage extends Message {
     }
 
     // checks for missing variables happens in constructor
-    return PreKeyMessage.new(prekey_id, base_key, identity_key, message);
+    return new PreKeyMessage(prekey_id, base_key, identity_key, message);
   }
 }
 

@@ -20,23 +20,13 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-
-const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
-
 const DecodeError = require('../errors/DecodeError');
 
 /** @module message */
 
-/**
- * @class Message
- * @throws {DontCallConstructor}
- */
+/** @class Message */
 class Message {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
   /** @returns {ArrayBuffer} */
   serialise() {
     const e = new CBOR.Encoder();
