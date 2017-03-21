@@ -64,11 +64,11 @@ class RootKey {
     TypeUtil.assert_is_instance(PublicKey, theirs);
 
     const secret = ours.secret_key.shared_secret(theirs);
-    const dsecs = DerivedSecrets.kdf(secret, this.key.key, 'dh_ratchet');
+    const derived_secrets = DerivedSecrets.kdf(secret, this.key.key, 'dh_ratchet');
 
     return [
-      RootKey.from_cipher_key(dsecs.cipher_key),
-      ChainKey.from_mac_key(dsecs.mac_key, 0),
+      RootKey.from_cipher_key(derived_secrets.cipher_key),
+      ChainKey.from_mac_key(derived_secrets.mac_key, 0),
     ];
   }
 

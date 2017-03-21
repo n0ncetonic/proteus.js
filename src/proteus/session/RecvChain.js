@@ -86,7 +86,7 @@ class RecvChain {
 
     const mk = this.message_keys.splice(idx, 1)[0];
     if (!envelope.verify(mk.mac_key)) {
-      throw new DecryptError.InvalidSignature();
+      throw new DecryptError.InvalidSignature(`Decryption of a previous (older) message failed. Remote index is at '${msg.counter}'. Local index is at '${this.chain_key.idx}'.`);
     }
 
     return mk.decrypt(msg.cipher_text);

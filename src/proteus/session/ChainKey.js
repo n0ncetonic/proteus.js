@@ -66,8 +66,8 @@ class ChainKey {
   /** @returns {session.MessageKeys} */
   message_keys() {
     const base = this.key.sign('0');
-    const dsecs = DerivedSecrets.kdf_without_salt(base, 'hash_ratchet');
-    return MessageKeys.new(dsecs.cipher_key, dsecs.mac_key, this.idx);
+    const derived_secrets = DerivedSecrets.kdf_without_salt(base, 'hash_ratchet');
+    return MessageKeys.new(derived_secrets.cipher_key, derived_secrets.mac_key, this.idx);
   }
 
   /**
