@@ -19,17 +19,16 @@
 
 'use strict';
 
-const ProteusError = require('../errors/ProteusError');
-
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') {
-  try {
-    const sodium_neon = require('libsodium-neon');
-    Object.assign(sodium, sodium_neon);
-  } catch (err) {}
-}
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
-module.exports = {
+/** @module util */
+
+const MemoryUtil = {
+  /**
+   * @param {!(Uint8Array|ArrayBuffer|Object)} object
+   * @returns {void}
+   */
   zeroize(object) {
     if (object instanceof Uint8Array) {
       sodium.memzero(object);
@@ -38,5 +37,7 @@ module.exports = {
     } else if (typeof object === 'object') {
       Object.values(object).forEach((val) => this.zeroize(val));
     }
-  }
+  },
 };
+
+module.exports = MemoryUtil;

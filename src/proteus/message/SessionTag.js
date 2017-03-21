@@ -21,12 +21,7 @@
 
 const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') {
-  try {
-    const sodium_neon = require('libsodium-neon');
-    Object.assign(sodium, sodium_neon);
-  } catch (err) {}
-}
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
 const DontCallConstructor = require('../errors/DontCallConstructor');
 
@@ -36,25 +31,41 @@ const TypeUtil = require('../util/TypeUtil');
 const DecodeError = require('../errors/DecodeError');
 const RandomUtil = require('../util/RandomUtil');
 
-module.exports = class SessionTag {
+/** @module message */
+
+/**
+ * @class SessionTag
+ * @throws {DontCallConstructor}
+ */
+class SessionTag {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /** @returns {SessionTag} - `this` */
   static new() {
     const st = ClassUtil.new_instance(SessionTag);
     st.tag = RandomUtil.random_bytes(16);
     return st;
   }
 
+  /** @returns {string} */
   toString() {
     return sodium.to_hex(this.tag);
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     return e.bytes(this.tag);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {SessionTag}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -69,4 +80,6 @@ module.exports = class SessionTag {
     st.tag = new Uint8Array(bytes);
     return st;
   }
-};
+}
+
+module.exports = SessionTag;

@@ -21,34 +21,40 @@
 
 const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') {
-  try {
-    const sodium_neon = require('libsodium-neon');
-    Object.assign(sodium, sodium_neon);
-  } catch (err) {}
-}
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
 const ClassUtil = require('../util/ClassUtil');
 const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
 
-module.exports = class CipherKey {
+/** @module derived */
+
+/**
+ * @class CipherKey
+ * @throws {DontCallConstructor}
+ */
+class CipherKey {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!Uint8Array} key
+   * @returns {CipherKey} - `this`
+   */
   static new(key) {
     TypeUtil.assert_is_instance(Uint8Array, key);
 
     const ck = ClassUtil.new_instance(CipherKey);
+    /** @type {Uint8Array} */
     ck.key = key;
     return ck;
   }
 
-  /*
-   * @param plaintext [String, Uint8Array, ArrayBuffer] The text to encrypt
-   * @param nonce [Uint8Array] Counter as nonce
-   * @return [Uint8Array] Encypted payload
+  /**
+   * @param {!(ArrayBuffer|String|Uint8Array)} plaintext - The text to encrypt
+   * @param {!Uint8Array} nonce - Counter as nonce
+   * @returns {Uint8Array} - Encrypted payload
    */
   encrypt(plaintext, nonce) {
     // @todo Re-validate if the ArrayBuffer check is needed (Prerequisite: Integration tests)
@@ -59,16 +65,29 @@ module.exports = class CipherKey {
     return sodium.crypto_stream_chacha20_xor(plaintext, nonce, this.key, 'uint8array');
   }
 
+  /**
+   * @param {!Uint8Array} ciphertext
+   * @param {!Uint8Array} nonce
+   * @returns {Uint8Array}
+   */
   decrypt(ciphertext, nonce) {
     return this.encrypt(ciphertext, nonce);
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(1);
     e.u8(0);
     return e.bytes(this.key);
   }
 
+  /**
+   * @param {!CBOR.Encoder} d
+   * @returns {CipherKey}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -86,4 +105,6 @@ module.exports = class CipherKey {
     }
     return CipherKey.new(key_bytes);
   }
-};
+}
+
+module.exports = CipherKey;

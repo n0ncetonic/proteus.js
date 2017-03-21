@@ -10,12 +10,12 @@
   </head>
   <body>
     <script>
-      var lastResort = Proteus.keys.PreKey.MAX_PREKEY_ID;
-      var preKey = Proteus.keys.PreKey.new(lastResort);
-      var serializedPreKey = preKey.serialise();
+      const lastResort = Proteus.keys.PreKey.MAX_PREKEY_ID;
+      const preKey = Proteus.keys.PreKey.new(lastResort);
+      const serializedPreKey = preKey.serialise();
 
-      var uint8array = new TextEncoder("utf-8").encode("¢");
-      var base64 = sodium.to_base64(uint8array);
+      const uint8array = new TextEncoder("utf-8").encode("¢");
+      const base64 = sodium.to_base64(uint8array);
 
       document.write(base64 + ' ' + serializedPreKey);
     </script>

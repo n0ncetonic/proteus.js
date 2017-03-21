@@ -48,7 +48,10 @@ const RootKey = require('./RootKey');
 const SendChain = require('./SendChain');
 const Session = require('./Session');
 
-module.exports = class SessionState {
+/** @module session */
+
+/** @class SessionState */
+class SessionState {
   constructor() {
     this.recv_chains = null;
     this.send_chain = null;
@@ -58,6 +61,12 @@ module.exports = class SessionState {
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!keys.IdentityKeyPair} alice_identity_pair
+   * @param {!keys.PublicKey} alice_base
+   * @param {!keys.PreKeyBundle} bob_pkbundle
+   * @returns {SessionState}
+   */
   static init_as_alice(alice_identity_pair, alice_base, bob_pkbundle) {
     TypeUtil.assert_is_instance(IdentityKeyPair, alice_identity_pair);
     TypeUtil.assert_is_instance(KeyPair, alice_base);
@@ -66,7 +75,7 @@ module.exports = class SessionState {
     const master_key = ArrayUtil.concatenate_array_buffers([
       alice_identity_pair.secret_key.shared_secret(bob_pkbundle.public_key),
       alice_base.secret_key.shared_secret(bob_pkbundle.identity_key.public_key),
-      alice_base.secret_key.shared_secret(bob_pkbundle.public_key)
+      alice_base.secret_key.shared_secret(bob_pkbundle.public_key),
     ]);
 
     const dsecs = DerivedSecrets.kdf_without_salt(master_key, 'handshake');
@@ -89,6 +98,13 @@ module.exports = class SessionState {
     return state;
   }
 
+  /**
+   * @param {!keys.IdentityKeyPair} bob_ident
+   * @param {!keys.KeyPair} bob_prekey
+   * @param {!keys.IdentityKey} alice_ident
+   * @param {!keys.PublicKey} alice_base
+   * @returns {SessionState}
+   */
   static init_as_bob(bob_ident, bob_prekey, alice_ident, alice_base) {
     TypeUtil.assert_is_instance(IdentityKeyPair, bob_ident);
     TypeUtil.assert_is_instance(KeyPair, bob_prekey);
@@ -98,7 +114,7 @@ module.exports = class SessionState {
     const master_key = ArrayUtil.concatenate_array_buffers([
       bob_prekey.secret_key.shared_secret(alice_ident.public_key),
       bob_ident.secret_key.shared_secret(alice_base),
-      bob_prekey.secret_key.shared_secret(alice_base)
+      bob_prekey.secret_key.shared_secret(alice_base),
     ]);
 
     const dsecs = DerivedSecrets.kdf_without_salt(master_key, 'handshake');
@@ -116,6 +132,10 @@ module.exports = class SessionState {
     return state;
   }
 
+  /**
+   * @param {!keys.KeyPair} ratchet_key
+   * @returns {void}
+   */
   ratchet(ratchet_key) {
     const new_ratchet = KeyPair.new();
 
@@ -143,13 +163,12 @@ module.exports = class SessionState {
     }
   }
 
-  /*
-   * @param identity_key [Proteus.keys.IdentityKey] Public identity key of the local identity key pair
-   * @param pending [] Pending pre-key
-   * @param tag [Proteus.message.SessionTag] Session tag
-   * @param plaintext [String, Uint8Array] The plaintext to encrypt
-   *
-   * @return [Proteus.message.Envelope]
+  /**
+   * @param {!keys.IdentityKey} identity_key - Public identity key of the local identity key pair
+   * @param {!Array<number>} pending - Pending pre-key
+   * @param {!message.SessionTag} tag - Session tag
+   * @param {!(string|Uint8Array)} plaintext - The plaintext to encrypt
+   * @returns {message.Envelope}
    */
   encrypt(identity_key, pending, tag, plaintext) {
     if (pending) {
@@ -178,6 +197,11 @@ module.exports = class SessionState {
     return env;
   }
 
+  /**
+   * @param {!message.Envelope} envelope
+   * @param {!message.CipherMessage} msg
+   * @returns {Uint8Array}
+   */
   decrypt(envelope, msg) {
     TypeUtil.assert_is_instance(Envelope, envelope);
     TypeUtil.assert_is_instance(CipherMessage, msg);
@@ -222,6 +246,7 @@ module.exports = class SessionState {
     }
   }
 
+  /** @returns {ArrayBuffer} */
   serialise() {
     const e = new CBOR.Encoder();
     this.encode(e);
@@ -233,6 +258,10 @@ module.exports = class SessionState {
     return SessionState.decode(new CBOR.Decoder(buf));
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(4);
     e.u8(0);
@@ -246,6 +275,10 @@ module.exports = class SessionState {
     return e.u32(this.prev_counter);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {SessionState}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -282,4 +315,6 @@ module.exports = class SessionState {
 
     return self;
   }
-};
+}
+
+module.exports = SessionState;

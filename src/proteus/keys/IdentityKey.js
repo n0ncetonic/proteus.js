@@ -21,12 +21,7 @@
 
 const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') {
-  try {
-    const sodium_neon = require('libsodium-neon');
-    Object.assign(sodium, sodium_neon);
-  } catch (err) {}
-}
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
 const ClassUtil = require('../util/ClassUtil');
 const DontCallConstructor = require('../errors/DontCallConstructor');
@@ -34,17 +29,23 @@ const TypeUtil = require('../util/TypeUtil');
 
 const PublicKey = require('./PublicKey');
 
-/*
+/** @module keys */
+
+/**
  * Construct a long-term identity key pair.
- *
- * Every client has a long-term identity key pair.
- * Long-term identity keys are used to initialise “sessions” with other clients (triple DH).
+ * @classdesc Every client has a long-term identity key pair.
+ * Long-term identity keys are used to initialise "sessions" with other clients (triple DH).
+ * @throws {DontCallConstructor}
  */
-module.exports = class IdentityKey {
+class IdentityKey {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!IdentityKey} public_key
+   * @returns {IdentityKey} - `this`
+   */
   static new(public_key) {
     TypeUtil.assert_is_instance(PublicKey, public_key);
 
@@ -53,20 +54,30 @@ module.exports = class IdentityKey {
     return key;
   }
 
+  /** @returns {string} */
   fingerprint() {
     return this.public_key.fingerprint();
   }
 
+  /** @returns {string} */
   toString() {
     return sodium.to_hex(this.public_key);
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(1);
     e.u8(0);
     return this.public_key.encode(e);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {IdentityKey}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -85,4 +96,6 @@ module.exports = class IdentityKey {
 
     return IdentityKey.new(public_key);
   }
-};
+}
+
+module.exports = IdentityKey;

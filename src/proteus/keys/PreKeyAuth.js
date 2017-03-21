@@ -19,8 +19,25 @@
 
 'use strict';
 
-module.exports = {
-  INVALID: 'Invalid',
-  UNKNOWN: 'Unknown',
-  VALID: 'Valid'
-};
+/** @module keys */
+
+/** @class PreKeyAuth */
+class PreKeyAuth {
+
+  /** @type {string} */
+  static get INVALID() {
+    return 'Invalid';
+  }
+
+  /** @type {string} */
+  static get UNKNOWN() {
+    return 'Unknown';
+  }
+
+  /** @type {string} */
+  static get VALID() {
+    return 'Valid';
+  }
+}
+
+module.exports = PreKeyAuth;

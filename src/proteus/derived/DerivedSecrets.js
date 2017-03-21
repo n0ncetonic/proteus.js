@@ -27,11 +27,23 @@ const MemoryUtil = require('../util/MemoryUtil');
 const CipherKey = require('./CipherKey');
 const MacKey = require('./MacKey');
 
-module.exports = class DerivedSecrets {
+/** @module derived */
+
+/**
+ * @class DerivedSecrets
+ * @throws {DontCallConstructor}
+ */
+class DerivedSecrets {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!Array<number>} input
+   * @param {!Uint8Array} salt
+   * @param {!string} info
+   * @returns {DerivedSecrets} - `this`
+   */
   static kdf(input, salt, info) {
     const byte_length = 64;
 
@@ -43,16 +55,21 @@ module.exports = class DerivedSecrets {
     MemoryUtil.zeroize(output_key_material.buffer);
 
     const ds = ClassUtil.new_instance(DerivedSecrets);
+    /** @type {derived.CipherKey} */
     ds.cipher_key = CipherKey.new(cipher_key);
+    /** @type {derived.MacKey} */
     ds.mac_key = MacKey.new(mac_key);
     return ds;
   }
 
-  /*
-   * @param input [Array<Integer>] Initial key material (usually the Master Key) in byte array format
-   * @param info [String] Key Derivation Data
+  /**
+   * @param {!Array<number>} input - Initial key material (usually the Master Key) in byte array format
+   * @param {!string} info - Key Derivation Data
+   * @returns {DerivedSecrets}
    */
   static kdf_without_salt(input, info) {
     return this.kdf(input, new Uint8Array(0), info);
   }
-};
+}
+
+module.exports = DerivedSecrets;

@@ -30,13 +30,26 @@ const PublicKey = require('../keys/PublicKey');
 const Message = require('./Message');
 const SessionTag = require('./SessionTag');
 
-module.exports = class CipherMessage extends Message {
+/** @module message */
 
+/**
+ * @extends Message
+ * @throws {DontCallConstructor}
+ */
+class CipherMessage extends Message {
   constructor() {
     super();
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!message.SessionTag} session_tag
+   * @param {!number} counter
+   * @param {!number} prev_counter
+   * @param {!keys.PublicKey} ratchet_key
+   * @param {!Uint8Array} cipher_text
+   * @returns {CipherMessage} - `this`
+   */
   static new(session_tag, counter, prev_counter, ratchet_key, cipher_text) {
     TypeUtil.assert_is_instance(SessionTag, session_tag);
     TypeUtil.assert_is_integer(counter);
@@ -56,6 +69,10 @@ module.exports = class CipherMessage extends Message {
     return cm;
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(5);
     e.u8(0);
@@ -70,6 +87,10 @@ module.exports = class CipherMessage extends Message {
     return e.bytes(this.cipher_text);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {CipherMessage}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -104,4 +125,6 @@ module.exports = class CipherMessage extends Message {
 
     return CipherMessage.new(session_tag, counter, prev_counter, ratchet_key, cipher_text);
   }
-};
+}
+
+module.exports = CipherMessage;

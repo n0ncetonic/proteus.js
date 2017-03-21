@@ -36,12 +36,22 @@ const Envelope = require('../message/Envelope');
 const ChainKey = require('./ChainKey');
 const MessageKeys = require('./MessageKeys');
 
-class RecvChain {
+/** @module session */
 
+/**
+ * @class RecvChain
+ * @throws {DontCallConstructor}
+ */
+class RecvChain {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!session.ChainKey} chain_key
+   * @param {!keys.PublicKey} public_key
+   * @returns {message.PreKeyMessage}
+   */
   static new(chain_key, public_key) {
     TypeUtil.assert_is_instance(ChainKey, chain_key);
     TypeUtil.assert_is_instance(PublicKey, public_key);
@@ -53,6 +63,11 @@ class RecvChain {
     return rc;
   }
 
+  /**
+   * @param {!message.Envelope} envelope
+   * @param {!message.CipherMessage} msg
+   * @returns {Uint8Array}
+   */
   try_message_keys(envelope, msg) {
     TypeUtil.assert_is_instance(Envelope, envelope);
     TypeUtil.assert_is_instance(CipherMessage, msg);
@@ -77,6 +92,10 @@ class RecvChain {
     return mk.decrypt(msg.cipher_text);
   }
 
+  /**
+   * @param {!message.CipherMessage} msg
+   * @returns {Array<session.ChainKey>|session.MessageKeys}
+   */
   stage_message_keys(msg) {
     TypeUtil.assert_is_instance(CipherMessage, msg);
 
@@ -97,6 +116,10 @@ class RecvChain {
     return [chk, mk, keys];
   }
 
+  /**
+   * @param {!Array<session.MessageKeys>} keys
+   * @returns {void}
+   */
   commit_message_keys(keys) {
     TypeUtil.assert_is_instance(Array, keys);
     keys.map((k) => TypeUtil.assert_is_instance(MessageKeys, k));
@@ -118,6 +141,10 @@ class RecvChain {
     }
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {Array<CBOR.Encoder>}
+   */
   encode(e) {
     e.object(3);
     e.u8(0);
@@ -130,6 +157,10 @@ class RecvChain {
     return this.message_keys.map((k) => k.encode(e));
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {RecvChain}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -166,6 +197,7 @@ class RecvChain {
   }
 }
 
+/** @type {number} */
 RecvChain.MAX_COUNTER_GAP = 1000;
 
 module.exports = RecvChain;

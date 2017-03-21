@@ -44,8 +44,13 @@ const SessionTag = require('../message/SessionTag');
 
 const PreKeyStore = require('./PreKeyStore');
 
-class Session {
+/** @module session */
 
+/**
+ * @class Session
+ * @throws {DontCallConstructor}
+ */
+class Session {
   constructor() {
     this.counter = 0;
     this.local_identity = null;
@@ -58,9 +63,20 @@ class Session {
     throw new DontCallConstructor(this);
   }
 
-  /*
-   * @param local_identity [IdentityKeyPair] Alice's Identity Key Pair
-   * @param remote_pkbundle [Proteus.keys.PreKeyBundle] Bob's Pre-Key Bundle
+  /** @type {number} */
+  static get MAX_RECV_CHAINS() {
+    return 5;
+  }
+
+  /** @type {number} */
+  static get MAX_SESSION_STATES() {
+    return 100;
+  }
+
+  /**
+   * @param {!keys.IdentityKeyPair} local_identity - Alice's Identity Key Pair
+   * @param {!keys.PreKeyBundle} remote_pkbundle - Bob's Pre-Key Bundle
+   * @returns {Promise<Session>}
    */
   static init_from_prekey(local_identity, remote_pkbundle) {
     return new Promise((resolve) => {
@@ -85,6 +101,14 @@ class Session {
     });
   }
 
+  /**
+   * @param {!keys.IdentityKeyPair} our_identity
+   * @param {!session.PreKeyStore} prekey_store
+   * @param {!message.Envelope} envelope
+   * @returns {Promise<Array<Session|string>>}
+   * @throws {errors.DecryptError.InvalidMessage}
+   * @throws {errors.DecryptError.PrekeyNotFound}
+   */
   static init_from_message(our_identity, prekey_store, envelope) {
     return new Promise((resolve, reject) => {
       TypeUtil.assert_is_instance(IdentityKeyPair, our_identity);
@@ -129,6 +153,13 @@ class Session {
     });
   }
 
+  /**
+   * @param {!session.PreKeyStore} pre_key_store
+   * @param {!message.PreKeyMessage} pre_key_message
+   * @returns {Promise<session.SessionState>}
+   * @private
+   * @throws {errors.ProteusError}
+   */
   _new_state(pre_key_store, pre_key_message) {
     return pre_key_store.get_prekey(pre_key_message.prekey_id)
     .then((pre_key) => {
@@ -144,6 +175,12 @@ class Session {
     });
   }
 
+  /**
+   * @param {!message.SessionTag} tag
+   * @param {!session.SessionState} state
+   * @returns {boolean}
+   * @private
+   */
   _insert_session_state(tag, state) {
     if (this.session_states.hasOwnProperty(tag)) {
       this.session_states[tag].state = state;
@@ -156,7 +193,7 @@ class Session {
       this.session_states[tag] = {
         idx: this.counter,
         tag: tag,
-        state: state
+        state: state,
       };
       this.counter++;
     }
@@ -176,6 +213,10 @@ class Session {
     return this._evict_oldest_session_state();
   }
 
+  /**
+   * @returns {void}
+   * @private
+   */
   _evict_oldest_session_state() {
     const oldest = Object.keys(this.session_states)
     .filter((obj) => obj.toString() !== this.session_tag)
@@ -187,13 +228,14 @@ class Session {
     delete this.session_states[oldest];
   }
 
+  /** @returns {keys.PublicKey} */
   get_local_identity() {
     return this.local_identity.public_key;
   }
 
-  /*
-   * @param plaintext [String, Uint8Array] The plaintext which needs to be encrypted
-   * @return [Proteus.message.Envelope] Encrypted message
+  /**
+   * @param {!(String|Uint8Array)} plaintext - The plaintext which needs to be encrypted
+   * @return {Promise<message.Envelope>} Encrypted message
    */
   encrypt(plaintext) {
     return new Promise((resolve, reject) => {
@@ -213,6 +255,12 @@ class Session {
     });
   }
 
+  /**
+   * @param {!session.PreKeyStore} prekey_store
+   * @param {!message.Envelope} envelope
+   * @returns {Promise<string>}
+   * @throws {errors.DecryptError}
+   */
   decrypt(prekey_store, envelope) {
     return new Promise((resolve) => {
       TypeUtil.assert_is_instance(PreKeyStore, prekey_store);
@@ -235,6 +283,14 @@ class Session {
     });
   }
 
+  /**
+   * @param {!message.Envelope} envelope
+   * @param {!message.Message} msg
+   * @param {!session.PreKeyStore} prekey_store
+   * @private
+   * @returns {Promise<string>}
+   * @throws {errors.DecryptError}
+   */
   _decrypt_prekey_message(envelope, msg, prekey_store) {
     return Promise.resolve()
     .then(() => this._decrypt_cipher_message(envelope, msg.message))
@@ -259,6 +315,12 @@ class Session {
     });
   }
 
+  /**
+   * @param {!message.Envelope} envelope
+   * @param {!message.Message} msg
+   * @private
+   * @returns {string}
+   */
   _decrypt_cipher_message(envelope, msg) {
     let state = this.session_states[msg.session_tag];
     if (!state) {
@@ -281,12 +343,20 @@ class Session {
     return plaintext;
   }
 
+  /**
+   * @returns {ArrayBuffer}
+   */
   serialise() {
     const e = new CBOR.Encoder();
     this.encode(e);
     return e.get_buffer();
   }
 
+  /**
+   * @param {!keys.IdentityKeyPair} local_identity
+   * @param {!ArrayBuffer} buf
+   * @returns {Session}
+   */
   static deserialise(local_identity, buf) {
     TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
     TypeUtil.assert_is_instance(ArrayBuffer, buf);
@@ -295,6 +365,10 @@ class Session {
     return this.decode(local_identity, d);
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {void}
+   */
   encode(e) {
     e.object(6);
     e.u8(0);
@@ -327,6 +401,11 @@ class Session {
     }
   }
 
+  /**
+   * @param {!keys.IdentityKeyPair} local_identity
+   * @param {!CBOR.Decoder} d
+   * @returns {Session}
+   */
   static decode(local_identity, d) {
     TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
@@ -381,7 +460,7 @@ class Session {
             self.session_states[tag] = {
               idx: i,
               tag: tag,
-              state: SessionState.decode(d)
+              state: SessionState.decode(d),
             };
           }
           break;
@@ -399,9 +478,6 @@ class Session {
     return self;
   }
 }
-
-Session.MAX_RECV_CHAINS = 5;
-Session.MAX_SESSION_STATES = 100;
 
 module.exports = Session;
 

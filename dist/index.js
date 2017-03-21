@@ -1,7 +1,9 @@
-var Proteus = require('./commonjs/proteus');
+'use strict';
 
-var lastResort = Proteus.keys.PreKey.MAX_PREKEY_ID;
-var preKey = Proteus.keys.PreKey.new(lastResort);
-var serializedPreKey = preKey.serialise();
+const Proteus = require('./commonjs/proteus');
+
+const lastResort = Proteus.keys.PreKey.MAX_PREKEY_ID;
+const preKey = Proteus.keys.PreKey.new(lastResort);
+const serializedPreKey = preKey.serialise();
 
 console.log(serializedPreKey);

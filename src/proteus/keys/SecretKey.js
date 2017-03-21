@@ -22,50 +22,56 @@
 const CBOR = require('wire-webapp-cbor');
 const ed2curve = require('ed2curve');
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') {
-  try {
-    const sodium_neon = require('libsodium-neon');
-    Object.assign(sodium, sodium_neon);
-  } catch (err) {}
-}
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
 const ClassUtil = require('../util/ClassUtil');
 const DontCallConstructor = require('../errors/DontCallConstructor');
 const PublicKey = require('./PublicKey');
 const TypeUtil = require('../util/TypeUtil');
 
-module.exports = class SecretKey {
+/** @module keys */
+
+/**
+ * @class SecretKey
+ * @throws {DontCallConstructor}
+ */
+class SecretKey {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!Uint8Array} sec_edward
+   * @param {!Uint8Array} sec_curve
+   * @returns {SecretKey} - `this`
+   */
   static new(sec_edward, sec_curve) {
     TypeUtil.assert_is_instance(Uint8Array, sec_edward);
     TypeUtil.assert_is_instance(Uint8Array, sec_curve);
 
     const sk = ClassUtil.new_instance(SecretKey);
 
+    /** @type {Uint8Array} */
     sk.sec_edward = sec_edward;
+    /** @type {Uint8Array} */
     sk.sec_curve = sec_curve;
     return sk;
   }
 
-  /*
+  /**
    * This function can be used to compute a message signature.
-   *
-   * @param message [String] Message to be signed
-   * @return [Uint8Array] A message signature
+   * @param {!string} message - Message to be signed
+   * @returns {Uint8Array} - A message signature
    */
   sign(message) {
     return sodium.crypto_sign_detached(message, this.sec_edward);
   }
 
-  /*
+  /**
    * This function can be used to compute a shared secret given a user's secret key and another
    * user's public key.
-   *
-   * @param public_key [Proteus.keys.PublicKey] Another user's public key
-   * @return [Uint8Array] Array buffer view of the computed shared secret
+   * @param {!keys.PublicKey} public_key - Another user's public key
+   * @returns {Uint8Array} - Array buffer view of the computed shared secret
    */
   shared_secret(public_key) {
     TypeUtil.assert_is_instance(PublicKey, public_key);
@@ -73,12 +79,20 @@ module.exports = class SecretKey {
     return sodium.crypto_scalarmult(this.sec_curve, public_key.pub_curve);
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(1);
     e.u8(0);
     return e.bytes(this.sec_edward);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {SecretKey}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -100,4 +114,6 @@ module.exports = class SecretKey {
     self.sec_curve = ed2curve.convertSecretKey(self.sec_edward);
     return self;
   }
-};
+}
+
+module.exports = SecretKey;

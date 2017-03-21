@@ -26,17 +26,28 @@ const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
 
 const KeyPair = require('./KeyPair');
-/*
- * Pre-generated (and regularly refreshed) pre-keys.
+
+/** @module keys **/
+
+/**
+ * @class PreKey
+ * @classdesc Pre-generated (and regularly refreshed) pre-keys.
  * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
+ * @throws {DontCallConstructor}
  */
 class PreKey {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
-  /*
-   * @param pre_key_id [Integer]
+  /** @type {number} */
+  static get MAX_PREKEY_ID() {
+    return 0xFFFF;
+  }
+
+  /**
+   * @param {!number} pre_key_id
+   * @returns {PreKey} - `this`
    */
   static new(pre_key_id) {
     TypeUtil.assert_is_integer(pre_key_id);
@@ -55,10 +66,16 @@ class PreKey {
     return pk;
   }
 
+  /** @returns {PreKey} */
   static last_resort() {
     return PreKey.new(PreKey.MAX_PREKEY_ID);
   }
 
+  /**
+   * @param {!number} start
+   * @param {!number} size
+   * @returns {Array<PreKey>}
+   */
   static generate_prekeys(start, size) {
     const check_integer = (value) => {
       TypeUtil.assert_is_integer(value);
@@ -80,17 +97,26 @@ class PreKey {
     return [...Array(size).keys()].map((x) => PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
   }
 
+  /** @returns {ArrayBuffer} */
   serialise() {
     const e = new CBOR.Encoder();
     this.encode(e);
     return e.get_buffer();
   }
 
+  /**
+   * @param {!ArrayBuffer} buf
+   * @returns {PreKey}
+   */
   static deserialise(buf) {
     TypeUtil.assert_is_instance(ArrayBuffer, buf);
     return PreKey.decode(new CBOR.Decoder(buf));
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     TypeUtil.assert_is_instance(CBOR.Encoder, e);
     e.object(3);
@@ -102,6 +128,10 @@ class PreKey {
     return this.key_pair.encode(e);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {PreKey}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -132,5 +162,4 @@ class PreKey {
   }
 }
 
-PreKey.MAX_PREKEY_ID = 0xFFFF;
 module.exports = PreKey;

@@ -26,14 +26,24 @@ const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
 
 const MacKey = require('../derived/MacKey');
-
 const Message = require('./Message');
 
-module.exports = class Envelope {
+/** @module message */
+
+/**
+ * @class Envelope
+ * @throws {DontCallConstructor}
+ */
+class Envelope {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!derived.MacKey} mac_key
+   * @param {!message.Message} message
+   * @returns {Envelope}
+   */
   static new(mac_key, message) {
     TypeUtil.assert_is_instance(MacKey, mac_key);
     TypeUtil.assert_is_instance(Message, message);
@@ -51,20 +61,26 @@ module.exports = class Envelope {
     return env;
   }
 
+  /**
+   * @param {!derived.MacKey} mac_key
+   * @returns {boolean}
+   */
   verify(mac_key) {
     TypeUtil.assert_is_instance(MacKey, mac_key);
     return mac_key.verify(this.mac, this._message_enc);
   }
 
-  /*
-   * @return [ArrayBuffer] The serialized message envelope
-   */
+  /** @returns {ArrayBuffer} - The serialized message envelope */
   serialise() {
     const e = new CBOR.Encoder();
     this.encode(e);
     return e.get_buffer();
   }
 
+  /**
+   * @param {!ArrayBuffer} buf
+   * @returns {Envelope}
+   */
   static deserialise(buf) {
     TypeUtil.assert_is_instance(ArrayBuffer, buf);
 
@@ -72,6 +88,10 @@ module.exports = class Envelope {
     return Envelope.decode(d);
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(3);
     e.u8(0);
@@ -86,6 +106,10 @@ module.exports = class Envelope {
     return e.bytes(this._message_enc);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {Envelope}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -99,7 +123,7 @@ module.exports = class Envelope {
           break;
         case 1:
           const nprops_mac = d.object();
-          for (let i = 0; i <= nprops_mac - 1; i++) {
+          for (let j = 0; j <= nprops_mac - 1; j++) {
             switch (d.u8()) {
               case 0:
                 env.mac = new Uint8Array(d.bytes());
@@ -125,4 +149,6 @@ module.exports = class Envelope {
     Object.freeze(env);
     return env;
   }
-};
+}
+
+module.exports = Envelope;

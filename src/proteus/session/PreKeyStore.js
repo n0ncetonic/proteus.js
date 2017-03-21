@@ -19,16 +19,32 @@
 
 'use strict';
 
-module.exports = class PreKeyStore {
+/** @module session */
+
+/** @class PreKeyStore */
+class PreKeyStore {
   constructor() {
+    /** @type {Array<number>} */
     this.prekeys = [];
   }
 
+  /**
+   * @param {!number} prekey_id
+   * @returns {void}
+   * @throws {Error}
+   */
   get_prekey(prekey_id) {
     throw Error('Virtual function unimplemented');
   }
 
+  /**
+   * @param {!number} prekey_id
+   * @returns {void}
+   * @throws {Error}
+   */
   remove(prekey_id) {
     throw Error('Virtual function unimplemented');
   }
-};
+}
+
+module.exports = PreKeyStore;

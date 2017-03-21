@@ -17,64 +17,110 @@
  *
  */
 
+/* eslint no-unused-vars: "off" */
+
 'use strict';
 
 const ProteusError = require('./ProteusError');
 
-const DecryptError = class DecryptError extends ProteusError {
+/** @module errors */
+
+/**
+ * @extends ProteusError
+ * @param {string} [message]
+ */
+class DecryptError extends ProteusError {
   constructor(message = 'Unknown decryption error') {
     super();
     this.message = message;
   }
-};
+}
 
-DecryptError.RemoteIdentityChanged = class RemoteIdentityChanged extends DecryptError {
+/**
+ * @extends DecryptError
+ * @param {string} [message]
+ */
+class RemoteIdentityChanged extends DecryptError {
   constructor(message = 'Remote identity changed') {
     super();
     this.message = message;
   }
-};
+}
 
-DecryptError.InvalidSignature = class InvalidSignature extends DecryptError {
+/**
+ * @extends DecryptError
+ * @param {string} [message]
+ */
+class InvalidSignature extends DecryptError {
   constructor(message = 'Invalid signature') {
     super();
     this.message = message;
   }
-};
+}
 
-DecryptError.InvalidMessage = class InvalidMessage extends DecryptError {
+/**
+ * @extends DecryptError
+ * @param {string} [message]
+ */
+class InvalidMessage extends DecryptError {
   constructor(message = 'Invalid message') {
     super();
     this.message = message;
   }
-};
+}
 
-DecryptError.DuplicateMessage = class DuplicateMessage extends DecryptError {
+/**
+ * @extends DecryptError
+ * @param {string} [message]
+ */
+class DuplicateMessage extends DecryptError {
   constructor(message = 'Duplicate message') {
     super();
     this.message = message;
   }
-};
+}
 
-DecryptError.TooDistantFuture = class TooDistantFuture extends DecryptError {
+/**
+ * @extends DecryptError
+ * @param {string} [message]
+ */
+class TooDistantFuture extends DecryptError {
   constructor(message = 'Message is from too distant in the future') {
     super();
     this.message = message;
   }
-};
+}
 
-DecryptError.OutdatedMessage = class OutdatedMessage extends DecryptError {
+/**
+ * @extends DecryptError
+ * @param {string} [message]
+ */
+class OutdatedMessage extends DecryptError {
   constructor(message = 'Outdated message') {
     super();
     this.message = message;
   }
-};
+}
 
-DecryptError.PrekeyNotFound = class PrekeyNotFound extends DecryptError {
+/**
+ * @extends DecryptError
+ * @param {string} [message]
+ */
+class PrekeyNotFound extends DecryptError {
   constructor(message = 'Pre-key not found') {
     super();
     this.message = message;
   }
-};
+}
+
+Object.assign(DecryptError, {
+  RemoteIdentityChanged,
+  InvalidSignature,
+  InvalidMessage,
+  DuplicateMessage,
+  TooDistantFuture,
+  OutdatedMessage,
+  PrekeyNotFound,
+});
 
 module.exports = ProteusError.DecryptError = DecryptError;

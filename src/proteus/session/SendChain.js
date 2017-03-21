@@ -28,7 +28,13 @@ const TypeUtil = require('../util/TypeUtil');
 const ChainKey = require('./ChainKey');
 const KeyPair = require('../keys/KeyPair');
 
-module.exports = class SendChain {
+/** @module session */
+
+/**
+ * @class SendChain
+ * @throws {DontCallConstructor}
+ */
+class SendChain {
   constructor() {
     throw new DontCallConstructor(this);
   }
@@ -43,6 +49,10 @@ module.exports = class SendChain {
     return sc;
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(2);
     e.u8(0);
@@ -51,6 +61,10 @@ module.exports = class SendChain {
     return this.ratchet_key.encode(e);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {SendChain}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
     const self = ClassUtil.new_instance(SendChain);
@@ -71,4 +85,6 @@ module.exports = class SendChain {
     TypeUtil.assert_is_instance(KeyPair, self.ratchet_key);
     return self;
   }
-};
+}
+
+module.exports = SendChain;

@@ -28,11 +28,23 @@ const TypeUtil = require('../util/TypeUtil');
 const CipherKey = require('../derived/CipherKey');
 const MacKey = require('../derived/MacKey');
 
-module.exports = class MessageKeys {
+/** @module session */
+
+/**
+ * @class MessageKeys
+ * @throws {DontCallConstructor}
+ */
+class MessageKeys {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!derived.CipherKey} cipher_key
+   * @param {!derived.MacKey} mac_key
+   * @param {!number} counter
+   * @returns {MessageKeys} - `this`
+   */
   static new(cipher_key, mac_key, counter) {
     TypeUtil.assert_is_instance(CipherKey, cipher_key);
     TypeUtil.assert_is_instance(MacKey, mac_key);
@@ -45,20 +57,36 @@ module.exports = class MessageKeys {
     return mk;
   }
 
+  /**
+   * @returns {Uint8Array}
+   * @private
+   */
   _counter_as_nonce() {
     const nonce = new ArrayBuffer(8);
     new DataView(nonce).setUint32(0, this.counter);
     return new Uint8Array(nonce);
   }
 
+  /**
+   * @param {!(string|Uint8Array)} plaintext
+   * @returns {Uint8Array}
+   */
   encrypt(plaintext) {
     return this.cipher_key.encrypt(plaintext, this._counter_as_nonce());
   }
 
+  /**
+   * @param {!Uint8Array} ciphertext
+   * @returns {Uint8Array}
+   */
   decrypt(ciphertext) {
     return this.cipher_key.decrypt(ciphertext, this._counter_as_nonce());
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(3);
     e.u8(0);
@@ -69,6 +97,10 @@ module.exports = class MessageKeys {
     return e.u32(this.counter);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {MessageKeys}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -97,4 +129,6 @@ module.exports = class MessageKeys {
 
     return self;
   }
-};
+}
+
+module.exports = MessageKeys;

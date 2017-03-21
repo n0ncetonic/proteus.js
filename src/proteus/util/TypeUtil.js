@@ -19,7 +19,15 @@
 
 'use strict';
 
-module.exports = {
+/** @module util */
+
+const TypeUtil = {
+  /**
+   * @param {*} classes
+   * @param {*} inst
+   * @returns {void}
+   * @throws {TypeError}
+   */
   assert_is_instance(classes, inst) {
     if (!Array.isArray(classes)) {
       classes = [classes];
@@ -33,6 +41,11 @@ module.exports = {
     }
     throw TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`);
   },
+  /**
+   * @param {*} inst
+   * @returns {boolean}
+   * @throws {TypeError}
+   */
   assert_is_integer(inst) {
     if (Number.isInteger(inst)) {
       return true;
@@ -41,5 +54,7 @@ module.exports = {
       throw new TypeError(`Expected integer, got '${inst.constructor.name}'.`);
     }
     throw new TypeError(`Expected integer, got '${String(inst)}'.`);
-  }
+  },
 };
+
+module.exports = TypeUtil;

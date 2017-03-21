@@ -19,15 +19,25 @@
 
 'use strict';
 
-module.exports = (function() {
-  const ProteusError = function(message) {
+/** @module errors */
+
+/**
+ * @class ProteusError
+ * @param {!string} message
+ * @extends Error
+ * @returns {ProteusError} - `this`
+ */
+const ProteusError = (function() {
+  const func = function(message) {
     this.name = this.constructor.name;
     this.message = message;
     this.stack = (new Error).stack;
   };
 
-  ProteusError.prototype = new Error;
-  ProteusError.prototype.constructor = ProteusError;
+  func.prototype = new Error;
+  func.prototype.constructor = func;
 
-  return ProteusError;
+  return func;
 })();
+
+module.exports = ProteusError;

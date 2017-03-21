@@ -22,28 +22,28 @@
 const CBOR = require('wire-webapp-cbor');
 const ed2curve = require('ed2curve');
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') {
-  try {
-    const sodium_neon = require('libsodium-neon');
-    Object.assign(sodium, sodium_neon);
-  } catch (err) {}
-}
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
 const ClassUtil = require('../util/ClassUtil');
 const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
-
+const ikp = require('./IdentityKeyPair');
 const PublicKey = require('./PublicKey');
 const SecretKey = require('./SecretKey');
 
-/*
+/** @module keys */
+
+/**
  * Construct an ephemeral key pair.
+ * @class KeyPair
+ * @throws {DontCallConstructor}
  */
-module.exports = class KeyPair {
+class KeyPair {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /** @returns {KeyPair} - `this` */
   static new() {
     const ed25519_key_pair = sodium.crypto_sign_keypair();
 
@@ -54,14 +54,12 @@ module.exports = class KeyPair {
     return kp;
   }
 
-  /*
-   * @note Ed25519 keys can be converted to Curve25519 keys, so that the same key pair can be
+  /**
+   * @description Ed25519 keys can be converted to Curve25519 keys, so that the same key pair can be
    * used both for authenticated encryption (crypto_box) and for signatures (crypto_sign).
-   * @param ed25519_key_pair [Object] Key pair based on Edwards-curve (Ed25519)
-   * @option ed25519_key_pair [Uint8Array[32]] publicKey
-   * @option ed25519_key_pair [Uint8Array[64]] privateKey
-   * @option ed25519_key_pair [String] keyType
-   * @return [Proteus.keys.SecretKey] Constructed private key
+   * @param {!Uint8Array} ed25519_key_pair - Key pair based on Edwards-curve (Ed25519)
+   * @returns {keys.SecretKey} - Constructed private key
+   * @private
    * @see https://download.libsodium.org/doc/advanced/ed25519-curve25519.html
    */
   _construct_private_key(ed25519_key_pair) {
@@ -70,9 +68,16 @@ module.exports = class KeyPair {
     return SecretKey.new(sk_ed25519, sk_curve25519);
   }
 
-  /*
-   * @param ed25519_key_pair [libsodium.KeyPair] Key pair based on Edwards-curve (Ed25519)
-   * @return [Proteus.keys.PublicKey] Constructed public key
+  /**
+   * @typedef {Object} libsodium_keypair
+   * @param {!Uint8Array} publicKey
+   * @param {!Uint8Array} privateKey
+   * @param {!string} keyType
+   */
+  /**
+   * @param {!libsodium_keypair} ed25519_key_pair - Key pair based on Edwards-curve (Ed25519)
+   * @private
+   * @returns {keys.PublicKey} - Constructed public key
    */
   _construct_public_key(ed25519_key_pair) {
     const pk_ed25519 = ed25519_key_pair.publicKey;
@@ -80,6 +85,10 @@ module.exports = class KeyPair {
     return PublicKey.new(pk_ed25519, pk_curve25519);
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(2);
 
@@ -90,6 +99,10 @@ module.exports = class KeyPair {
     return this.public_key.encode(e);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {KeyPair}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -114,4 +127,6 @@ module.exports = class KeyPair {
 
     return self;
   }
-};
+}
+
+module.exports = KeyPair;

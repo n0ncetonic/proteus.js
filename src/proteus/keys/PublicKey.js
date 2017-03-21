@@ -22,55 +22,73 @@
 const CBOR = require('wire-webapp-cbor');
 const ed2curve = require('ed2curve');
 const sodium = require('libsodium-wrappers-sumo');
-if (typeof window === 'undefined') {
-  try {
-    const sodium_neon = require('libsodium-neon');
-    Object.assign(sodium, sodium_neon);
-  } catch (err) {}
-}
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
 
 const ClassUtil = require('../util/ClassUtil');
 const DontCallConstructor = require('../errors/DontCallConstructor');
 const TypeUtil = require('../util/TypeUtil');
 
-module.exports = class PublicKey {
+/** @module keys */
+
+/**
+ * @class PublicKey
+ * @throws {DontCallConstructor}
+ */
+class PublicKey {
   constructor() {
     throw new DontCallConstructor(this);
   }
 
+  /**
+   * @param {!Uint8Array} pub_edward
+   * @param {!Uint8Array} pub_curve
+   * @returns {PublicKey} - `this`
+   */
   static new(pub_edward, pub_curve) {
     TypeUtil.assert_is_instance(Uint8Array, pub_edward);
     TypeUtil.assert_is_instance(Uint8Array, pub_curve);
 
+    /** @type {PublicKey} */
     const pk = ClassUtil.new_instance(PublicKey);
 
+    /** @type {Uint8Array} */
     pk.pub_edward = pub_edward;
+    /** @type {Uint8Array} */
     pk.pub_curve = pub_curve;
     return pk;
   }
 
-  /*
+  /**
    * This function can be used to verify a message signature.
    *
-   * @param signature [Uint8Array] The signature to verify
-   * @param message [String] The message from which the signature was computed.
-   * @return [bool] `true` if the signature is valid, `false` otherwise.
+   * @param {!Uint8Array} signature - The signature to verify
+   * @param {!string} message - The message from which the signature was computed.
+   * @returns {boolean} - `true` if the signature is valid, `false` otherwise.
    */
   verify(signature, message) {
     TypeUtil.assert_is_instance(Uint8Array, signature);
     return sodium.crypto_sign_verify_detached(signature, message, this.pub_edward);
   }
 
+  /** @returns {string} */
   fingerprint() {
     return sodium.to_hex(this.pub_edward);
   }
 
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
   encode(e) {
     e.object(1);
     e.u8(0);
     return e.bytes(this.pub_edward);
   }
 
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {PublicKey}
+   */
   static decode(d) {
     TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
@@ -92,4 +110,6 @@ module.exports = class PublicKey {
     self.pub_curve = ed2curve.convertPublicKey(self.pub_edward);
     return self;
   }
-};
+}
+
+module.exports = PublicKey;

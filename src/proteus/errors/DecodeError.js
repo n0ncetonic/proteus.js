@@ -17,36 +17,66 @@
  *
  */
 
+/* eslint no-unused-vars: "off" */
+
 'use strict';
 
 const ProteusError = require('./ProteusError');
 
-const DecodeError = class DecodeError extends ProteusError {
+/** @module errors */
+
+/**
+ * @extends ProteusError
+ * @param {string} [message]
+ * @returns {string}
+ */
+class DecodeError extends ProteusError {
   constructor(message = 'Unknown decoding error') {
     super();
     this.message = message;
   }
-};
+}
 
-DecodeError.InvalidType = class InvalidType extends DecodeError {
+/**
+ * @extends DecodeError
+ * @param {string} [message]
+ * @returns {string}
+ */
+class InvalidType extends DecodeError {
   constructor(message = 'Invalid type') {
     super();
     this.message = message;
   }
-};
+}
 
-DecodeError.InvalidArrayLen = class InvalidArrayLen extends DecodeError {
+/**
+ * @extends DecodeError
+ * @param {string} [message]
+ * @returns {string}
+ */
+class InvalidArrayLen extends DecodeError {
   constructor(message = 'Invalid array length') {
     super();
     this.message = message;
   }
-};
+}
 
-DecodeError.LocalIdentityChanged = class LocalIdentityChanged extends DecodeError {
+/**
+ * @extends DecodeError
+ * @param {string} [message]
+ * @returns {string}
+ */
+class LocalIdentityChanged extends DecodeError {
   constructor(message = 'Local identity changed') {
     super();
     this.message = message;
   }
-};
+}
+
+Object.assign(DecodeError, {
+  InvalidType,
+  InvalidArrayLen,
+  LocalIdentityChanged,
+});
 
 module.exports = ProteusError.DecodeError = DecodeError;

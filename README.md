@@ -23,7 +23,7 @@ npm install wire-webapp-proteus
 **CommonJS**
 
 ```javascript
-var Proteus = require('wire-webapp-proteus');
+const Proteus = require('wire-webapp-proteus');
 ```
 
 ### Usage
