@@ -43,47 +43,18 @@ class Envelope {
 
       const message_enc = new Uint8Array(message.serialise());
 
-      this._message_enc = message_enc;
-      this._mac = mac_key.sign(message_enc);
+      /** @type {Uint8Array} */
+      this.message_enc = message_enc;
+
+      /** @type {Uint8Array} */
+      this.mac = mac_key.sign(message_enc);
     }
 
-    this._version = 1;
-    this._message = message;
-  }
+    /** @type {number} */
+    this.version = 1;
 
-  get message_enc() {
-    return this._message_enc;
-  }
-
-  set message_enc(message_enc) {
-    this._message_enc = message_enc;
-  }
-
-  /** @type {Uint8Array} */
-  get mac() {
-    return this._mac;
-  }
-
-  set mac(mac) {
-    this._mac = mac;
-  }
-
-  /** @type {number} */
-  get version() {
-    return this._version;
-  }
-
-  set version(version) {
-    this._version = version;
-  }
-
-  /** @type {message.Message} */
-  get message() {
-    return this._message;
-  }
-
-  set message(message) {
-    this._message = message;
+    /** @type {message.Message} */
+    this.message = message;
   }
 
   /**
@@ -92,7 +63,7 @@ class Envelope {
    */
   verify(mac_key) {
     TypeUtil.assert_is_instance(MacKey, mac_key);
-    return mac_key.verify(this._mac, this._message_enc);
+    return mac_key.verify(this.mac, this.message_enc);
   }
 
   /** @returns {ArrayBuffer} - The serialized message envelope */
@@ -120,15 +91,15 @@ class Envelope {
   encode(e) {
     e.object(3);
     e.u8(0);
-    e.u8(this._version);
+    e.u8(this.version);
 
     e.u8(1);
     e.object(1);
     e.u8(0);
-    e.bytes(this._mac);
+    e.bytes(this.mac);
 
     e.u8(2);
-    return e.bytes(this._message_enc);
+    return e.bytes(this.message_enc);
   }
 
   /**

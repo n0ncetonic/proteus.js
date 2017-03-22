@@ -33,16 +33,9 @@ const TypeUtil = require('../util/TypeUtil');
 class CipherKey {
   constructor(key) {
     TypeUtil.assert_is_instance(Uint8Array, key);
-    this._key = key;
-  }
 
-  /** @type {Uint8Array} */
-  get key() {
-    return this._key;
-  }
-
-  set key(key) {
-    this._key = key;
+    /** @type {Uint8Array} */
+    this.key = key;
   }
 
   /**
@@ -56,7 +49,7 @@ class CipherKey {
       plaintext = new Uint8Array(plaintext);
     }
 
-    return sodium.crypto_stream_chacha20_xor(plaintext, nonce, this._key, 'uint8array');
+    return sodium.crypto_stream_chacha20_xor(plaintext, nonce, this.key, 'uint8array');
   }
 
   /**
@@ -75,7 +68,7 @@ class CipherKey {
   encode(e) {
     e.object(1);
     e.u8(0);
-    return e.bytes(this._key);
+    return e.bytes(this.key);
   }
 
   /**

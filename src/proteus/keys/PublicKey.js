@@ -42,26 +42,11 @@ class PublicKey {
       TypeUtil.assert_is_instance(Uint8Array, pub_curve);
     }
 
-    this._pub_edward = pub_edward;
-    this._pub_curve = pub_curve;
-  }
+    /** @type {Uint8Array} */
+    this.pub_edward = pub_edward;
 
-  /** @type {Uint8Array} */
-  get pub_edward() {
-    return this._pub_edward;
-  }
-
-  set pub_edward(pub_edward) {
-    this._pub_edward = pub_edward;
-  }
-
-  /** @type {Uint8Array} */
-  get pub_curve() {
-    return this._pub_curve;
-  }
-
-  set pub_curve(pub_curve) {
-    this._pub_curve = pub_curve;
+    /** @type {Uint8Array} */
+    this.pub_curve = pub_curve;
   }
 
   /**
@@ -73,12 +58,12 @@ class PublicKey {
    */
   verify(signature, message) {
     TypeUtil.assert_is_instance(Uint8Array, signature);
-    return sodium.crypto_sign_verify_detached(signature, message, this._pub_edward);
+    return sodium.crypto_sign_verify_detached(signature, message, this.pub_edward);
   }
 
   /** @returns {string} */
   fingerprint() {
-    return sodium.to_hex(this._pub_edward);
+    return sodium.to_hex(this.pub_edward);
   }
 
   /**
@@ -88,7 +73,7 @@ class PublicKey {
   encode(e) {
     e.object(1);
     e.u8(0);
-    return e.bytes(this._pub_edward);
+    return e.bytes(this.pub_edward);
   }
 
   /**

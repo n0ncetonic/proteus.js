@@ -46,40 +46,18 @@ class PreKeyBundle {
     if (typeof prekey !== 'undefined') {
       TypeUtil.assert_is_instance(PreKey, prekey);
 
-      this._prekey_id = prekey.key_id;
-      this._public_key = prekey.key_pair.public_key;
+      this.prekey_id = prekey.key_id;
+      this.public_key = prekey.key_pair.public_key;
     }
 
-    this._version = 1;
-    this._identity_key = public_identity_key;
-    this._signature = null;
-  }
+    /** @type {number} */
+    this.version = 1;
 
-  /** @type {number} */
-  get version() {
-    return this._version;
-  }
+    /** @type {keys.IdentityKey} */
+    this.identity_key = public_identity_key;
 
-  set version(version) {
-    this._version = version;
-  }
-
-  /** @type {keys.IdentityKey} */
-  get identity_key() {
-    return this._identity_key;
-  }
-
-  set identity_key(identity_key) {
-    this._identity_key = identity_key;
-  }
-
-  /** @type {Uint8Array} */
-  get signature() {
-    return this._signature;
-  }
-
-  set signature(signature) {
-    this._signature = signature;
+    /** @type {Uint8Array} */
+    this.signature = null;
   }
 
   /**
@@ -106,11 +84,11 @@ class PreKeyBundle {
 
   /** @returns {keys.PreKeyAuth} */
   verify() {
-    if (!this._signature) {
+    if (!this.signature) {
       return PreKeyAuth.UNKNOWN;
     }
 
-    if (this._identity_key.public_key.verify(this._signature, this._public_key.pub_edward)) {
+    if (this.identity_key.public_key.verify(this.signature, this.public_key.pub_edward)) {
       return PreKeyAuth.VALID;
     }
     return PreKeyAuth.INVALID;
@@ -131,7 +109,7 @@ class PreKeyBundle {
   /** @returns {type_serialised_json} */
   serialised_json() {
     return {
-      'id': this._prekey_id,
+      'id': this.prekey_id,
       'key': sodium.to_base64(new Uint8Array(this.serialise()), true),
     };
   }
@@ -154,19 +132,19 @@ class PreKeyBundle {
 
     e.object(5);
     e.u8(0);
-    e.u8(this._version);
+    e.u8(this.version);
     e.u8(1);
-    e.u16(this._prekey_id);
+    e.u16(this.prekey_id);
     e.u8(2);
-    this._public_key.encode(e);
+    this.public_key.encode(e);
     e.u8(3);
-    this._identity_key.encode(e);
+    this.identity_key.encode(e);
 
     e.u8(4);
-    if (!this._signature) {
+    if (!this.signature) {
       return e.null();
     } else {
-      return e.bytes(this._signature);
+      return e.bytes(this.signature);
     }
   }
 

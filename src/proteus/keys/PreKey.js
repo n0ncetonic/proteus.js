@@ -45,43 +45,20 @@ class PreKey {
       );
     }
 
-    this._version = 1;
-    this._key_id = pre_key_id;
-    this._key_pair = new KeyPair();
+    /** @type {number} */
+    this.version = 1;
+
+    /** @type {number} */
+    this.key_id = pre_key_id;
+
+    /** @type {keys.KeyPair} */
+    this.key_pair = new KeyPair();
   }
 
   /** @type {number} */
   static get MAX_PREKEY_ID() {
     return 0xFFFF;
   }
-
-  /** @type {number} */
-  get version() {
-    return this._version;
-  }
-
-  set version(version) {
-    this._version = version;
-  }
-
-  /** @type {number} */
-  get key_id() {
-    return this._key_id;
-  }
-
-  set key_id(key_id) {
-    this._key_id = key_id;
-  }
-
-  /** @type {keys.KeyPair} */
-  get key_pair() {
-    return this._key_pair;
-  }
-
-  set key_pair(key_pair) {
-    this._key_pair = key_pair;
-  }
-
 
   /** @returns {PreKey} */
   static last_resort() {
@@ -92,6 +69,7 @@ class PreKey {
    * @param {!number} start
    * @param {!number} size
    * @returns {Array<PreKey>}
+   * @throws {RangeError}
    */
   static generate_prekeys(start, size) {
     const check_integer = (value) => {
@@ -138,11 +116,11 @@ class PreKey {
     TypeUtil.assert_is_instance(CBOR.Encoder, e);
     e.object(3);
     e.u8(0);
-    e.u8(this._version);
+    e.u8(this.version);
     e.u8(1);
-    e.u16(this._key_id);
+    e.u16(this.key_id);
     e.u8(2);
-    return this._key_pair.encode(e);
+    return this.key_pair.encode(e);
   }
 
   /**

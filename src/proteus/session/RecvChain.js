@@ -49,36 +49,14 @@ class RecvChain {
       TypeUtil.assert_is_instance(PublicKey, public_key);
     }
 
-    this._chain_key = chain_key;
-    this._ratchet_key = public_key;
-    this._message_keys = [];
-  }
+    /** @type {session.ChainKey} */
+    this.chain_key = chain_key;
 
-  /** @type {session.ChainKey} */
-  get chain_key() {
-    return this._chain_key;
-  }
+    /** @type {keys.PublicKey} */
+    this.ratchet_key = public_key;
 
-  set chain_key(chain_key) {
-    this._chain_key = chain_key;
-  }
-
-  /** @type {keys.PublicKey} */
-  get ratchet_key() {
-    return this._ratchet_key;
-  }
-
-  set ratchet_key(ratchet_key) {
-    this._ratchet_key = ratchet_key;
-  }
-
-  /** @type {Array<message.Message>} */
-  get message_keys() {
-    return this._message_keys;
-  }
-
-  set message_keys(message_keys) {
-    this._message_keys = message_keys;
+    /** @type {Array<message.Message>} */
+    this.message_keys = [];
   }
 
   /** @type {number} */
@@ -95,11 +73,11 @@ class RecvChain {
     TypeUtil.assert_is_instance(Envelope, envelope);
     TypeUtil.assert_is_instance(CipherMessage, msg);
 
-    if (this._message_keys[0] && this._message_keys[0].counter > msg.counter) {
+    if (this.message_keys[0] && this.message_keys[0].counter > msg.counter) {
       throw new DecryptError.OutdatedMessage();
     }
 
-    const idx = this._message_keys.findIndex((mk) => {
+    const idx = this.message_keys.findIndex((mk) => {
       return mk.counter === msg.counter;
     });
 
@@ -107,7 +85,7 @@ class RecvChain {
       throw new DecryptError.DuplicateMessage();
     }
 
-    const mk = this._message_keys.splice(idx, 1)[0];
+    const mk = this.message_keys.splice(idx, 1)[0];
     if (!envelope.verify(mk.mac_key)) {
       throw new DecryptError.InvalidSignature();
     }
@@ -122,13 +100,13 @@ class RecvChain {
   stage_message_keys(msg) {
     TypeUtil.assert_is_instance(CipherMessage, msg);
 
-    const num = msg.counter - this._chain_key.idx;
+    const num = msg.counter - this.chain_key.idx;
     if (num > RecvChain.MAX_COUNTER_GAP) {
       throw new DecryptError.TooDistantFuture();
     }
 
     let keys = [];
-    let chk = this._chain_key;
+    let chk = this.chain_key;
 
     for (let i = 0; i <= num - 1; i++) {
       keys.push(chk.message_keys());
@@ -151,13 +129,13 @@ class RecvChain {
       throw new ProteusError('More keys than MAX_COUNTER_GAP');
     }
 
-    const excess = this._message_keys.length + keys.length - RecvChain.MAX_COUNTER_GAP;
+    const excess = this.message_keys.length + keys.length - RecvChain.MAX_COUNTER_GAP;
 
     for (let i = 0; i <= excess - 1; i++) {
-      this._message_keys.shift();
+      this.message_keys.shift();
     }
 
-    keys.map((k) => this._message_keys.push(k));
+    keys.map((k) => this.message_keys.push(k));
 
     if (keys.length > RecvChain.MAX_COUNTER_GAP) {
       throw new ProteusError('Skipped keys greater than MAX_COUNTER_GAP');
@@ -171,13 +149,13 @@ class RecvChain {
   encode(e) {
     e.object(3);
     e.u8(0);
-    this._chain_key.encode(e);
+    this.chain_key.encode(e);
     e.u8(1);
-    this._ratchet_key.encode(e);
+    this.ratchet_key.encode(e);
 
     e.u8(2);
-    e.array(this._message_keys.length);
-    return this._message_keys.map((k) => k.encode(e));
+    e.array(this.message_keys.length);
+    return this.message_keys.map((k) => k.encode(e));
   }
 
   /**

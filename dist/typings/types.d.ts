@@ -22,9 +22,6 @@ export module derived {
         */
        encrypt(plaintext: (ArrayBuffer|String|Uint8Array), nonce: Uint8Array): Uint8Array;
 
-       /** @type {Uint8Array} */
-       key: Uint8Array;
-
        /**
         * @param {!Uint8Array} ciphertext
         * @param {!Uint8Array} nonce
@@ -283,14 +280,14 @@ export module errors {
 
    /**
     * @class ProteusError
-    * @param {!string} message
+    * @param {string} message
     * @extends Error
     * @returns {ProteusError} - `this`
     */
    class ProteusError extends Error {
        /**
         * @class ProteusError
-        * @param {!string} message
+        * @param {string} message
         * @extends Error
         * @returns {ProteusError} - `this`
         */
@@ -352,15 +349,6 @@ export module keys {
 
        /** @returns {ArrayBuffer} */
        serialise(): ArrayBuffer;
-
-       /** @type {number} */
-       version: number;
-
-       /** @type {number} */
-       secret_key: number;
-
-       /** @type {keys.IdentityKey} */
-       public_key: keys.IdentityKey;
 
        /**
         * @param {!ArrayBuffer} buf
@@ -440,6 +428,7 @@ export module keys {
     * @classdesc Pre-generated (and regularly refreshed) pre-keys.
     * @param {!number} pre_key_id
     * @returns {PreKey} - `this`
+    * @throws {RangeError}
     */
    class PreKey {
        /**
@@ -448,20 +437,12 @@ export module keys {
         * @classdesc Pre-generated (and regularly refreshed) pre-keys.
         * @param {!number} pre_key_id
         * @returns {PreKey} - `this`
+        * @throws {RangeError}
         */
        constructor(pre_key_id: number);
 
        /** @type {number} */
        static MAX_PREKEY_ID: number;
-
-       /** @type {number} */
-       key_id: number;
-
-       /** @type {number} */
-       version: number;
-
-       /** @type {keys.KeyPair} */
-       key_pair: keys.KeyPair;
 
        /** @returns {PreKey} */
        static last_resort(): PreKey;
@@ -470,6 +451,7 @@ export module keys {
         * @param {!number} start
         * @param {!number} size
         * @returns {Array<PreKey>}
+        * @throws {RangeError}
         */
        static generate_prekeys(start: number, size: number): PreKey[];
 
@@ -700,14 +682,14 @@ export module message {
 
    /**
     * @class Envelope
-    * @param {!derived.MacKey} mac_key
+    * @param {derived.MacKey} mac_key
     * @param {!message.Message} message
     * @returns {Envelope}
     */
    class Envelope {
        /**
         * @class Envelope
-        * @param {!derived.MacKey} mac_key
+        * @param {derived.MacKey} mac_key
         * @param {!message.Message} message
         * @returns {Envelope}
         */
@@ -1058,27 +1040,6 @@ export module session {
        /** @type {number} */
        static MAX_SESSION_STATES: number;
 
-       /** @type {number} */
-       counter: number;
-
-       /** @type {keys.IdentityKeyPair} */
-       local_identity: keys.IdentityKeyPair;
-
-       /** @type {Array<(number|keys.PublicKey)>} */
-       pending_prekey: (number|keys.PublicKey)[];
-
-       /** @type {keys.IdentityKey} */
-       remote_identity: keys.IdentityKey;
-
-       /** @type {Array<session.SessionState>} */
-       session_states: session.SessionState[];
-
-       /** @type {message.SessionTag} */
-       session_tag: message.SessionTag;
-
-       /** @type {number} */
-       version: number;
-
        /**
         * @param {!keys.IdentityKeyPair} local_identity - Alice's Identity Key Pair
         * @param {!keys.PreKeyBundle} remote_pkbundle - Bob's Pre-Key Bundle
@@ -1248,8 +1209,68 @@ export module session {
 export module util {
    /**
     * Concatenates array buffers (usually 8-bit unsigned).
+    * @class ArrayUtil
     */
-   const ArrayUtil: any;
+   class ArrayUtil {
+       /**
+        * Concatenates array buffers (usually 8-bit unsigned).
+        * @class ArrayUtil
+        */
+       constructor();
+
+       /**
+        * @param {!Array<ArrayBuffer>} buffers
+        * @returns {Array<ArrayBuffer>}
+        */
+       static concatenate_array_buffers(buffers: ArrayBuffer[]): ArrayBuffer[];
+
+       /**
+        * @param {!(Array<number>|Uint8Array)} array
+        * @returns {void}
+        * @throws {errors.ProteusError}
+        */
+       static assert_is_not_zeros(array: (number[]|Uint8Array)): void;
+
+   }
+
+   /**
+    * @class MemoryUtil
+    */
+   class MemoryUtil {
+       /**
+        * @class MemoryUtil
+        */
+       constructor();
+
+       /**
+        * @param {!(Uint8Array|ArrayBuffer|Object)} object
+        * @returns {void}
+        */
+       static zeroize(object: (Uint8Array|ArrayBuffer|Object)): void;
+
+   }
+
+   /** @class TypeUtil */
+   class TypeUtil {
+       /** @class TypeUtil */
+       constructor();
+
+       /**
+        * @param {*} classes
+        * @param {*} inst
+        * @returns {void}
+        * @throws {TypeError}
+        */
+       static assert_is_instance(classes: any, inst: any): void;
+
+       /**
+        * @param {*} inst
+        * @returns {boolean}
+        * @throws {TypeError}
+        */
+       static assert_is_integer(inst: any): boolean;
+
+   }
 
 }
 

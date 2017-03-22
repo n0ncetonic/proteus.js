@@ -34,21 +34,13 @@ const RandomUtil = require('../util/RandomUtil');
  */
 class SessionTag {
   constructor() {
-    this._tag = RandomUtil.random_bytes(16);
-  }
-
-  /** @type {Buffer} */
-  get tag() {
-    return this._tag;
-  }
-
-  set tag(tag) {
-    this._tag = tag;
+    /** @type {Buffer} */
+    this.tag = RandomUtil.random_bytes(16);
   }
 
   /** @returns {string} */
   toString() {
-    return sodium.to_hex(this._tag);
+    return sodium.to_hex(this.tag);
   }
 
   /**
@@ -56,7 +48,7 @@ class SessionTag {
    * @returns {CBOR.Encoder}
    */
   encode(e) {
-    return e.bytes(this._tag);
+    return e.bytes(this.tag);
   }
 
   /**

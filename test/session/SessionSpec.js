@@ -86,13 +86,8 @@ const assert_serialise_deserialise = (local_identity, session) => {
 
 describe('Session', () => {
   it('can be serialised and deserialised to/from CBOR', () => {
-    const [alice_ident, bob_ident] = [0, 1].map(
-      () => new Proteus.keys.IdentityKeyPair()
-    );
-    const [alice_store, bob_store] = [0, 1].map(
-      () => new TestStore(Proteus.keys.PreKey.generate_prekeys(0, 10))
-    );
-
+    const [alice_ident, bob_ident] = [0, 1].map(() => new Proteus.keys.IdentityKeyPair());
+    const bob_store = new TestStore(Proteus.keys.PreKey.generate_prekeys(0, 10));
     const bob_prekey = bob_store.prekeys[0];
     const bob_bundle = new Proteus.keys.PreKeyBundle(bob_ident.public_key, bob_prekey);
 

@@ -50,16 +50,16 @@ class ChainKey {
   /** @returns {ChainKey} */
   next() {
     const ck = new ChainKey();
-    ck.key = new MacKey(this._key.sign('1'));
-    ck.idx = this._idx + 1;
+    ck.key = new MacKey(this.key.sign('1'));
+    ck.idx = this.idx + 1;
     return ck;
   }
 
   /** @returns {session.MessageKeys} */
   message_keys() {
-    const base = this._key.sign('0');
+    const base = this.key.sign('0');
     const dsecs = DerivedSecrets.kdf_without_salt(base, 'hash_ratchet');
-    return new MessageKeys(dsecs.cipher_key, dsecs.mac_key, this._idx);
+    return new MessageKeys(dsecs.cipher_key, dsecs.mac_key, this.idx);
   }
 
   /**
@@ -69,9 +69,9 @@ class ChainKey {
   encode(e) {
     e.object(2);
     e.u8(0);
-    this._key.encode(e);
+    this.key.encode(e);
     e.u8(1);
-    return e.u32(this._idx);
+    return e.u32(this.idx);
   }
 
   /**

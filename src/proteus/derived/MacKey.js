@@ -33,16 +33,9 @@ const TypeUtil = require('../util/TypeUtil');
 class MacKey {
   constructor(key) {
     TypeUtil.assert_is_instance(Uint8Array, key);
-    this._key = key;
-  }
 
-  /** @type {Uint8Array} */
-  get key() {
-    return this._key;
-  }
-
-  set key(key) {
-    this._key = key;
+    /** @type {Uint8Array} */
+    this.key = key;
   }
 
   /**
@@ -51,7 +44,7 @@ class MacKey {
    * @returns {Uint8Array}
    */
   sign(msg) {
-    return sodium.crypto_auth_hmacsha256(msg, this._key);
+    return sodium.crypto_auth_hmacsha256(msg, this.key);
   }
 
   /**
@@ -60,7 +53,7 @@ class MacKey {
    * @returns {boolean}
    */
   verify(signature, msg) {
-    return sodium.crypto_auth_hmacsha256_verify(signature, msg, this._key);
+    return sodium.crypto_auth_hmacsha256_verify(signature, msg, this.key);
   }
 
   /**
@@ -70,7 +63,7 @@ class MacKey {
   encode(e) {
     e.object(1);
     e.u8(0);
-    return e.bytes(this._key);
+    return e.bytes(this.key);
   }
 
   /**

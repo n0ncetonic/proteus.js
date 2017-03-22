@@ -43,26 +43,11 @@ class SecretKey {
       TypeUtil.assert_is_instance(Uint8Array, sec_curve);
     }
 
-    this._sec_edward = sec_edward;
-    this._sec_curve = sec_curve;
-  }
+    /** @type {Uint8Array} */
+    this.sec_edward = sec_edward;
 
-  /** @type {Uint8Array} */
-  get sec_edward() {
-    return this._sec_edward;
-  }
-
-  set sec_edward(sec_edward) {
-    this._sec_edward = sec_edward;
-  }
-
-  /** @type {Uint8Array} */
-  get sec_curve() {
-    return this._sec_curve;
-  }
-
-  set sec_curve(sec_curve) {
-    this._sec_curve = sec_curve;
+    /** @type {Uint8Array} */
+    this.sec_curve = sec_curve;
   }
 
   /**
@@ -71,7 +56,7 @@ class SecretKey {
    * @returns {Uint8Array} - A message signature
    */
   sign(message) {
-    return sodium.crypto_sign_detached(message, this._sec_edward);
+    return sodium.crypto_sign_detached(message, this.sec_edward);
   }
 
   /**
@@ -83,7 +68,7 @@ class SecretKey {
   shared_secret(public_key) {
     TypeUtil.assert_is_instance(PublicKey, public_key);
 
-    return sodium.crypto_scalarmult(this._sec_curve, public_key.pub_curve);
+    return sodium.crypto_scalarmult(this.sec_curve, public_key.pub_curve);
   }
 
   /**
@@ -93,7 +78,7 @@ class SecretKey {
   encode(e) {
     e.object(1);
     e.u8(0);
-    return e.bytes(this._sec_edward);
+    return e.bytes(this.sec_edward);
   }
 
   /**

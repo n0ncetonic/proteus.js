@@ -50,46 +50,17 @@ const Session = require('./Session');
 /** @class SessionState */
 class SessionState {
   constructor() {
-    this._recv_chains = null;
-    this._send_chain = null;
-    this._root_key = null;
-    this._prev_counter = null;
-  }
+    /** @type {Array<session.RecvChain>} */
+    this.recv_chains = null;
 
-  /** @type {Array<session.RecvChain>} */
-  get recv_chains() {
-    return this._recv_chains;
-  }
+    /** @type {session.SendChain} */
+    this.send_chain = null;
 
-  set recv_chains(recv_chains) {
-    this._recv_chains = recv_chains;
-  }
+    /** @type {session.RootKey} */
+    this.root_key = null;
 
-  /** @type {session.SendChain} */
-  get send_chain() {
-    return this._send_chain;
-  }
-
-  set send_chain(send_chain) {
-    this._send_chain = send_chain;
-  }
-
-  /** @type {session.RootKey} */
-  get root_key() {
-    return this._root_key;
-  }
-
-  set root_key(root_key) {
-    this._root_key = root_key;
-  }
-
-  /** @type {number} */
-  get prev_counter() {
-    return this._prev_counter;
-  }
-
-  set prev_counter(prev_counter) {
-    this._prev_counter = prev_counter;
+    /** @type {number} */
+    this.prev_counter = null;
   }
 
   /**
@@ -169,24 +140,24 @@ class SessionState {
    */
   ratchet(ratchet_key) {
     const new_ratchet = new KeyPair();
-    const [recv_root_key, recv_chain_key] = this._root_key.dh_ratchet(this._send_chain.ratchet_key, ratchet_key);
+    const [recv_root_key, recv_chain_key] = this.root_key.dh_ratchet(this.send_chain.ratchet_key, ratchet_key);
     const [send_root_key, send_chain_key] = recv_root_key.dh_ratchet(new_ratchet, ratchet_key);
 
     const recv_chain = new RecvChain(recv_chain_key, ratchet_key);
     const send_chain = new SendChain(send_chain_key, new_ratchet);
 
-    this._root_key = send_root_key;
-    this._prev_counter = this._send_chain.chain_key.idx;
-    this._send_chain = send_chain;
+    this.root_key = send_root_key;
+    this.prev_counter = this.send_chain.chain_key.idx;
+    this.send_chain = send_chain;
 
-    this._recv_chains.unshift(recv_chain);
+    this.recv_chains.unshift(recv_chain);
 
-    if (this._recv_chains.length > Session.MAX_RECV_CHAINS) {
-      for (let index = Session.MAX_RECV_CHAINS; index < this._recv_chains.length; index++) {
-        MemoryUtil.zeroize(this._recv_chains[index]);
+    if (this.recv_chains.length > Session.MAX_RECV_CHAINS) {
+      for (let index = Session.MAX_RECV_CHAINS; index < this.recv_chains.length; index++) {
+        MemoryUtil.zeroize(this.recv_chains[index]);
       }
 
-      this._recv_chains = this._recv_chains.slice(0, Session.MAX_RECV_CHAINS);
+      this.recv_chains = this.recv_chains.slice(0, Session.MAX_RECV_CHAINS);
     }
   }
 
@@ -205,13 +176,13 @@ class SessionState {
     TypeUtil.assert_is_instance(IdentityKey, identity_key);
     TypeUtil.assert_is_instance(SessionTag, tag);
 
-    const msgkeys = this._send_chain.chain_key.message_keys();
+    const msgkeys = this.send_chain.chain_key.message_keys();
 
     let message = new CipherMessage(
       tag,
-      this._send_chain.chain_key.idx,
-      this._prev_counter,
-      this._send_chain.ratchet_key.public_key,
+      this.send_chain.chain_key.idx,
+      this.prev_counter,
+      this.send_chain.ratchet_key.public_key,
       msgkeys.encrypt(plaintext)
     );
 
@@ -220,7 +191,7 @@ class SessionState {
     }
 
     const env = new Envelope(msgkeys.mac_key, message);
-    this._send_chain.chain_key = this._send_chain.chain_key.next();
+    this.send_chain.chain_key = this.send_chain.chain_key.next();
     return env;
   }
 
@@ -233,7 +204,7 @@ class SessionState {
     TypeUtil.assert_is_instance(Envelope, envelope);
     TypeUtil.assert_is_instance(CipherMessage, msg);
 
-    let idx = this._recv_chains.findIndex(
+    let idx = this.recv_chains.findIndex(
       (c) => c.ratchet_key.fingerprint() === msg.ratchet_key.fingerprint()
     );
 
@@ -242,7 +213,7 @@ class SessionState {
       idx = 0;
     }
 
-    const rc = this._recv_chains[idx];
+    const rc = this.recv_chains[idx];
     if (msg.counter < rc.chain_key.idx) {
       return rc.try_message_keys(envelope, msg);
 
@@ -292,14 +263,14 @@ class SessionState {
   encode(e) {
     e.object(4);
     e.u8(0);
-    e.array(this._recv_chains.length);
-    this._recv_chains.map((rch) => rch.encode(e));
+    e.array(this.recv_chains.length);
+    this.recv_chains.map((rch) => rch.encode(e));
     e.u8(1);
-    this._send_chain.encode(e);
+    this.send_chain.encode(e);
     e.u8(2);
-    this._root_key.encode(e);
+    this.root_key.encode(e);
     e.u8(3);
-    return e.u32(this._prev_counter);
+    return e.u32(this.prev_counter);
   }
 
   /**

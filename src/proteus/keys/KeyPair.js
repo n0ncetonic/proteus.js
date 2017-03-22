@@ -38,26 +38,11 @@ class KeyPair {
   constructor() {
     const ed25519_key_pair = sodium.crypto_sign_keypair();
 
-    this._public_key = this._construct_public_key(ed25519_key_pair);
-    this._secret_key = this._construct_private_key(ed25519_key_pair);
-  }
+    /** @type {keys.PublicKey} */
+    this.public_key = this._construct_public_key(ed25519_key_pair);
 
-  /** @type {keys.PublicKey} */
-  get public_key() {
-    return this._public_key;
-  }
-
-  set public_key(public_key) {
-    this._public_key = public_key;
-  }
-
-  /** @type {keys.SecretKey} */
-  get secret_key() {
-    return this._secret_key;
-  }
-
-  set secret_key(secret_key) {
-    this._secret_key = secret_key;
+    /** @type {keys.SecretKey} */
+    this.secret_key = this._construct_private_key(ed25519_key_pair);
   }
 
   /**
@@ -99,10 +84,10 @@ class KeyPair {
     e.object(2);
 
     e.u8(0);
-    this._secret_key.encode(e);
+    this.secret_key.encode(e);
 
     e.u8(1);
-    return this._public_key.encode(e);
+    return this.public_key.encode(e);
   }
 
   /**

@@ -36,36 +36,14 @@ class IdentityKeyPair {
   constructor() {
     const key_pair = new KeyPair();
 
-    this._version = 1;
-    this._secret_key = key_pair.secret_key;
-    this._public_key = new IdentityKey(key_pair.public_key);
-  }
+    /** @type {number} */
+    this.version = 1;
 
-  /** @type {number} */
-  get version() {
-    return this._version;
-  }
+    /** @type {keys.SecretKey} */
+    this.secret_key = key_pair.secret_key;
 
-  set version(version) {
-    this._version = version;
-  }
-
-  /** @type {keys.PublicKey} */
-  get public_key() {
-    return this._public_key;
-  }
-
-  set public_key(public_key) {
-    this._public_key = public_key;
-  }
-
-  /** @type {keys.SecretKey} */
-  get secret_key() {
-    return this._secret_key;
-  }
-
-  set secret_key(secret_key) {
-    this._secret_key = secret_key;
+    /** @type {keys.PublicKey} */
+    this.public_key = new IdentityKey(key_pair.public_key);
   }
 
   /** @returns {ArrayBuffer} */
@@ -93,11 +71,11 @@ class IdentityKeyPair {
   encode(e) {
     e.object(3);
     e.u8(0);
-    e.u8(this._version);
+    e.u8(this.version);
     e.u8(1);
-    this._secret_key.encode(e);
+    this.secret_key.encode(e);
     e.u8(2);
-    return this._public_key.encode(e);
+    return this.public_key.encode(e);
   }
 
   /**
