@@ -46,7 +46,10 @@ class PreKeyBundle {
     if (typeof prekey !== 'undefined') {
       TypeUtil.assert_is_instance(PreKey, prekey);
 
+      /** @type {number} */
       this.prekey_id = prekey.key_id;
+
+      /** @type {keys.PublicKey} */
       this.public_key = prekey.key_pair.public_key;
     }
 

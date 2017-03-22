@@ -44,7 +44,7 @@ class Envelope {
       const message_enc = new Uint8Array(message.serialise());
 
       /** @type {Uint8Array} */
-      this.message_enc = message_enc;
+      this._message_enc = message_enc;
 
       /** @type {Uint8Array} */
       this.mac = mac_key.sign(message_enc);
@@ -63,7 +63,7 @@ class Envelope {
    */
   verify(mac_key) {
     TypeUtil.assert_is_instance(MacKey, mac_key);
-    return mac_key.verify(this.mac, this.message_enc);
+    return mac_key.verify(this.mac, this._message_enc);
   }
 
   /** @returns {ArrayBuffer} - The serialized message envelope */
@@ -99,7 +99,7 @@ class Envelope {
     e.bytes(this.mac);
 
     e.u8(2);
-    return e.bytes(this.message_enc);
+    return e.bytes(this._message_enc);
   }
 
   /**
