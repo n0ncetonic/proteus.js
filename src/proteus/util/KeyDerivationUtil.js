@@ -20,7 +20,6 @@
 'use strict';
 
 const sodium = require('libsodium-wrappers-sumo');
-
 const ArrayUtil = require('../util/ArrayUtil');
 const MemoryUtil = require('../util/MemoryUtil');
 const TypeUtil = require('../util/TypeUtil');

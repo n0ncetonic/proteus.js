@@ -20,8 +20,6 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-
-
 const MemoryUtil = require('../util/MemoryUtil');
 const TypeUtil = require('../util/TypeUtil');
 
@@ -50,13 +48,13 @@ const PreKeyStore = require('./PreKeyStore');
  */
 class Session {
   constructor() {
-    this.counter = 0;
-    this.local_identity = null;
-    this.pending_prekey = null;
-    this.remote_identity = null;
-    this.session_states = null;
-    this.session_tag = null;
-    this.version = 1;
+    this._counter = 0;
+    this._local_identity = null;
+    this._pending_prekey = null;
+    this._remote_identity = null;
+    this._session_states = null;
+    this._session_tag = null;
+    this._version = 1;
   }
 
   /** @type {number} */
@@ -71,37 +69,65 @@ class Session {
 
   /** @type {number} */
   get counter() {
-    return this.counter;
+    return this._counter;
+  }
+
+  set counter(counter) {
+    this._counter = counter;
   }
 
   /** @type {keys.IdentityKeyPair} */
   get local_identity() {
-    return this.local_identity;
+    return this._local_identity;
+  }
+
+  set local_identity(local_identity) {
+    this._local_identity = local_identity;
   }
 
   /** @type {Array<(number|keys.PublicKey)>} */
   get pending_prekey() {
-    return this.pending_prekey;
+    return this._pending_prekey;
   }
 
-  /** @type {keys.IdentityKey} */
+  set pending_prekey(pending_prekey) {
+    this._pending_prekey = pending_prekey;
+  }
+
+  /** @type {number} */
   get remote_identity() {
-    return this.remote_identity;
+    return this._remote_identity;
+  }
+
+  set remote_identity(remote_identity) {
+    this._remote_identity = remote_identity;
   }
 
   /** @type {Array<session.SessionState>} */
   get session_states() {
-    return this.session_states;
+    return this._session_states;
   }
 
-  /** @type {message.SessionTag} */
+  set session_states(session_states) {
+    this._session_states = session_states;
+  }
+
+  /** @type {session.SessionTag} */
   get session_tag() {
-    return this.session_tag;
+    return this._session_tag;
+  }
+
+  set session_tag(session_tag) {
+    this._session_tag = session_tag;
   }
 
   /** @type {number} */
   get version() {
-    return this.version;
+    return this._version;
+  }
+
+  set version(version) {
+    this._version = version;
   }
 
   /**
@@ -196,7 +222,7 @@ class Session {
     .then((pre_key) => {
       if (pre_key) {
         return SessionState.init_as_bob(
-          this.local_identity,
+          this._local_identity,
           pre_key.key_pair,
           pre_key_message.identity_key,
           pre_key_message.base_key
@@ -213,29 +239,29 @@ class Session {
    * @private
    */
   _insert_session_state(tag, state) {
-    if (this.session_states.hasOwnProperty(tag)) {
-      this.session_states[tag].state = state;
+    if (this._session_states.hasOwnProperty(tag)) {
+      this._session_states[tag].state = state;
     } else {
-      if (this.counter >= Number.MAX_SAFE_INTEGER) {
-        this.session_states = {};
-        this.counter = 0;
+      if (this._counter >= Number.MAX_SAFE_INTEGER) {
+        this._session_states = {};
+        this._counter = 0;
       }
 
-      this.session_states[tag] = {
-        idx: this.counter,
+      this._session_states[tag] = {
+        idx: this._counter,
         tag: tag,
         state: state,
       };
-      this.counter++;
+      this._counter++;
     }
 
-    if (this.session_tag.toString() !== tag.toString()) {
-      this.session_tag = tag;
+    if (this._session_tag.toString() !== tag.toString()) {
+      this._session_tag = tag;
     }
 
     const obj_size = (obj) => Object.keys(obj).length;
 
-    if (obj_size(this.session_states) < Session.MAX_SESSION_STATES) {
+    if (obj_size(this._session_states) < Session.MAX_SESSION_STATES) {
       return;
     }
 
@@ -249,19 +275,19 @@ class Session {
    * @private
    */
   _evict_oldest_session_state() {
-    const oldest = Object.keys(this.session_states)
-    .filter((obj) => obj.toString() !== this.session_tag)
+    const oldest = Object.keys(this._session_states)
+    .filter((obj) => obj.toString() !== this._session_tag)
     .reduce((lowest, obj, index) => {
-      return this.session_states[obj].idx < this.session_states[lowest].idx ? obj.toString() : lowest;
+      return this._session_states[obj].idx < this._session_states[lowest].idx ? obj.toString() : lowest;
     });
 
-    MemoryUtil.zeroize(this.session_states[oldest]);
-    delete this.session_states[oldest];
+    MemoryUtil.zeroize(this._session_states[oldest]);
+    delete this._session_states[oldest];
   }
 
   /** @returns {keys.PublicKey} */
   get_local_identity() {
-    return this.local_identity.public_key;
+    return this._local_identity.public_key;
   }
 
   /**
@@ -270,18 +296,18 @@ class Session {
    */
   encrypt(plaintext) {
     return new Promise((resolve, reject) => {
-      const state = this.session_states[this.session_tag];
+      const state = this._session_states[this._session_tag];
 
       if (!state) {
         return reject(new ProteusError(
-          `Could not find session for tag '${(this.session_tag || '').toString()}'.`
+          `Could not find session for tag '${(this._session_tag || '').toString()}'.`
         ));
       }
 
       return resolve(state.state.encrypt(
-        this.local_identity.public_key,
-        this.pending_prekey,
-        this.session_tag, plaintext
+        this._local_identity.public_key,
+        this._pending_prekey,
+        this._session_tag, plaintext
       ));
     });
   }
@@ -302,7 +328,7 @@ class Session {
         return resolve(this._decrypt_cipher_message(envelope, envelope.message));
       } else if (msg instanceof PreKeyMessage) {
         const actual_fingerprint = msg.identity_key.fingerprint();
-        const expected_fingerprint = this.remote_identity.fingerprint();
+        const expected_fingerprint = this._remote_identity.fingerprint();
         if (actual_fingerprint !== expected_fingerprint) {
           const message = `Fingerprints do not match: We expected '${expected_fingerprint}', but received '${actual_fingerprint}'.`;
           throw new DecryptError.RemoteIdentityChanged(message);
@@ -337,7 +363,7 @@ class Session {
           }
 
           this._insert_session_state(msg.message.session_tag, state);
-          this.pending_prekey = null;
+          this._pending_prekey = null;
 
           return plaintext;
         });
@@ -353,7 +379,7 @@ class Session {
    * @returns {string}
    */
   _decrypt_cipher_message(envelope, msg) {
-    let state = this.session_states[msg.session_tag];
+    let state = this._session_states[msg.session_tag];
     if (!state) {
       throw new DecryptError.InvalidMessage(
         `We received a message with session tag '${(msg.session_tag || '').toString()}', but we ` +
@@ -368,7 +394,7 @@ class Session {
 
     const plaintext = state.decrypt(envelope, msg);
 
-    this.pending_prekey = null;
+    this._pending_prekey = null;
 
     this._insert_session_state(msg.session_tag, state);
     return plaintext;
@@ -403,30 +429,30 @@ class Session {
   encode(e) {
     e.object(6);
     e.u8(0);
-    e.u8(this.version);
+    e.u8(this._version);
     e.u8(1);
-    this.session_tag.encode(e);
+    this._session_tag.encode(e);
     e.u8(2);
-    this.local_identity.public_key.encode(e);
+    this._local_identity.public_key.encode(e);
     e.u8(3);
-    this.remote_identity.encode(e);
+    this._remote_identity.encode(e);
 
     e.u8(4);
-    if (this.pending_prekey) {
+    if (this._pending_prekey) {
       e.object(2);
       e.u8(0);
-      e.u16(this.pending_prekey[0]);
+      e.u16(this._pending_prekey[0]);
       e.u8(1);
-      this.pending_prekey[1].encode(e);
+      this._pending_prekey[1].encode(e);
     } else {
       e.null();
     }
 
     e.u8(5);
-    e.object(Object.keys(this.session_states).length);
+    e.object(Object.keys(this._session_states).length);
 
-    for (let i in this.session_states) {
-      const state = this.session_states[i];
+    for (let i in this._session_states) {
+      const state = this._session_states[i];
       state.tag.encode(e);
       state.state.encode(e);
     }

@@ -21,7 +21,6 @@
 
 const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
-
 const TypeUtil = require('../util/TypeUtil');
 
 /** @module derived */
@@ -34,9 +33,16 @@ const TypeUtil = require('../util/TypeUtil');
 class CipherKey {
   constructor(key) {
     TypeUtil.assert_is_instance(Uint8Array, key);
+    this._key = key;
+  }
 
-    this.key = key;
-    return this;
+  /** @type {Uint8Array} */
+  get key() {
+    return this._key;
+  }
+
+  set key(key) {
+    this._key = key;
   }
 
   /**
@@ -46,16 +52,11 @@ class CipherKey {
    */
   encrypt(plaintext, nonce) {
     // @todo Re-validate if the ArrayBuffer check is needed (Prerequisite: Integration tests)
-    if (plaintext instanceof ArrayBuffer && plaintext.byteLength !== undefined) {
+    if (plaintext instanceof ArrayBuffer && typeof plaintext.byteLength !== 'undefined') {
       plaintext = new Uint8Array(plaintext);
     }
 
-    return sodium.crypto_stream_chacha20_xor(plaintext, nonce, this.key, 'uint8array');
-  }
-
-  /** @type {Uint8Array} */
-  get key() {
-    return this.key;
+    return sodium.crypto_stream_chacha20_xor(plaintext, nonce, this._key, 'uint8array');
   }
 
   /**
@@ -74,7 +75,7 @@ class CipherKey {
   encode(e) {
     e.object(1);
     e.u8(0);
-    return e.bytes(this.key);
+    return e.bytes(this._key);
   }
 
   /**

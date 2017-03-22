@@ -20,8 +20,6 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-
-
 const TypeUtil = require('../util/TypeUtil');
 
 const ChainKey = require('./ChainKey');
@@ -43,12 +41,26 @@ class SendChain {
       TypeUtil.assert_is_instance(KeyPair, keypair);
     }
 
-    /** @type {session.ChainKey} */
-    this.chain_key = chain_key;
+    this._chain_key = chain_key;
+    this._ratchet_key = keypair;
+  }
 
-    /** @type {keys.KeyPair} */
-    this.ratchet_key = keypair;
-    return this;
+  /** @type {session.ChainKey} */
+  get chain_key() {
+    return this._chain_key;
+  }
+
+  set chain_key(chain_key) {
+    this._chain_key = chain_key;
+  }
+
+  /** @type {keys.KeyPair} */
+  get ratchet_key() {
+    return this._ratchet_key;
+  }
+
+  set ratchet_key(ratchet_key) {
+    this._ratchet_key = ratchet_key;
   }
 
   /**
@@ -58,9 +70,9 @@ class SendChain {
   encode(e) {
     e.object(2);
     e.u8(0);
-    this.chain_key.encode(e);
+    this._chain_key.encode(e);
     e.u8(1);
-    return this.ratchet_key.encode(e);
+    return this._ratchet_key.encode(e);
   }
 
   /**

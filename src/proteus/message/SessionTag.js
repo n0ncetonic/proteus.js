@@ -21,8 +21,6 @@
 
 const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
-
-
 const TypeUtil = require('../util/TypeUtil');
 
 const DecodeError = require('../errors/DecodeError');
@@ -36,14 +34,21 @@ const RandomUtil = require('../util/RandomUtil');
  */
 class SessionTag {
   constructor() {
-    /** @type {Buffer} */
-    this.tag = RandomUtil.random_bytes(16);
-    return this;
+    this._tag = RandomUtil.random_bytes(16);
+  }
+
+  /** @type {Buffer} */
+  get tag() {
+    return this._tag;
+  }
+
+  set tag(tag) {
+    this._tag = tag;
   }
 
   /** @returns {string} */
   toString() {
-    return sodium.to_hex(this.tag);
+    return sodium.to_hex(this._tag);
   }
 
   /**
@@ -51,7 +56,7 @@ class SessionTag {
    * @returns {CBOR.Encoder}
    */
   encode(e) {
-    return e.bytes(this.tag);
+    return e.bytes(this._tag);
   }
 
   /**

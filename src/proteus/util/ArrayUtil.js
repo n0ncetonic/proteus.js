@@ -26,13 +26,14 @@ const TypeUtil = require('../util/TypeUtil');
 
 /**
  * Concatenates array buffers (usually 8-bit unsigned).
+ * @class ArrayUtil
  */
-const ArrayUtil = {
+class ArrayUtil {
   /**
    * @param {!Array<ArrayBuffer>} buffers
    * @returns {Array<ArrayBuffer>}
    */
-  concatenate_array_buffers(buffers) {
+  static concatenate_array_buffers(buffers) {
     TypeUtil.assert_is_instance(Array, buffers);
 
     return buffers.reduce((a, b) => {
@@ -41,14 +42,14 @@ const ArrayUtil = {
       buf.set(b, a.byteLength);
       return buf;
     });
-  },
+  }
 
   /**
    * @param {!(Array<number>|Uint8Array)} array
    * @returns {void}
    * @throws {errors.ProteusError}
    */
-  assert_is_not_zeros(array) {
+  static assert_is_not_zeros(array) {
     let only_zeroes = true;
     for (let val in array) {
       if (val > 0) {
@@ -60,7 +61,7 @@ const ArrayUtil = {
     if (only_zeroes === true) {
       throw new ProteusError('Array consists only of zeroes.');
     }
-  },
-};
+  }
+}
 
 module.exports = ArrayUtil;

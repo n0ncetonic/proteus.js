@@ -23,12 +23,15 @@ const sodium = require('libsodium-wrappers-sumo');
 
 /** @module util */
 
-const MemoryUtil = {
+/**
+ * @class MemoryUtil
+ */
+class MemoryUtil {
   /**
    * @param {!(Uint8Array|ArrayBuffer|Object)} object
    * @returns {void}
    */
-  zeroize(object) {
+  static zeroize(object) {
     if (object instanceof Uint8Array) {
       sodium.memzero(object);
     } else if (object instanceof ArrayBuffer) {
@@ -36,7 +39,7 @@ const MemoryUtil = {
     } else if (typeof object === 'object') {
       Object.values(object).forEach((val) => this.zeroize(val));
     }
-  },
-};
+  }
+}
 
 module.exports = MemoryUtil;

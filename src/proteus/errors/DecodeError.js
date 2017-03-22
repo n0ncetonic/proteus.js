@@ -33,7 +33,16 @@ const ProteusError = require('./ProteusError');
 class DecodeError extends ProteusError {
   constructor(message = 'Unknown decoding error') {
     super();
-    this.message = message;
+    this._message = message;
+  }
+
+  /** @type {string} */
+  get message() {
+    return this._message;
+  }
+
+  set message(message) {
+    this._message = message;
   }
 }
 
@@ -45,7 +54,16 @@ class DecodeError extends ProteusError {
 class InvalidType extends DecodeError {
   constructor(message = 'Invalid type') {
     super();
-    this.message = message;
+    this._message = message;
+  }
+
+  /** @type {string} */
+  get message() {
+    return this._message;
+  }
+
+  set message(message) {
+    this._message = message;
   }
 }
 
@@ -57,7 +75,16 @@ class InvalidType extends DecodeError {
 class InvalidArrayLen extends DecodeError {
   constructor(message = 'Invalid array length') {
     super();
-    this.message = message;
+    this._message = message;
+  }
+
+  /** @type {string} */
+  get message() {
+    return this._message;
+  }
+
+  set message(message) {
+    this._message = message;
   }
 }
 
@@ -69,7 +96,16 @@ class InvalidArrayLen extends DecodeError {
 class LocalIdentityChanged extends DecodeError {
   constructor(message = 'Local identity changed') {
     super();
-    this.message = message;
+    this._message = message;
+  }
+
+  /** @type {string} */
+  get message() {
+    return this._message;
+  }
+
+  set message(message) {
+    this._message = message;
   }
 }
 

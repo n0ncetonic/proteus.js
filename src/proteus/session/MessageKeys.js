@@ -20,8 +20,6 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-
-
 const TypeUtil = require('../util/TypeUtil');
 
 const CipherKey = require('../derived/CipherKey');
@@ -48,16 +46,36 @@ class MessageKeys {
       TypeUtil.assert_is_integer(counter);
     }
 
-    /** @type {derived.CipherKey} */
-    this.cipher_key = cipher_key;
+    this._cipher_key = cipher_key;
+    this._mac_key = mac_key;
+    this._counter = counter;
+  }
 
-    /** @type {derived.MacKey} */
-    this.mac_key = mac_key;
+  /** @type {derived.CipherKey} */
+  get cipher_key() {
+    return this._cipher_key;
+  }
 
-    /** @type {number} */
-    this.counter = counter;
+  set cipher_key(cipher_key) {
+    this._cipher_key = cipher_key;
+  }
 
-    return this;
+  /** @type {derived.MacKey} */
+  get mac_key() {
+    return this._mac_key;
+  }
+
+  set mac_key(mac_key) {
+    this._mac_key = mac_key;
+  }
+
+  /** @type {number} */
+  get counter() {
+    return this._counter;
+  }
+
+  set counter(counter) {
+    this._counter = counter;
   }
 
   /**
@@ -66,7 +84,7 @@ class MessageKeys {
    */
   _counter_as_nonce() {
     const nonce = new ArrayBuffer(8);
-    new DataView(nonce).setUint32(0, this.counter);
+    new DataView(nonce).setUint32(0, this._counter);
     return new Uint8Array(nonce);
   }
 
@@ -75,7 +93,7 @@ class MessageKeys {
    * @returns {Uint8Array}
    */
   encrypt(plaintext) {
-    return this.cipher_key.encrypt(plaintext, this._counter_as_nonce());
+    return this._cipher_key.encrypt(plaintext, this._counter_as_nonce());
   }
 
   /**
@@ -83,7 +101,7 @@ class MessageKeys {
    * @returns {Uint8Array}
    */
   decrypt(ciphertext) {
-    return this.cipher_key.decrypt(ciphertext, this._counter_as_nonce());
+    return this._cipher_key.decrypt(ciphertext, this._counter_as_nonce());
   }
 
   /**
@@ -93,11 +111,11 @@ class MessageKeys {
   encode(e) {
     e.object(3);
     e.u8(0);
-    this.cipher_key.encode(e);
+    this._cipher_key.encode(e);
     e.u8(1);
-    this.mac_key.encode(e);
+    this._mac_key.encode(e);
     e.u8(2);
-    return e.u32(this.counter);
+    return e.u32(this._counter);
   }
 
   /**

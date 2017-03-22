@@ -23,21 +23,20 @@
 
 /**
  * @class ProteusError
- * @param {!string} message
+ * @param {string} message
  * @extends Error
  * @returns {ProteusError} - `this`
  */
-const ProteusError = (function() {
-  const func = function(message) {
+class ProteusError extends Error {
+  constructor(message) {
+    super(message);
     this.name = this.constructor.name;
-    this.message = message;
-    this.stack = (new Error).stack;
-  };
-
-  func.prototype = new Error;
-  func.prototype.constructor = func;
-
-  return func;
-})();
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      this.stack = (new Error(message)).stack;
+    }
+  }
+}
 
 module.exports = ProteusError;

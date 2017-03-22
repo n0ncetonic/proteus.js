@@ -20,8 +20,8 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-const TypeUtil = require('../util/TypeUtil');
 const KeyPair = require('./KeyPair');
+const TypeUtil = require('../util/TypeUtil');
 
 /** @module keys **/
 
@@ -31,6 +31,7 @@ const KeyPair = require('./KeyPair');
  * @classdesc Pre-generated (and regularly refreshed) pre-keys.
  * @param {!number} pre_key_id
  * @returns {PreKey} - `this`
+ * @throws {RangeError}
  */
 class PreKey {
   constructor(pre_key_id) {
@@ -44,11 +45,9 @@ class PreKey {
       );
     }
 
-    this.version = 1;
-    this.key_id = pre_key_id;
-    this.key_pair = new KeyPair();
-
-    return this;
+    this._version = 1;
+    this._key_id = pre_key_id;
+    this._key_pair = new KeyPair();
   }
 
   /** @type {number} */
@@ -57,19 +56,32 @@ class PreKey {
   }
 
   /** @type {number} */
-  get key_id() {
-    return this.key_id;
+  get version() {
+    return this._version;
+  }
+
+  set version(version) {
+    this._version = version;
   }
 
   /** @type {number} */
-  get version() {
-    return this.version;
+  get key_id() {
+    return this._key_id;
+  }
+
+  set key_id(key_id) {
+    this._key_id = key_id;
   }
 
   /** @type {keys.KeyPair} */
   get key_pair() {
-    return this.key_pair;
+    return this._key_pair;
   }
+
+  set key_pair(key_pair) {
+    this._key_pair = key_pair;
+  }
+
 
   /** @returns {PreKey} */
   static last_resort() {
@@ -126,11 +138,11 @@ class PreKey {
     TypeUtil.assert_is_instance(CBOR.Encoder, e);
     e.object(3);
     e.u8(0);
-    e.u8(this.version);
+    e.u8(this._version);
     e.u8(1);
-    e.u16(this.key_id);
+    e.u16(this._key_id);
     e.u8(2);
-    return this.key_pair.encode(e);
+    return this._key_pair.encode(e);
   }
 
   /**

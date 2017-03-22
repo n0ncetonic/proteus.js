@@ -23,10 +23,9 @@ const CBOR = require('wire-webapp-cbor');
 const ed2curve = require('ed2curve');
 const sodium = require('libsodium-wrappers-sumo');
 
-const TypeUtil = require('../util/TypeUtil');
-
 const PublicKey = require('./PublicKey');
 const SecretKey = require('./SecretKey');
+const TypeUtil = require('../util/TypeUtil');
 
 /** @module keys */
 
@@ -39,13 +38,26 @@ class KeyPair {
   constructor() {
     const ed25519_key_pair = sodium.crypto_sign_keypair();
 
-    /** @type {keys.SecretKey} */
-    this.secret_key = this._construct_private_key(ed25519_key_pair);
+    this._public_key = this._construct_public_key(ed25519_key_pair);
+    this._secret_key = this._construct_private_key(ed25519_key_pair);
+  }
 
-    /** @type {keys.PublicKey} */
-    this.public_key = this._construct_public_key(ed25519_key_pair);
+  /** @type {keys.PublicKey} */
+  get public_key() {
+    return this._public_key;
+  }
 
-    return this;
+  set public_key(public_key) {
+    this._public_key = public_key;
+  }
+
+  /** @type {keys.SecretKey} */
+  get secret_key() {
+    return this._secret_key;
+  }
+
+  set secret_key(secret_key) {
+    this._secret_key = secret_key;
   }
 
   /**
@@ -87,10 +99,10 @@ class KeyPair {
     e.object(2);
 
     e.u8(0);
-    this.secret_key.encode(e);
+    this._secret_key.encode(e);
 
     e.u8(1);
-    return this.public_key.encode(e);
+    return this._public_key.encode(e);
   }
 
   /**

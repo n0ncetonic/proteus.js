@@ -27,6 +27,7 @@ const IdentityKeyPair = require('./IdentityKeyPair');
 const PreKey = require('./PreKey');
 const PreKeyAuth = require('./PreKeyAuth');
 const PublicKey = require('./PublicKey');
+
 const TypeUtil = require('../util/TypeUtil');
 
 /** @module keys */
@@ -44,23 +45,41 @@ class PreKeyBundle {
     }
     if (typeof prekey !== 'undefined') {
       TypeUtil.assert_is_instance(PreKey, prekey);
-      /** @type {number} */
-      this.prekey_id = prekey.key_id;
 
-      /** @type {keys.PublicKey} */
-      this.public_key = prekey.key_pair.public_key;
+      this._prekey_id = prekey.key_id;
+      this._public_key = prekey.key_pair.public_key;
     }
 
-    /** @type {number} */
-    this.version = 1;
+    this._version = 1;
+    this._identity_key = public_identity_key;
+    this._signature = null;
+  }
 
-    /** @type {keys.IdentityKey} */
-    this.identity_key = public_identity_key;
+  /** @type {number} */
+  get version() {
+    return this._version;
+  }
 
-    /** @type {Uint8Array} */
-    this.signature = null;
+  set version(version) {
+    this._version = version;
+  }
 
-    return this;
+  /** @type {keys.IdentityKey} */
+  get identity_key() {
+    return this._identity_key;
+  }
+
+  set identity_key(identity_key) {
+    this._identity_key = identity_key;
+  }
+
+  /** @type {Uint8Array} */
+  get signature() {
+    return this._signature;
+  }
+
+  set signature(signature) {
+    this._signature = signature;
   }
 
   /**
@@ -72,12 +91,8 @@ class PreKeyBundle {
     TypeUtil.assert_is_instance(IdentityKeyPair, identity_pair);
     TypeUtil.assert_is_instance(PreKey, prekey);
 
-    /** @type {keys.PublicKey} */
     const ratchet_key = prekey.key_pair.public_key;
-    /** @type {Uint8Array} */
     const signature = identity_pair.secret_key.sign(ratchet_key.pub_edward);
-
-    /** @type {keys.PreyKeyBundle} */
     const bundle = new PreKeyBundle();
 
     bundle.version = 1;
@@ -91,11 +106,11 @@ class PreKeyBundle {
 
   /** @returns {keys.PreKeyAuth} */
   verify() {
-    if (!this.signature) {
+    if (!this._signature) {
       return PreKeyAuth.UNKNOWN;
     }
 
-    if (this.identity_key.public_key.verify(this.signature, this.public_key.pub_edward)) {
+    if (this._identity_key.public_key.verify(this._signature, this._public_key.pub_edward)) {
       return PreKeyAuth.VALID;
     }
     return PreKeyAuth.INVALID;
@@ -116,7 +131,7 @@ class PreKeyBundle {
   /** @returns {type_serialised_json} */
   serialised_json() {
     return {
-      'id': this.prekey_id,
+      'id': this._prekey_id,
       'key': sodium.to_base64(new Uint8Array(this.serialise()), true),
     };
   }
@@ -139,19 +154,19 @@ class PreKeyBundle {
 
     e.object(5);
     e.u8(0);
-    e.u8(this.version);
+    e.u8(this._version);
     e.u8(1);
-    e.u16(this.prekey_id);
+    e.u16(this._prekey_id);
     e.u8(2);
-    this.public_key.encode(e);
+    this._public_key.encode(e);
     e.u8(3);
-    this.identity_key.encode(e);
+    this._identity_key.encode(e);
 
     e.u8(4);
-    if (!this.signature) {
+    if (!this._signature) {
       return e.null();
     } else {
-      return e.bytes(this.signature);
+      return e.bytes(this._signature);
     }
   }
 

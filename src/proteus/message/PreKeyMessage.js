@@ -49,20 +49,48 @@ class PreKeyMessage extends Message {
 
     super();
 
-    /** @type {number} */
-    this.prekey_id = prekey_id;
-
-    /** @type {keys.PublicKey} */
-    this.base_key = base_key;
-
-    /** @type {keys.IdentityKey} */
-    this.identity_key = identity_key;
-
-    /** @type {message.CipherMessage} */
-    this.message = message;
+    this._prekey_id = prekey_id;
+    this._base_key = base_key;
+    this._identity_key = identity_key;
+    this._message = message;
 
     Object.freeze(this);
-    return this;
+  }
+
+  /** @type {number} */
+  get prekey_id() {
+    return this._prekey_id;
+  }
+
+  set prekey_id(prekey_id) {
+    this._prekey_id = prekey_id;
+  }
+
+  /** @type {keys.PublicKey} */
+  get base_key() {
+    return this._base_key;
+  }
+
+  set base_key(base_key) {
+    this._base_key = base_key;
+  }
+
+  /** @type {keys.IdentityKey} */
+  get identity_key() {
+    return this._identity_key;
+  }
+
+  set identity_key(identity_key) {
+    this._identity_key = identity_key;
+  }
+
+  /** @type {message.CipherMessage} */
+  get message() {
+    return this._message;
+  }
+
+  set message(message) {
+    this._message = message;
   }
 
   /**
@@ -72,13 +100,13 @@ class PreKeyMessage extends Message {
   encode(e) {
     e.object(4);
     e.u8(0);
-    e.u16(this.prekey_id);
+    e.u16(this._prekey_id);
     e.u8(1);
-    this.base_key.encode(e);
+    this._base_key.encode(e);
     e.u8(2);
-    this.identity_key.encode(e);
+    this._identity_key.encode(e);
     e.u8(3);
-    return this.message.encode(e);
+    return this._message.encode(e);
   }
 
   /**

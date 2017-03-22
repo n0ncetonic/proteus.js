@@ -20,10 +20,7 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-
-
 const TypeUtil = require('../util/TypeUtil');
-
 const PublicKey = require('../keys/PublicKey');
 
 const Message = require('./Message');
@@ -50,23 +47,36 @@ class CipherMessage extends Message {
 
     super();
 
-    /** @type {message.SessionTag} */
-    this.session_tag = session_tag;
+    this._session_tag = session_tag;
+    this._counter = counter;
+    this._prev_counter = prev_counter;
+    this._ratchet_key = ratchet_key;
+    this._cipher_text = cipher_text;
+  }
 
-    /** @type {number} */
-    this.counter = counter;
+  /** @type {message.SessionTag} */
+  get session_tag() {
+    return this._session_tag;
+  }
 
-    /** @type {number} */
-    this.prev_counter = prev_counter;
+  /** @type {number} */
+  get counter() {
+    return this._counter;
+  }
 
-    /** @type {keys.PublicKey} */
-    this.ratchet_key = ratchet_key;
+  /** @type {number} */
+  get prev_counter() {
+    return this._prev_counter;
+  }
 
-    /** @type {Uint8Array} */
-    this.cipher_text = cipher_text;
+  /** @type {keys.PublicKey} */
+  get ratchet_key() {
+    return this._ratchet_key;
+  }
 
-    Object.freeze(this);
-    return this;
+  /** @type {Uint8Array} */
+  get cipher_text() {
+    return this._cipher_text;
   }
 
   /**
@@ -76,15 +86,15 @@ class CipherMessage extends Message {
   encode(e) {
     e.object(5);
     e.u8(0);
-    this.session_tag.encode(e);
+    this._session_tag.encode(e);
     e.u8(1);
-    e.u32(this.counter);
+    e.u32(this._counter);
     e.u8(2);
-    e.u32(this.prev_counter);
+    e.u32(this._prev_counter);
     e.u8(3);
-    this.ratchet_key.encode(e);
+    this._ratchet_key.encode(e);
     e.u8(4);
-    return e.bytes(this.cipher_text);
+    return e.bytes(this._cipher_text);
   }
 
   /**

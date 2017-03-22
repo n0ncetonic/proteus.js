@@ -20,8 +20,8 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-const TypeUtil = require('../util/TypeUtil');
 const DecodeError = require('../errors/DecodeError');
+const TypeUtil = require('../util/TypeUtil');
 
 /** @module message */
 

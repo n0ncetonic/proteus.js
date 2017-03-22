@@ -20,7 +20,6 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-
 const TypeUtil = require('../util/TypeUtil');
 
 const IdentityKey = require('./IdentityKey');
@@ -37,11 +36,36 @@ class IdentityKeyPair {
   constructor() {
     const key_pair = new KeyPair();
 
-    this.version = 1;
-    this.secret_key = key_pair.secret_key;
-    this.public_key = new IdentityKey(key_pair.public_key);
+    this._version = 1;
+    this._secret_key = key_pair.secret_key;
+    this._public_key = new IdentityKey(key_pair.public_key);
+  }
 
-    return this;
+  /** @type {number} */
+  get version() {
+    return this._version;
+  }
+
+  set version(version) {
+    this._version = version;
+  }
+
+  /** @type {keys.PublicKey} */
+  get public_key() {
+    return this._public_key;
+  }
+
+  set public_key(public_key) {
+    this._public_key = public_key;
+  }
+
+  /** @type {keys.SecretKey} */
+  get secret_key() {
+    return this._secret_key;
+  }
+
+  set secret_key(secret_key) {
+    this._secret_key = secret_key;
   }
 
   /** @returns {ArrayBuffer} */
@@ -49,21 +73,6 @@ class IdentityKeyPair {
     const e = new CBOR.Encoder();
     this.encode(e);
     return e.get_buffer();
-  }
-
-  /** @type {number} */
-  get version() {
-    return this.version;
-  }
-
-  /** @type {number} */
-  get secret_key() {
-    return this.secret_key;
-  }
-
-  /** @type {keys.IdentityKey} */
-  get public_key() {
-    return this.public_key;
   }
 
   /**
@@ -84,11 +93,11 @@ class IdentityKeyPair {
   encode(e) {
     e.object(3);
     e.u8(0);
-    e.u8(this.version);
+    e.u8(this._version);
     e.u8(1);
-    this.secret_key.encode(e);
+    this._secret_key.encode(e);
     e.u8(2);
-    return this.public_key.encode(e);
+    return this._public_key.encode(e);
   }
 
   /**

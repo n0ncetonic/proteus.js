@@ -20,8 +20,6 @@
 'use strict';
 
 const CBOR = require('wire-webapp-cbor');
-
-
 const TypeUtil = require('../util/TypeUtil');
 
 const ChainKey = require('./ChainKey');
@@ -58,7 +56,7 @@ class RootKey {
     TypeUtil.assert_is_instance(PublicKey, theirs);
 
     const secret = ours.secret_key.shared_secret(theirs);
-    const dsecs = DerivedSecrets.kdf(secret, this.key.key, 'dh_ratchet');
+    const dsecs = DerivedSecrets.kdf(secret, this._key.key, 'dh_ratchet');
 
     return [
       RootKey.from_cipher_key(dsecs.cipher_key),
@@ -73,7 +71,7 @@ class RootKey {
   encode(e) {
     e.object(1);
     e.u8(0);
-    return this.key.encode(e);
+    return this._key.encode(e);
   }
 
   /**

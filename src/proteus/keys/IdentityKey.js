@@ -22,9 +22,8 @@
 const CBOR = require('wire-webapp-cbor');
 const sodium = require('libsodium-wrappers-sumo');
 
-const TypeUtil = require('../util/TypeUtil');
-
 const PublicKey = require('./PublicKey');
+const TypeUtil = require('../util/TypeUtil');
 
 /** @module keys */
 
@@ -38,21 +37,26 @@ const PublicKey = require('./PublicKey');
 class IdentityKey {
   constructor(public_key) {
     TypeUtil.assert_is_instance(PublicKey, public_key);
+    this._public_key = public_key;
+  }
 
-    /** @type {keys.PublicKey} */
-    this.public_key = public_key;
+  /** @type {keys.PublicKey} */
+  get public_key() {
+    return this._public_key;
+  }
 
-    return this;
+  set public_key(public_key) {
+    this._public_key = public_key;
   }
 
   /** @returns {string} */
   fingerprint() {
-    return this.public_key.fingerprint();
+    return this._public_key.fingerprint();
   }
 
   /** @returns {string} */
   toString() {
-    return sodium.to_hex(this.public_key);
+    return sodium.to_hex(this._public_key);
   }
 
   /**
@@ -62,7 +66,7 @@ class IdentityKey {
   encode(e) {
     e.object(1);
     e.u8(0);
-    return this.public_key.encode(e);
+    return this._public_key.encode(e);
   }
 
   /**
