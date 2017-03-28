@@ -16,6 +16,7 @@ module.exports = {
   },
   externals: {
     'libsodium-wrappers-sumo': 'sodium',
+    'libsodium-neon': 'empty',
   },
   plugins: [
     new webpack.BannerPlugin(`${pkg.name} v${pkg.version}`)
