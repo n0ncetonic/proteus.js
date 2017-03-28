@@ -41,12 +41,6 @@ class Envelope {
     if (typeof message !== 'undefined') {
       TypeUtil.assert_is_instance(Message, message);
 
-      const message_enc = new Uint8Array(message.serialise());
-
-      /** @type {Uint8Array} */
-      this.mac = mac_key.sign(message_enc);
-
-      /** @type {Uint8Array} */
       const serialized_message = new Uint8Array(message.serialise());
 
       /** @type {Uint8Array} */
