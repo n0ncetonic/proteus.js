@@ -19,7 +19,7 @@
   "main": "dist/commonjs/proteus.js",
   "name": "wire-webapp-proteus",
   "optionalDependencies": {
-    "libsodium-neon": "2.0.4"
+    "libsodium-neon": "2.0.5"
   },
   "repository": {
     "type": "git",
