@@ -156,7 +156,8 @@ class Session {
         } else {
           return resolve([session, plain]);
         }
-      }).catch(reject);
+      })
+      .catch(reject);
     });
   }
 
@@ -265,7 +266,7 @@ class Session {
   /**
    * @param {!session.PreKeyStore} prekey_store
    * @param {!message.Envelope} envelope
-   * @returns {Promise<string>}
+   * @returns {Promise<Uint8Array>}
    * @throws {errors.DecryptError}
    */
   decrypt(prekey_store, envelope) {
@@ -295,7 +296,7 @@ class Session {
    * @param {!message.Message} msg
    * @param {!session.PreKeyStore} prekey_store
    * @private
-   * @returns {Promise<string>}
+   * @returns {Promise<Uint8Array>}
    * @throws {errors.DecryptError}
    */
   _decrypt_prekey_message(envelope, msg, prekey_store) {
@@ -314,7 +315,6 @@ class Session {
 
           this._insert_session_state(msg.message.session_tag, state);
           this.pending_prekey = null;
-
           return plaintext;
         });
       }
@@ -326,7 +326,7 @@ class Session {
    * @param {!message.Envelope} envelope
    * @param {!message.Message} msg
    * @private
-   * @returns {string}
+   * @returns {Uint8Array}
    */
   _decrypt_cipher_message(envelope, msg) {
     let state = this.session_states[msg.session_tag];
