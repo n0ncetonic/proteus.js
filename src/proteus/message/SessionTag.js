@@ -36,7 +36,7 @@ if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodiu
  */
 class SessionTag {
   constructor() {
-    /** @type {Buffer} */
+    /** @type {Uint8Array} */
     this.tag = RandomUtil.random_bytes(16);
   }
 

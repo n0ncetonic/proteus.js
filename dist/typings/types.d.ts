@@ -399,8 +399,8 @@ export module keys {
        /** @type {keys.SecretKey} */
        secret_key: keys.SecretKey;
 
-       /** @type {keys.PublicKey} */
-       public_key: keys.PublicKey;
+       /** @type {keys.IdentityKey} */
+       public_key: keys.IdentityKey;
 
        /** @returns {ArrayBuffer} */
        serialise(): ArrayBuffer;
@@ -920,8 +920,8 @@ export module message {
         */
        constructor();
 
-       /** @type {Buffer} */
-       tag: Buffer;
+       /** @type {Uint8Array} */
+       tag: Uint8Array;
 
        /** @returns {string} */
        toString(): string;
@@ -1042,6 +1042,9 @@ export module session {
    class PreKeyStore {
        /** @class PreKeyStore */
        constructor();
+
+       /** @type {Array<number>} */
+       prekeys: Array<number>;
 
        /**
         * @param {!number} prekey_id

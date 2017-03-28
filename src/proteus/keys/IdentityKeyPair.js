@@ -42,7 +42,7 @@ class IdentityKeyPair {
     /** @type {keys.SecretKey} */
     this.secret_key = key_pair.secret_key;
 
-    /** @type {keys.PublicKey} */
+    /** @type {keys.IdentityKey} */
     this.public_key = new IdentityKey(key_pair.public_key);
   }
 
