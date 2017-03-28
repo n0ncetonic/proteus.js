@@ -7,7 +7,6 @@
   "description": "Axolotl protocol implementation for JavaScript.",
   "devDependencies": {
     "chai": "3.5.0",
-    "cpx": "1.5.0",
     "eslint": "3.17.1",
     "jsdoc": "3.4.3",
     "mocha": "2.5.3",
@@ -16,15 +15,14 @@
   },
   "homepage": "https://github.com/wireapp/proteus.js",
   "license": "GPL-3.0",
-  "main": "dist/commonjs/proteus.js",
+  "main": "src/proteus.js",
   "name": "wire-webapp-proteus",
   "repository": {
     "type": "git",
     "url": "git://github.com/wireapp/proteus.js.git"
   },
   "scripts": {
-    "bundle": "npm run copy && webpack --progress",
-    "copy": "cpx 'src/**/*' dist/commonjs",
+    "bundle": "webpack --progress",
     "types": "jsdoc --verbose --pedantic --configure jsdoc.json src/ && node replace.js",
     "lint": "eslint src/",
     "prepublish": "npm run bundle && npm test",
