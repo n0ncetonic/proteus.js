@@ -34,7 +34,7 @@ const RandomUtil = require('../util/RandomUtil');
  */
 class SessionTag {
   constructor() {
-    /** @type {Buffer} */
+    /** @type {Uint8Array} */
     this.tag = RandomUtil.random_bytes(16);
   }
 
