@@ -15,6 +15,9 @@ export module derived {
         */
        constructor(key: Uint8Array);
 
+       /** @type {Uint8Array} */
+       key: Uint8Array;
+
        /**
         * @param {!(ArrayBuffer|String|Uint8Array)} plaintext - The text to encrypt
         * @param {!Uint8Array} nonce - Counter as nonce
@@ -82,6 +85,9 @@ export module derived {
         */
        constructor(key: Uint8Array);
 
+       /** @type {Uint8Array} */
+       key: Uint8Array;
+
        /**
         * Hash-based message authentication code
         * @param {!(string|Uint8Array)} msg
@@ -128,6 +134,9 @@ export module errors {
         */
        constructor(message?: string);
 
+       /** @type {string} */
+       message: string;
+
    }
 
    /**
@@ -142,6 +151,9 @@ export module errors {
         * @returns {string}
         */
        constructor(message?: string);
+
+       /** @type {string} */
+       message: string;
 
    }
 
@@ -158,6 +170,9 @@ export module errors {
         */
        constructor(message?: string);
 
+       /** @type {string} */
+       message: string;
+
    }
 
    /**
@@ -173,6 +188,9 @@ export module errors {
         */
        constructor(message?: string);
 
+       /** @type {string} */
+       message: string;
+
    }
 
    /**
@@ -185,6 +203,9 @@ export module errors {
         * @param {string} [message]
         */
        constructor(message?: string);
+
+       /** @type {string} */
+       message: string;
 
    }
 
@@ -199,6 +220,9 @@ export module errors {
         */
        constructor(message?: string);
 
+       /** @type {string} */
+       message: string;
+
    }
 
    /**
@@ -211,6 +235,9 @@ export module errors {
         * @param {string} [message]
         */
        constructor(message?: string);
+
+       /** @type {string} */
+       message: string;
 
    }
 
@@ -225,6 +252,9 @@ export module errors {
         */
        constructor(message?: string);
 
+       /** @type {string} */
+       message: string;
+
    }
 
    /**
@@ -237,6 +267,9 @@ export module errors {
         * @param {string} [message]
         */
        constructor(message?: string);
+
+       /** @type {string} */
+       message: string;
 
    }
 
@@ -251,6 +284,9 @@ export module errors {
         */
        constructor(message?: string);
 
+       /** @type {string} */
+       message: string;
+
    }
 
    /**
@@ -264,6 +300,9 @@ export module errors {
         */
        constructor(message?: string);
 
+       /** @type {string} */
+       message: string;
+
    }
 
    /**
@@ -276,6 +315,9 @@ export module errors {
         * @param {string} [message]
         */
        constructor(message?: string);
+
+       /** @type {string} */
+       message: string;
 
    }
 
@@ -317,6 +359,9 @@ export module keys {
         */
        constructor(public_key: keys.PublicKey);
 
+       /** @type {keys.PublicKey} */
+       public_key: keys.PublicKey;
+
        /** @returns {string} */
        fingerprint(): string;
 
@@ -347,6 +392,15 @@ export module keys {
         * @returns {IdentityKeyPair} - `this`
         */
        constructor();
+
+       /** @type {number} */
+       version: number;
+
+       /** @type {keys.SecretKey} */
+       secret_key: keys.SecretKey;
+
+       /** @type {keys.PublicKey} */
+       public_key: keys.PublicKey;
 
        /** @returns {ArrayBuffer} */
        serialise(): ArrayBuffer;
@@ -383,6 +437,12 @@ export module keys {
         * @returns {KeyPair} - `this`
         */
        constructor();
+
+       /** @type {keys.PublicKey} */
+       public_key: keys.PublicKey;
+
+       /** @type {keys.SecretKey} */
+       secret_key: keys.SecretKey;
 
        /**
         * @description Ed25519 keys can be converted to Curve25519 keys, so that the same key pair can be
@@ -448,6 +508,15 @@ export module keys {
        /** @returns {PreKey} */
        static last_resort(): PreKey;
 
+       /** @type {number} */
+       version: number
+
+       /** @type {number} */
+       key_id: number;
+
+       /** @type {keys.KeyPair} */
+       key_pair: keys.KeyPair;
+
        /**
         * @param {!number} start
         * @param {!number} size
@@ -509,6 +578,21 @@ export module keys {
         * @returns {PreKeyBundle} - `this`
         */
        constructor(public_identity_key: keys.IdentityKey, prekey: keys.PreKey);
+
+       /** @type {number} */
+       prekey_id: number;
+
+       /** @type {keys.PublicKey} */
+       public_key: keys.PublicKey;
+
+       /** @type {number} */
+       version: number;
+
+       /** @type {keys.IdentityKey} */
+       identity_key: keys.IdentityKey;
+
+       /** @type {Uint8Array} */
+       signature: Uint8Array;
 
        /**
         * @param {!keys.IdentityKeyPair} identity_pair
@@ -572,6 +656,12 @@ export module keys {
         */
        constructor(pub_edward?: Uint8Array, pub_curve?: Uint8Array);
 
+       /** @type {Uint8Array} */
+       pub_edward: Uint8Array;
+
+       /** @type {Uint8Array} */
+       pub_curve: Uint8Array;
+
        /**
         * This function can be used to verify a message signature.
         *
@@ -612,6 +702,12 @@ export module keys {
         * @returns {SecretKey} - `this`
         */
        constructor(sec_edward: Uint8Array, sec_curve: Uint8Array);
+
+       /** @type {Uint8Array} */
+       sec_edward: Uint8Array;
+
+       /** @type {Uint8Array} */
+       sec_curve: Uint8Array;
 
        /**
         * This function can be used to compute a message signature.
@@ -667,6 +763,21 @@ export module message {
         */
        constructor(session_tag: message.SessionTag, counter: number, prev_counter: number, ratchet_key: keys.PublicKey, cipher_text: Uint8Array);
 
+       /** @type {message.SessionTag} */
+       session_tag: message.SessionTag;
+
+       /** @type {number} */
+       counter: number;
+
+       /** @type {number} */
+       prev_counter: number;
+
+       /** @type {keys.PublicKey} */
+       ratchet_key: keys.PublicKey;
+
+       /** @type {Uint8Array} */
+       cipher_text: Uint8Array;
+
        /**
         * @param {!CBOR.Encoder} e
         * @returns {CBOR.Encoder}
@@ -695,6 +806,18 @@ export module message {
         * @returns {Envelope}
         */
        constructor(mac_key: derived.MacKey, message: message.Message);
+
+       /** @type {Uint8Array} */
+       _message_enc: Uint8Array;
+
+       /** @type {Uint8Array} */
+       mac: Uint8Array;
+
+       /** @type {message.Message} */
+       message: message.Message;
+
+       /** @type {number} */
+       version: number;
 
        /**
         * @param {!derived.MacKey} mac_key - The remote party's MacKey
@@ -760,6 +883,18 @@ export module message {
         */
        constructor(prekey_id: number, base_key: keys.PublicKey, identity_key: keys.IdentityKey, message: message.CipherMessage);
 
+       /** @type {number} */
+       prekey_id: number;
+
+       /** @type {keys.PublicKey} */
+       base_key: keys.PublicKey;
+
+       /** @type {keys.IdentityKey} */
+       identity_key: keys.IdentityKey;
+
+       /** @type {message.CipherMessage} */
+       message: message.CipherMessage;
+
        /**
         * @param {!CBOR.Encoder} e
         * @returns {CBOR.Encoder}
@@ -784,6 +919,9 @@ export module message {
         * @returns {SessionTag} - `this`
         */
        constructor();
+
+       /** @type {Buffer} */
+       tag: Buffer;
 
        /** @returns {string} */
        toString(): string;
@@ -859,6 +997,15 @@ export module session {
         */
        constructor(cipher_key: derived.CipherKey, mac_key: derived.MacKey, counter: number);
 
+       /** @type {derived.CipherKey} */
+       cipher_key: derived.CipherKey;
+
+       /** @type {derived.MacKey} */
+       mac_key: derived.MacKey;
+
+       /** @type {number} */
+       counter: number;
+
        /**
         * @returns {Uint8Array}
         * @private
@@ -926,6 +1073,15 @@ export module session {
         * @returns {message.PreKeyMessage} - `this`
         */
        constructor(chain_key: session.ChainKey, public_key: keys.PublicKey);
+
+       /** @type {session.ChainKey} */
+       chain_key: session.ChainKey;
+
+       /** @type {keys.PublicKey} */
+       ratchet_key: keys.PublicKey;
+
+       /** @type {Array<message.Message>} */
+       message_keys: Array<message.Message>;
 
        /** @type {number} */
        static MAX_COUNTER_GAP: number;
@@ -1012,6 +1168,12 @@ export module session {
         */
        constructor(chain_key: session.ChainKey, keypair: keys.KeyPair);
 
+       /** @type {session.ChainKey} */
+       chain_key: session.ChainKey;
+
+       /** @type {keys.KeyPair} */
+       ratchet_key: keys.KeyPair;
+
        /**
         * @param {!CBOR.Encoder} e
         * @returns {CBOR.Encoder}
@@ -1025,6 +1187,8 @@ export module session {
        static decode(d: CBOR.Decoder): SendChain;
 
    }
+
+   interface SessionFromMessageTuple extends Array<session.Session | Uint8Array> { 0: session.Session; 1: Uint8Array; }
 
    /**
     * @class Session
@@ -1041,6 +1205,27 @@ export module session {
        /** @type {number} */
        static MAX_SESSION_STATES: number;
 
+       /** @type {number} */
+       counter: number;
+
+       /** @type {keys.IdentityKeyPair} */
+       local_identity: keys.IdentityKeyPair;
+
+       /** @type {Array<(number|keys.PublicKey)>} */
+       pending_prekey: Array<(number|keys.PublicKey)>;
+
+       /** @type {keys.IdentityKey} */
+       remote_identity: keys.IdentityKey;
+
+       /** @type {Array<session.SessionState>} */
+       session_states: Array<session.SessionState>;
+
+       /** @type {message.SessionTag} */
+       session_tag: message.SessionTag;
+
+       /** @type {number} */
+       version: number;
+
        /**
         * @param {!keys.IdentityKeyPair} local_identity - Alice's Identity Key Pair
         * @param {!keys.PreKeyBundle} remote_pkbundle - Bob's Pre-Key Bundle
@@ -1052,11 +1237,11 @@ export module session {
         * @param {!keys.IdentityKeyPair} our_identity
         * @param {!session.PreKeyStore} prekey_store
         * @param {!message.Envelope} envelope
-        * @returns {Promise<Array<Session|string>>}
+        * @returns {Promise<SessionFromMessageTuple>}
         * @throws {errors.DecryptError.InvalidMessage}
         * @throws {errors.DecryptError.PrekeyNotFound}
         */
-       static init_from_message(our_identity: keys.IdentityKeyPair, prekey_store: session.PreKeyStore, envelope: message.Envelope): Promise<(Session|string)[]>;
+       static init_from_message(our_identity: keys.IdentityKeyPair, prekey_store: session.PreKeyStore, envelope: message.Envelope): Promise<SessionFromMessageTuple>;
 
        /**
         * @param {!session.PreKeyStore} pre_key_store
@@ -1147,6 +1332,18 @@ export module session {
    class SessionState {
        /** @class SessionState */
        constructor();
+
+       /** @type {Array<session.RecvChain>} */
+       recv_chains: Array<session.RecvChain>;
+
+       /** @type {session.SendChain} */
+       send_chain: session.SendChain;
+
+       /** @type {session.RootKey} */
+       root_key: session.RootKey;
+
+       /** @type {number} */
+       prev_counter: number;
 
        /**
         * @param {!keys.IdentityKeyPair} alice_identity_pair
