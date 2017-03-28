@@ -27,6 +27,8 @@ const PublicKey = require('./PublicKey');
 const SecretKey = require('./SecretKey');
 const TypeUtil = require('../util/TypeUtil');
 
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
+
 /** @module keys */
 
 /**

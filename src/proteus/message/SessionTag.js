@@ -26,6 +26,8 @@ const TypeUtil = require('../util/TypeUtil');
 const DecodeError = require('../errors/DecodeError');
 const RandomUtil = require('../util/RandomUtil');
 
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
+
 /** @module message */
 
 /**

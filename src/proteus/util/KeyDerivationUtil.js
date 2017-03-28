@@ -24,6 +24,8 @@ const ArrayUtil = require('../util/ArrayUtil');
 const MemoryUtil = require('../util/MemoryUtil');
 const TypeUtil = require('../util/TypeUtil');
 
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
+
 /** @module util */
 
 const KeyDerivationUtil = {

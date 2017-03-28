@@ -25,6 +25,8 @@ const sodium = require('libsodium-wrappers-sumo');
 const PublicKey = require('./PublicKey');
 const TypeUtil = require('../util/TypeUtil');
 
+if (typeof window === 'undefined') try { Object.assign(sodium, require('libsodium-neon')); } catch (e) { /**/ }
+
 /** @module keys */
 
 /**
