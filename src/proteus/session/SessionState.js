@@ -80,11 +80,11 @@ class SessionState {
       alice_base.secret_key.shared_secret(bob_pkbundle.public_key),
     ]);
 
-    const dsecs = DerivedSecrets.kdf_without_salt(master_key, 'handshake');
+    const derived_secrets = DerivedSecrets.kdf_without_salt(master_key, 'handshake');
     MemoryUtil.zeroize(master_key);
 
-    const rootkey = RootKey.from_cipher_key(dsecs.cipher_key);
-    const chainkey = ChainKey.from_mac_key(dsecs.mac_key, 0);
+    const rootkey = RootKey.from_cipher_key(derived_secrets.cipher_key);
+    const chainkey = ChainKey.from_mac_key(derived_secrets.mac_key, 0);
 
     const recv_chains = [new RecvChain(chainkey, bob_pkbundle.public_key)];
 
@@ -119,11 +119,11 @@ class SessionState {
       bob_prekey.secret_key.shared_secret(alice_base),
     ]);
 
-    const dsecs = DerivedSecrets.kdf_without_salt(master_key, 'handshake');
+    const derived_secrets = DerivedSecrets.kdf_without_salt(master_key, 'handshake');
     MemoryUtil.zeroize(master_key);
 
-    const rootkey = RootKey.from_cipher_key(dsecs.cipher_key);
-    const chainkey = ChainKey.from_mac_key(dsecs.mac_key, 0);
+    const rootkey = RootKey.from_cipher_key(derived_secrets.cipher_key);
+    const chainkey = ChainKey.from_mac_key(derived_secrets.mac_key, 0);
     const send_chain = new SendChain(chainkey, bob_prekey);
 
     const state = new SessionState();
@@ -216,12 +216,11 @@ class SessionState {
     const rc = this.recv_chains[idx];
     if (msg.counter < rc.chain_key.idx) {
       return rc.try_message_keys(envelope, msg);
-
     } else if (msg.counter == rc.chain_key.idx) {
       const mks = rc.chain_key.message_keys();
 
       if (!envelope.verify(mks.mac_key)) {
-        throw new DecryptError.InvalidSignature();
+        throw new DecryptError.InvalidSignature(`Decryption of a message in sync failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`);
       }
 
       const plain = mks.decrypt(msg.cipher_text);
@@ -232,7 +231,7 @@ class SessionState {
       const [chk, mk, mks] = rc.stage_message_keys(msg);
 
       if (!envelope.verify(mk.mac_key)) {
-        throw new DecryptError.InvalidSignature();
+        throw new DecryptError.InvalidSignature(`Decryption of a newer message failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`);
       }
 
       const plain = mk.decrypt(msg.cipher_text);

@@ -48,8 +48,9 @@ class MacKey {
   }
 
   /**
-   * @param {!Uint8Array} signature
-   * @param {!Uint8Array} msg
+   * Verifies the signature of a given message by resigning it.
+   * @param {!Uint8Array} signature - Mac signature (HMAC) which needs to get verified
+   * @param {!Uint8Array} msg - Unsigned message
    * @returns {boolean}
    */
   verify(signature, msg) {
