@@ -1,13 +1,13 @@
 {
   "dependencies": {
     "ed2curve": "0.2.1",
-    "libsodium-wrappers-sumo": "0.5.0",
+    "libsodium-wrappers-sumo": "0.5.1",
     "wire-webapp-cbor": "2.0.0"
   },
   "description": "Axolotl protocol implementation for JavaScript.",
   "devDependencies": {
     "chai": "3.5.0",
-    "eslint": "3.17.1",
+    "eslint": "3.18.0",
     "jsdoc": "3.4.3",
     "mocha": "2.5.3",
     "tsd-jsdoc": "dcodeio/tsd-jsdoc#fe76c4dc071b00bb549d3af7a3bad8c555999e81",
@@ -25,7 +25,7 @@
     "bundle": "webpack --progress",
     "types": "jsdoc --verbose --pedantic --configure jsdoc.json src/ && node replace.js",
     "lint": "eslint src/",
-    "prepublish": "npm run bundle && npm test",
+    "prepublish": "npm run bundle && npm run types && npm test",
     "test": "mocha -s 30000 -t 30000 --recursive test/harness.js test --trace-warnings"
   },
   "types": "dist/typings/types.d.ts",
