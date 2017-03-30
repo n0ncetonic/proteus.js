@@ -17,8 +17,6 @@
  *
  */
 
-/* eslint no-unused-vars: "off" */
-
 'use strict';
 
 const ProteusError = require('./ProteusError');
@@ -28,88 +26,105 @@ const ProteusError = require('./ProteusError');
 /**
  * @extends ProteusError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class DecryptError extends ProteusError {
-  constructor(message = 'Unknown decryption error') {
-    super();
-    this.message = message;
+  constructor(message = 'Unknown decryption error', code) {
+    super(message, code);
+  }
+
+  static get CODE() {
+    return {
+      CASE_200: 200,
+      CASE_201: 201,
+      CASE_202: 202,
+      CASE_203: 203,
+      CASE_204: 204,
+      CASE_205: 205,
+      CASE_206: 206,
+      CASE_207: 207,
+      CASE_208: 208,
+      CASE_209: 209,
+      CASE_210: 210,
+      CASE_211: 211,
+    };
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class RemoteIdentityChanged extends DecryptError {
-  constructor(message = 'Remote identity changed') {
-    super();
-    this.message = message;
+  constructor(message = 'Remote identity changed', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class InvalidSignature extends DecryptError {
-  constructor(message = 'Invalid signature') {
-    super();
-    this.message = message;
+  constructor(message = 'Invalid signature', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class InvalidMessage extends DecryptError {
-  constructor(message = 'Invalid message') {
-    super();
-    this.message = message;
+  constructor(message = 'Invalid message', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class DuplicateMessage extends DecryptError {
-  constructor(message = 'Duplicate message') {
-    super();
-    this.message = message;
+  constructor(message = 'Duplicate message', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class TooDistantFuture extends DecryptError {
-  constructor(message = 'Message is from too distant in the future') {
-    super();
-    this.message = message;
+  constructor(message = 'Message is from too distant in the future', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class OutdatedMessage extends DecryptError {
-  constructor(message = 'Outdated message') {
-    super();
-    this.message = message;
+  constructor(message = 'Outdated message', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class PrekeyNotFound extends DecryptError {
-  constructor(message = 'Pre-key not found') {
-    super();
-    this.message = message;
+  constructor(message = 'Pre-key not found', code) {
+    super(message, code);
   }
 }
 

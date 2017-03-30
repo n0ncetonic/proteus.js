@@ -318,6 +318,7 @@ describe('Session', () => {
           .then(() => assert.fail('should have raised Proteus.errors.DecryptError.DuplicateMessage'))
           .catch((err) => {
             assert.instanceOf(err, Proteus.errors.DecryptError.DuplicateMessage);
+            assert.strictEqual(err.code, Proteus.errors.DecryptError.CODE.CASE_209);
             resolve();
           });
         });
@@ -625,7 +626,10 @@ describe('Session', () => {
       return Proteus.session.Session.init_from_message(bob_ident, bob_store, hello_bob);
     })
     .then(() => assert.fail('should have thrown Proteus.errors.ProteusError'))
-    .catch((err) => assert.instanceOf(err, Proteus.errors.ProteusError))
+    .catch((err) => {
+      assert.instanceOf(err, Proteus.errors.ProteusError);
+      assert.strictEqual(err.code, Proteus.errors.ProteusError.prototype.CODE.CASE_101);
+    })
     .then(() => {
       done();
     })

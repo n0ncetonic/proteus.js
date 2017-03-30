@@ -29,4 +29,20 @@ describe('TypeUtil', () => {
     Proteus.util.TypeUtil.assert_is_instance([Array, String], []);
     return assert.throws(() => Proteus.util.TypeUtil.assert_is_instance([Array, String], {}));
   });
+
+  it('throws errors with error codes', () => {
+    try {
+      Proteus.util.TypeUtil.assert_is_instance(Uint8Array, 1337);
+    } catch (error) {
+      assert.instanceOf(error, Proteus.errors.InputError.TypeError);
+      assert.strictEqual(error.code, Proteus.errors.InputError.TypeError.CODE.CASE_402);
+    }
+
+    try {
+      Proteus.util.TypeUtil.assert_is_integer('Hello');
+    } catch (error) {
+      assert.instanceOf(error, Proteus.errors.InputError.TypeError);
+      assert.strictEqual(error.code, Proteus.errors.InputError.TypeError.CODE.CASE_404);
+    }
+  });
 });

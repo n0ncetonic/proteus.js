@@ -24,6 +24,7 @@ module.exports = {
     ProteusError: require('./proteus/errors/ProteusError'),
     DecodeError: require('./proteus/errors/DecodeError'),
     DecryptError: require('./proteus/errors/DecryptError'),
+    InputError: require('./proteus/errors/InputError'),
   },
 
   keys: {

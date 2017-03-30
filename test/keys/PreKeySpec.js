@@ -35,6 +35,22 @@ describe('PreKey', () => {
       assert.throws(() => Proteus.keys.PreKey.new(4242.42));
     });
 
+    it('throws errors with error codes', () => {
+      try {
+        Proteus.keys.PreKey.new(Proteus.keys.PreKey.MAX_PREKEY_ID + 1);
+      } catch (error) {
+        assert.instanceOf(error, Proteus.errors.InputError.RangeError);
+        assert.strictEqual(error.code, Proteus.errors.InputError.CODE.CASE_400);
+      }
+
+      try {
+        Proteus.keys.PreKey.generate_prekeys(Proteus.keys.PreKey.MAX_PREKEY_ID + 1, 1);
+      } catch (error) {
+        assert.instanceOf(error, Proteus.errors.InputError.RangeError);
+        assert.strictEqual(error.code, Proteus.errors.InputError.CODE.CASE_401);
+      }
+    });
+
     it('generates ranges of PreKeys', () => {
       let prekeys = Proteus.keys.PreKey.generate_prekeys(0, 0);
       assert.strictEqual(prekeys.length, 0);

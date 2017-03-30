@@ -23,6 +23,7 @@ const CBOR = require('wire-webapp-cbor');
 
 const ClassUtil = require('../util/ClassUtil');
 const DontCallConstructor = require('../errors/DontCallConstructor');
+const InputError = require('../errors/InputError');
 const TypeUtil = require('../util/TypeUtil');
 
 const KeyPair = require('./KeyPair');
@@ -48,13 +49,14 @@ class PreKey {
   /**
    * @param {!number} pre_key_id
    * @returns {PreKey} - `this`
+   * @throws {errors.InputError.RangeError}
    */
   static new(pre_key_id) {
     TypeUtil.assert_is_integer(pre_key_id);
 
     if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
-      throw new RangeError(
-        `Argument pre_key_id (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, 14
+      throw new InputError.RangeError(
+        `PreKey ID (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_400
       );
     }
 
@@ -75,14 +77,15 @@ class PreKey {
    * @param {!number} start
    * @param {!number} size
    * @returns {Array<PreKey>}
+   * @throws {errors.InputError.RangeError}
    */
   static generate_prekeys(start, size) {
     const check_integer = (value) => {
       TypeUtil.assert_is_integer(value);
 
       if (value < 0 || value > PreKey.MAX_PREKEY_ID) {
-        throw new RangeError(
-          `Arguments must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, 15
+        throw new InputError.RangeError(
+          `PreKey ID (${value}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_401
         );
       }
     };

@@ -118,13 +118,13 @@ class Session {
       const pkmsg = (() => {
         if (envelope.message instanceof CipherMessage) {
           throw new DecryptError.InvalidMessage(
-            'Can\'t initialise a session from a CipherMessage.', 1
+            'Can\'t initialise a session from a CipherMessage.', DecryptError.CODE.CASE_201
           );
         } else if (envelope.message instanceof PreKeyMessage) {
           return envelope.message;
         } else {
           throw new DecryptError.InvalidMessage(
-            'Unknown message format: The message is neither a "CipherMessage" nor a "PreKeyMessage".', 2
+            'Unknown message format: The message is neither a "CipherMessage" nor a "PreKeyMessage".', DecryptError.CODE.CASE_202
           );
         }
       })();
@@ -145,9 +145,9 @@ class Session {
             MemoryUtil.zeroize(prekey_store.prekeys[pkmsg.prekey_id]);
             return prekey_store.remove(pkmsg.prekey_id)
               .then(() => resolve([session, plain]))
-              .catch((error) =>
-                reject(new DecryptError.PrekeyNotFound(`Could not delete PreKey: ${error.message}`))
-              );
+              .catch((error) => {
+                reject(new DecryptError.PrekeyNotFound(`Could not delete PreKey: ${error.message}`, DecryptError.CODE.CASE_203));
+              });
           } else {
             return resolve([session, plain]);
           }
@@ -173,7 +173,7 @@ class Session {
             pre_key_message.base_key
           );
         }
-        throw new ProteusError('Unable to get PreKey from PreKey store.', 3);
+        throw new ProteusError('Unable to get PreKey from PreKey store.', ProteusError.prototype.CODE.CASE_101);
       });
   }
 
@@ -245,7 +245,7 @@ class Session {
 
       if (!state) {
         return reject(new ProteusError(
-          `Could not find session for tag '${(this.session_tag || '').toString()}'.`
+          `Could not find session for tag '${(this.session_tag || '').toString()}'.`, ProteusError.prototype.CODE.CASE_102
         ));
       }
 
@@ -276,11 +276,11 @@ class Session {
         const expected_fingerprint = this.remote_identity.fingerprint();
         if (actual_fingerprint !== expected_fingerprint) {
           const message = `Fingerprints do not match: We expected '${expected_fingerprint}', but received '${actual_fingerprint}'.`;
-          throw new DecryptError.RemoteIdentityChanged(message, 4);
+          throw new DecryptError.RemoteIdentityChanged(message, DecryptError.CODE.CASE_204);
         }
         return resolve(this._decrypt_prekey_message(envelope, msg, prekey_store));
       } else {
-        throw new DecryptError('Unknown message type.', 5);
+        throw new DecryptError('Unknown message type.', DecryptError.CODE.CASE_200);
       }
     });
   }
@@ -327,8 +327,7 @@ class Session {
     let state = this.session_states[msg.session_tag];
     if (!state) {
       throw new DecryptError.InvalidMessage(
-        `We received a message with session tag '${(msg.session_tag || '').toString()}', but we ` +
-        `don't have a session for this tag.`, 6
+        `We received a message with session tag '${(msg.session_tag || '').toString()}', but we don't have a session for this tag.`, DecryptError.CODE.CASE_205
       );
     }
 
@@ -426,7 +425,7 @@ class Session {
         case 2:
           const ik = IdentityKey.decode(d);
           if (local_identity.public_key.fingerprint() !== ik.fingerprint()) {
-            throw new DecodeError.LocalIdentityChanged(null, 7);
+            throw new DecodeError.LocalIdentityChanged(null, DecodeError.CODE.CASE_300);
           }
           self.local_identity = local_identity;
           break;
@@ -451,7 +450,7 @@ class Session {
               }
               break;
             default:
-              throw new DecodeError.InvalidType(null, 8);
+              throw new DecodeError.InvalidType(null, DecodeError.CODE.CASE_301);
           }
           break;
         case 5:

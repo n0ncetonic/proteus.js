@@ -24,18 +24,27 @@
 /**
  * @class ProteusError
  * @param {!string} message
+ * @param {string} [code]
  * @extends Error
  * @returns {ProteusError} - `this`
  */
 const ProteusError = (function() {
-  const func = function(message) {
-    this.name = this.constructor.name;
+  const func = function(message, code) {
+    this.code = code;
     this.message = message;
+    this.name = this.constructor.name;
     this.stack = (new Error).stack;
   };
 
   func.prototype = new Error;
   func.prototype.constructor = func;
+  func.prototype.CODE = {
+    CASE_100: 100,
+    CASE_101: 101,
+    CASE_102: 102,
+    CASE_103: 103,
+    CASE_104: 104,
+  };
 
   return func;
 })();

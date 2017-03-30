@@ -1,6 +1,6 @@
 /*
  * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
+ * Copyright (C) 2017 Wire Swiss GmbH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,6 @@
  *
  */
 
-/* eslint no-unused-vars: "off" */
-
 'use strict';
 
 const ProteusError = require('./ProteusError');
@@ -31,61 +29,50 @@ const ProteusError = require('./ProteusError');
  * @param {string} [code]
  * @returns {string}
  */
-class DecodeError extends ProteusError {
-  constructor(message = 'Unknown decoding error', code) {
+class InputError extends ProteusError {
+  constructor(message = 'Invalid input', code) {
     super(message, code);
   }
 
   static get CODE() {
     return {
-      CASE_300: 300,
-      CASE_301: 301,
-      CASE_302: 302,
-      CASE_303: 303,
+      CASE_400: 400,
+      CASE_401: 401,
+      CASE_402: 402,
+      CASE_403: 403,
+      CASE_404: 404,
+      CASE_405: 405,
     };
   }
 }
 
 /**
- * @extends DecodeError
+ * @extends InputError
  * @param {string} [message]
  * @param {string} [code]
  * @returns {string}
  */
-class InvalidType extends DecodeError {
+class RangeError extends InputError {
   constructor(message = 'Invalid type', code) {
     super(message, code);
   }
 }
 
 /**
- * @extends DecodeError
+ * @extends InputError
  * @param {string} [message]
  * @param {string} [code]
  * @returns {string}
  */
-class InvalidArrayLen extends DecodeError {
+class TypeError extends InputError {
   constructor(message = 'Invalid array length', code) {
     super(message, code);
   }
 }
 
-/**
- * @extends DecodeError
- * @param {string} [message]
- * @param {string} [code]
- * @returns {string}
- */
-class LocalIdentityChanged extends DecodeError {
-  constructor(message = 'Local identity changed', code) {
-    super(message, code);
-  }
-}
-
-Object.assign(DecodeError, {
-  InvalidType,
-  InvalidArrayLen,
-  LocalIdentityChanged,
+Object.assign(InputError, {
+  RangeError,
+  TypeError,
 });
 
-module.exports = ProteusError.DecodeError = DecodeError;
+module.exports = ProteusError.InputError = InputError;

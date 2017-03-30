@@ -19,6 +19,8 @@
 
 'use strict';
 
+const InputError = require('../errors/InputError');
+
 /** @module util */
 
 const TypeUtil = {
@@ -26,7 +28,7 @@ const TypeUtil = {
    * @param {*} classes
    * @param {*} inst
    * @returns {void}
-   * @throws {TypeError}
+   * @throws {errors.InputError.TypeError}
    */
   assert_is_instance(classes, inst) {
     if (!Array.isArray(classes)) {
@@ -37,23 +39,23 @@ const TypeUtil = {
     }
     const valid_types = classes.map((k) => `'${k.name}'`).join(' or ');
     if (inst) {
-      throw TypeError(`Expected one of ${valid_types}, got '${inst.constructor.name}'.`);
+      throw new InputError.TypeError(`Expected one of ${valid_types}, got '${inst.constructor.name}'.`, InputError.CODE.CASE_402);
     }
-    throw TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`);
+    throw new InputError.TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`, InputError.CODE.CASE_403);
   },
   /**
    * @param {*} inst
    * @returns {boolean}
-   * @throws {TypeError}
+   * @throws {errors.InputError.TypeError}
    */
   assert_is_integer(inst) {
     if (Number.isInteger(inst)) {
       return true;
     }
     if (inst) {
-      throw new TypeError(`Expected integer, got '${inst.constructor.name}'.`, 11);
+      throw new InputError.TypeError(`Expected integer, got '${inst.constructor.name}'.`, InputError.CODE.CASE_404);
     }
-    throw new TypeError(`Expected integer, got '${String(inst)}'.`, 12);
+    throw new InputError.TypeError(`Expected integer, got '${String(inst)}'.`, InputError.CODE.CASE_405);
   },
 };
 
