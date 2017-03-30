@@ -73,7 +73,7 @@ class RecvChain {
     TypeUtil.assert_is_instance(CipherMessage, msg);
 
     if (this.message_keys[0] && this.message_keys[0].counter > msg.counter) {
-      throw new DecryptError.OutdatedMessage();
+      throw new DecryptError.OutdatedMessage(`Message is out of sync. Message counter: ${msg.counter}. Message chain counter: ${this.message_keys[0].counter}.`, 16);
     }
 
     const idx = this.message_keys.findIndex((mk) => {
@@ -81,12 +81,12 @@ class RecvChain {
     });
 
     if (idx === -1) {
-      throw new DecryptError.DuplicateMessage();
+      throw new DecryptError.DuplicateMessage(null, 17);
     }
 
     const mk = this.message_keys.splice(idx, 1)[0];
     if (!envelope.verify(mk.mac_key)) {
-      throw new DecryptError.InvalidSignature(`Decryption of a previous (older) message failed. Remote index is at '${msg.counter}'. Local index is at '${this.chain_key.idx}'.`);
+      throw new DecryptError.InvalidSignature(`Decryption of a previous (older) message failed. Remote index is at '${msg.counter}'. Local index is at '${this.chain_key.idx}'.`, 18);
     }
 
     return mk.decrypt(msg.cipher_text);
@@ -101,7 +101,7 @@ class RecvChain {
 
     const num = msg.counter - this.chain_key.idx;
     if (num > RecvChain.MAX_COUNTER_GAP) {
-      throw new DecryptError.TooDistantFuture();
+      throw new DecryptError.TooDistantFuture(null, 19);
     }
 
     let keys = [];
@@ -125,7 +125,7 @@ class RecvChain {
     keys.map((k) => TypeUtil.assert_is_instance(MessageKeys, k));
 
     if (keys.length > RecvChain.MAX_COUNTER_GAP) {
-      throw new ProteusError('More keys than MAX_COUNTER_GAP');
+      throw new ProteusError(`Number of message keys (${keys.length}) exceed message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, 20);
     }
 
     const excess = this.message_keys.length + keys.length - RecvChain.MAX_COUNTER_GAP;
@@ -137,7 +137,7 @@ class RecvChain {
     keys.map((k) => this.message_keys.push(k));
 
     if (keys.length > RecvChain.MAX_COUNTER_GAP) {
-      throw new ProteusError('Skipped keys greater than MAX_COUNTER_GAP');
+      throw new ProteusError(`Skipped message keys which exceed the message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, 21);
     }
   }
 

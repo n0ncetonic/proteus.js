@@ -54,7 +54,7 @@ class PreKey {
 
     if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
       throw new RangeError(
-        `Argument pre_key_id (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`
+        `Argument pre_key_id (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, 14
       );
     }
 
@@ -82,7 +82,7 @@ class PreKey {
 
       if (value < 0 || value > PreKey.MAX_PREKEY_ID) {
         throw new RangeError(
-          `Arguments must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`
+          `Arguments must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, 15
         );
       }
     };

@@ -45,7 +45,7 @@ class Message {
     } else if (this instanceof PreKeyMessage) {
       e.u8(2);
     } else {
-      throw new TypeError('Unexpected message type');
+      throw new TypeError('Unexpected message type', 9);
     }
 
     this.encode(e);
@@ -67,7 +67,7 @@ class Message {
       case 2:
         return PreKeyMessage.decode(d);
       default:
-        throw new DecodeError.InvalidType('Unrecognised message type');
+        throw new DecodeError.InvalidType('Unrecognised message type', 10);
     }
   }
 }

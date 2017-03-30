@@ -51,9 +51,9 @@ const TypeUtil = {
       return true;
     }
     if (inst) {
-      throw new TypeError(`Expected integer, got '${inst.constructor.name}'.`);
+      throw new TypeError(`Expected integer, got '${inst.constructor.name}'.`, 11);
     }
-    throw new TypeError(`Expected integer, got '${String(inst)}'.`);
+    throw new TypeError(`Expected integer, got '${String(inst)}'.`, 12);
   },
 };
 
