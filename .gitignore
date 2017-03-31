@@ -3,4 +3,4 @@
 /dist/commonjs
 !/dist/commonjs/proteus.window.js
 /node_modules
-/npm-debug.log
+/npm-debug.log*

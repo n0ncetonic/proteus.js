@@ -128,164 +128,188 @@ export module errors {
    /**
     * @extends ProteusError
     * @param {string} [message]
+    * @param {string} [code]
     * @returns {string}
     */
    class DecodeError extends ProteusError {
        /**
         * @extends ProteusError
         * @param {string} [message]
+        * @param {string} [code]
         * @returns {string}
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecodeError
     * @param {string} [message]
+    * @param {string} [code]
     * @returns {string}
     */
    class InvalidType extends DecodeError {
        /**
         * @extends DecodeError
         * @param {string} [message]
+        * @param {string} [code]
         * @returns {string}
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecodeError
     * @param {string} [message]
+    * @param {string} [code]
     * @returns {string}
     */
    class InvalidArrayLen extends DecodeError {
        /**
         * @extends DecodeError
         * @param {string} [message]
+        * @param {string} [code]
         * @returns {string}
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecodeError
     * @param {string} [message]
+    * @param {string} [code]
     * @returns {string}
     */
    class LocalIdentityChanged extends DecodeError {
        /**
         * @extends DecodeError
         * @param {string} [message]
+        * @param {string} [code]
         * @returns {string}
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends ProteusError
     * @param {string} [message]
+    * @param {string} [code]
     */
    class DecryptError extends ProteusError {
        /**
         * @extends ProteusError
         * @param {string} [message]
+        * @param {string} [code]
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecryptError
     * @param {string} [message]
+    * @param {string} [code]
     */
    class RemoteIdentityChanged extends DecryptError {
        /**
         * @extends DecryptError
         * @param {string} [message]
+        * @param {string} [code]
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecryptError
     * @param {string} [message]
+    * @param {string} [code]
     */
    class InvalidSignature extends DecryptError {
        /**
         * @extends DecryptError
         * @param {string} [message]
+        * @param {string} [code]
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecryptError
     * @param {string} [message]
+    * @param {string} [code]
     */
    class InvalidMessage extends DecryptError {
        /**
         * @extends DecryptError
         * @param {string} [message]
+        * @param {string} [code]
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecryptError
     * @param {string} [message]
+    * @param {string} [code]
     */
    class DuplicateMessage extends DecryptError {
        /**
         * @extends DecryptError
         * @param {string} [message]
+        * @param {string} [code]
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecryptError
     * @param {string} [message]
+    * @param {string} [code]
     */
    class TooDistantFuture extends DecryptError {
        /**
         * @extends DecryptError
         * @param {string} [message]
+        * @param {string} [code]
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecryptError
     * @param {string} [message]
+    * @param {string} [code]
     */
    class OutdatedMessage extends DecryptError {
        /**
         * @extends DecryptError
         * @param {string} [message]
+        * @param {string} [code]
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
    /**
     * @extends DecryptError
     * @param {string} [message]
+    * @param {string} [code]
     */
    class PrekeyNotFound extends DecryptError {
        /**
         * @extends DecryptError
         * @param {string} [message]
+        * @param {string} [code]
         */
-       constructor(message?: string);
+       constructor(message?: string, code?: string);
 
    }
 
@@ -305,8 +329,60 @@ export module errors {
    }
 
    /**
+    * @extends ProteusError
+    * @param {string} [message]
+    * @param {string} [code]
+    * @returns {string}
+    */
+   class InputError extends ProteusError {
+       /**
+        * @extends ProteusError
+        * @param {string} [message]
+        * @param {string} [code]
+        * @returns {string}
+        */
+       constructor(message?: string, code?: string);
+
+   }
+
+   /**
+    * @extends InputError
+    * @param {string} [message]
+    * @param {string} [code]
+    * @returns {string}
+    */
+   class RangeError extends InputError {
+       /**
+        * @extends InputError
+        * @param {string} [message]
+        * @param {string} [code]
+        * @returns {string}
+        */
+       constructor(message?: string, code?: string);
+
+   }
+
+   /**
+    * @extends InputError
+    * @param {string} [message]
+    * @param {string} [code]
+    * @returns {string}
+    */
+   class TypeError extends InputError {
+       /**
+        * @extends InputError
+        * @param {string} [message]
+        * @param {string} [code]
+        * @returns {string}
+        */
+       constructor(message?: string, code?: string);
+
+   }
+
+   /**
     * @class ProteusError
     * @param {!string} message
+    * @param {string} [code]
     * @extends Error
     * @returns {ProteusError} - `this`
     */
@@ -314,10 +390,11 @@ export module errors {
        /**
         * @class ProteusError
         * @param {!string} message
+        * @param {string} [code]
         * @extends Error
         * @returns {ProteusError} - `this`
         */
-       constructor(message: string);
+       constructor(message: string, code?: string);
 
    }
 
@@ -479,6 +556,7 @@ export module keys {
        /**
         * @param {!number} pre_key_id
         * @returns {PreKey} - `this`
+        * @throws {errors.InputError.RangeError}
         */
        static new(pre_key_id: number): PreKey;
 
@@ -489,6 +567,7 @@ export module keys {
         * @param {!number} start
         * @param {!number} size
         * @returns {Array<PreKey>}
+        * @throws {errors.InputError.RangeError}
         */
        static generate_prekeys(start: number, size: number): PreKey[];
 

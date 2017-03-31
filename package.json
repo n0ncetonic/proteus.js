@@ -2,7 +2,7 @@
   "dependencies": {
     "ed2curve": "0.2.1",
     "libsodium-wrappers-sumo": "0.5.1",
-    "wire-webapp-cbor": "2.0.0"
+    "wire-webapp-cbor": "2.0.1"
   },
   "description": "Axolotl protocol implementation for JavaScript.",
   "devDependencies": {
@@ -28,6 +28,6 @@
     "prepublish": "npm run bundle && npm run types && npm test",
     "test": "mocha -s 30000 -t 30000 --recursive test/harness.js test --trace-warnings"
   },
-  "types": "dist/typings/types.d.ts",
+  "types": "dist/typings/proteus.d.ts",
   "version": "5.0.0"
 }
