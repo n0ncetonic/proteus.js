@@ -1,5 +1,5 @@
-var pkg = require('./package.json');
-var webpack = require('webpack');
+const pkg = require('./package.json');
+const webpack = require('webpack');
 
 module.exports = {
   devtool: 'source-map',
