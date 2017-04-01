@@ -10,14 +10,15 @@
   </head>
   <body>
     <script>
-      const lastResort = Proteus.keys.PreKey.MAX_PREKEY_ID;
-      const preKey = Proteus.keys.PreKey.new(lastResort);
-      const serializedPreKey = preKey.serialise();
+      const identity = Proteus.keys.IdentityKeyPair.new();
+      const fingerprint = identity.public_key.fingerprint();
+      const serializedIdentity = identity.serialise();
+      const encodedSerializedIdentity = sodium.to_base64(new Uint8Array(serializedIdentity));
 
-      const uint8array = new TextEncoder("utf-8").encode("¢");
-      const base64 = sodium.to_base64(uint8array);
+      const messageFingerprint = `Identity Test (Fingerprint): ${fingerprint}`;
+      const messageSerialization = `Identity Test (Serialization): ${encodedSerializedIdentity}`;
 
-      document.write(base64 + ' ' + serializedPreKey);
+      document.write(`${messageFingerprint}<br/>${messageSerialization}`);
     </script>
   </body>
 </html>

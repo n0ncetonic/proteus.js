@@ -1,9 +1,14 @@
 'use strict';
 
 const Proteus = require('./commonjs/proteus');
+const sodium = require('libsodium-wrappers-sumo');
 
-const lastResort = Proteus.keys.PreKey.MAX_PREKEY_ID;
-const preKey = Proteus.keys.PreKey.new(lastResort);
-const serializedPreKey = preKey.serialise();
+const identity = Proteus.keys.IdentityKeyPair.new();
+const fingerprint = identity.public_key.fingerprint();
+const serializedIdentity = identity.serialise();
+const encodedSerializedIdentity = sodium.to_base64(new Uint8Array(serializedIdentity));
 
-console.log(serializedPreKey);
+const messageFingerprint = `Identity Test (Fingerprint): ${fingerprint}`;
+const messageSerialization = `Identity Test (Serialization): ${encodedSerializedIdentity}`;
+
+console.log(`${messageFingerprint}\r\n${messageSerialization}`);

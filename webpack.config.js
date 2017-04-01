@@ -8,6 +8,7 @@ module.exports = {
   },
   output: {
     filename: 'proteus.js',
+    libraryTarget: 'var',
     path: './dist/window',
   },
   node: {
