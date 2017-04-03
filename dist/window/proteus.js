@@ -1,4 +1,4 @@
-/*! wire-webapp-proteus v5.0.0 */
+/*! wire-webapp-proteus v5.0.1 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -64,7 +64,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 46);
+/******/ 	return __webpack_require__(__webpack_require__.s = 47);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -157,6 +157,8 @@ module.exports = DontCallConstructor;
 
 
 
+const InputError = __webpack_require__(23);
+
 /** @module util */
 
 const TypeUtil = {
@@ -164,7 +166,7 @@ const TypeUtil = {
    * @param {*} classes
    * @param {*} inst
    * @returns {void}
-   * @throws {TypeError}
+   * @throws {errors.InputError.TypeError}
    */
   assert_is_instance(classes, inst) {
     if (!Array.isArray(classes)) {
@@ -175,23 +177,23 @@ const TypeUtil = {
     }
     const valid_types = classes.map((k) => `'${k.name}'`).join(' or ');
     if (inst) {
-      throw TypeError(`Expected one of ${valid_types}, got '${inst.constructor.name}'.`);
+      throw new InputError.TypeError(`Expected one of ${valid_types}, got '${inst.constructor.name}'.`, InputError.CODE.CASE_402);
     }
-    throw TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`);
+    throw new InputError.TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`, InputError.CODE.CASE_403);
   },
   /**
    * @param {*} inst
    * @returns {boolean}
-   * @throws {TypeError}
+   * @throws {errors.InputError.TypeError}
    */
   assert_is_integer(inst) {
     if (Number.isInteger(inst)) {
       return true;
     }
     if (inst) {
-      throw new TypeError(`Expected integer, got '${inst.constructor.name}'.`);
+      throw new InputError.TypeError(`Expected integer, got '${inst.constructor.name}'.`, InputError.CODE.CASE_404);
     }
-    throw new TypeError(`Expected integer, got '${String(inst)}'.`);
+    throw new InputError.TypeError(`Expected integer, got '${String(inst)}'.`, InputError.CODE.CASE_405);
   },
 };
 
@@ -225,10 +227,10 @@ module.exports = TypeUtil;
 
 
 module.exports = {
-  BaseError:   __webpack_require__(27),
-  DecodeError: __webpack_require__(28),
-  Decoder:     __webpack_require__(37),
-  Encoder:     __webpack_require__(38),
+  BaseError:   __webpack_require__(28),
+  DecodeError: __webpack_require__(29),
+  Decoder:     __webpack_require__(38),
+  Encoder:     __webpack_require__(39),
   Types:       __webpack_require__(20),
 };
 
@@ -441,18 +443,27 @@ module.exports = PublicKey;
 /**
  * @class ProteusError
  * @param {!string} message
+ * @param {string} [code]
  * @extends Error
  * @returns {ProteusError} - `this`
  */
 const ProteusError = (function() {
-  const func = function(message) {
-    this.name = this.constructor.name;
+  const func = function(message, code) {
+    this.code = code;
     this.message = message;
+    this.name = this.constructor.name;
     this.stack = (new Error).stack;
   };
 
   func.prototype = new Error;
   func.prototype.constructor = func;
+  func.prototype.CODE = {
+    CASE_100: 100,
+    CASE_101: 101,
+    CASE_102: 102,
+    CASE_103: 103,
+    CASE_104: 104,
+  };
 
   return func;
 })();
@@ -495,7 +506,7 @@ const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
 const PublicKey = __webpack_require__(5);
-const SecretKey = __webpack_require__(25);
+const SecretKey = __webpack_require__(26);
 
 /** @module keys */
 
@@ -740,7 +751,7 @@ const TypeUtil = __webpack_require__(1);
 const PublicKey = __webpack_require__(5);
 
 const Message = __webpack_require__(15);
-const SessionTag = __webpack_require__(26);
+const SessionTag = __webpack_require__(27);
 
 /** @module message */
 
@@ -990,48 +1001,57 @@ const ProteusError = __webpack_require__(6);
 /**
  * @extends ProteusError
  * @param {string} [message]
+ * @param {string} [code]
  * @returns {string}
  */
 class DecodeError extends ProteusError {
-  constructor(message = 'Unknown decoding error') {
-    super();
-    this.message = message;
+  constructor(message = 'Unknown decoding error', code) {
+    super(message, code);
+  }
+
+  static get CODE() {
+    return {
+      CASE_300: 300,
+      CASE_301: 301,
+      CASE_302: 302,
+      CASE_303: 303,
+    };
   }
 }
 
 /**
  * @extends DecodeError
  * @param {string} [message]
+ * @param {string} [code]
  * @returns {string}
  */
 class InvalidType extends DecodeError {
-  constructor(message = 'Invalid type') {
-    super();
-    this.message = message;
+  constructor(message = 'Invalid type', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecodeError
  * @param {string} [message]
+ * @param {string} [code]
  * @returns {string}
  */
 class InvalidArrayLen extends DecodeError {
-  constructor(message = 'Invalid array length') {
-    super();
-    this.message = message;
+  constructor(message = 'Invalid array length', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecodeError
  * @param {string} [message]
+ * @param {string} [code]
  * @returns {string}
  */
 class LocalIdentityChanged extends DecodeError {
-  constructor(message = 'Local identity changed') {
-    super();
-    this.message = message;
+  constructor(message = 'Local identity changed', code) {
+    super(message, code);
   }
 }
 
@@ -1068,8 +1088,6 @@ module.exports = ProteusError.DecodeError = DecodeError;
  *
  */
 
-/* eslint no-unused-vars: "off" */
-
 
 
 const ProteusError = __webpack_require__(6);
@@ -1079,88 +1097,105 @@ const ProteusError = __webpack_require__(6);
 /**
  * @extends ProteusError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class DecryptError extends ProteusError {
-  constructor(message = 'Unknown decryption error') {
-    super();
-    this.message = message;
+  constructor(message = 'Unknown decryption error', code) {
+    super(message, code);
+  }
+
+  static get CODE() {
+    return {
+      CASE_200: 200,
+      CASE_201: 201,
+      CASE_202: 202,
+      CASE_203: 203,
+      CASE_204: 204,
+      CASE_205: 205,
+      CASE_206: 206,
+      CASE_207: 207,
+      CASE_208: 208,
+      CASE_209: 209,
+      CASE_210: 210,
+      CASE_211: 211,
+    };
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class RemoteIdentityChanged extends DecryptError {
-  constructor(message = 'Remote identity changed') {
-    super();
-    this.message = message;
+  constructor(message = 'Remote identity changed', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class InvalidSignature extends DecryptError {
-  constructor(message = 'Invalid signature') {
-    super();
-    this.message = message;
+  constructor(message = 'Invalid signature', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class InvalidMessage extends DecryptError {
-  constructor(message = 'Invalid message') {
-    super();
-    this.message = message;
+  constructor(message = 'Invalid message', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class DuplicateMessage extends DecryptError {
-  constructor(message = 'Duplicate message') {
-    super();
-    this.message = message;
+  constructor(message = 'Duplicate message', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class TooDistantFuture extends DecryptError {
-  constructor(message = 'Message is from too distant in the future') {
-    super();
-    this.message = message;
+  constructor(message = 'Message is from too distant in the future', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class OutdatedMessage extends DecryptError {
-  constructor(message = 'Outdated message') {
-    super();
-    this.message = message;
+  constructor(message = 'Outdated message', code) {
+    super(message, code);
   }
 }
 
 /**
  * @extends DecryptError
  * @param {string} [message]
+ * @param {string} [code]
  */
 class PrekeyNotFound extends DecryptError {
-  constructor(message = 'Pre-key not found') {
-    super();
-    this.message = message;
+  constructor(message = 'Pre-key not found', code) {
+    super(message, code);
   }
 }
 
@@ -1211,7 +1246,7 @@ const TypeUtil = __webpack_require__(1);
 
 const IdentityKey = __webpack_require__(8);
 const KeyPair = __webpack_require__(7);
-const SecretKey = __webpack_require__(25);
+const SecretKey = __webpack_require__(26);
 
 /** @module keys */
 
@@ -1519,7 +1554,7 @@ class Message {
     } else if (this instanceof PreKeyMessage) {
       e.u8(2);
     } else {
-      throw new TypeError('Unexpected message type');
+      throw new TypeError('Unexpected message type', 9);
     }
 
     this.encode(e);
@@ -1541,7 +1576,7 @@ class Message {
       case 2:
         return PreKeyMessage.decode(d);
       default:
-        throw new DecodeError.InvalidType('Unrecognised message type');
+        throw new DecodeError.InvalidType('Unrecognised message type', DecodeError.CODE.CASE_302);
     }
   }
 }
@@ -1718,7 +1753,7 @@ const TypeUtil = __webpack_require__(1);
 
 const DerivedSecrets = __webpack_require__(22);
 const MacKey = __webpack_require__(10);
-const MessageKeys = __webpack_require__(30);
+const MessageKeys = __webpack_require__(31);
 
 /** @module session */
 
@@ -1868,7 +1903,7 @@ module.exports = MemoryUtil;
 /* jshint newcap: false */
 (function(root, f) {
   'use strict';
-  if (typeof module !== 'undefined' && module.exports) module.exports = f(__webpack_require__(36));
+  if (typeof module !== 'undefined' && module.exports) module.exports = f(__webpack_require__(37));
   else root.ed2curve = f(root.nacl);
 }(this, function(nacl) {
   'use strict';
@@ -2151,7 +2186,7 @@ module.exports = MemoryUtil;
  */
 class Types {
   constructor() {
-    throw new Error(`Can't create instance of singleton`);
+    throw new Error('Can\'t create instance of singleton');
   }
 
   /** @type {number} */
@@ -2393,7 +2428,7 @@ module.exports = CipherKey;
 
 const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
-const KeyDerivationUtil = __webpack_require__(43);
+const KeyDerivationUtil = __webpack_require__(44);
 const MemoryUtil = __webpack_require__(18);
 
 const CipherKey = __webpack_require__(21);
@@ -2454,6 +2489,91 @@ module.exports = DerivedSecrets;
 "use strict";
 /*
  * Wire
+ * Copyright (C) 2017 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const ProteusError = __webpack_require__(6);
+
+/** @module errors */
+
+/**
+ * @extends ProteusError
+ * @param {string} [message]
+ * @param {string} [code]
+ * @returns {string}
+ */
+class InputError extends ProteusError {
+  constructor(message = 'Invalid input', code) {
+    super(message, code);
+  }
+
+  static get CODE() {
+    return {
+      CASE_400: 400,
+      CASE_401: 401,
+      CASE_402: 402,
+      CASE_403: 403,
+      CASE_404: 404,
+      CASE_405: 405,
+    };
+  }
+}
+
+/**
+ * @extends InputError
+ * @param {string} [message]
+ * @param {string} [code]
+ * @returns {string}
+ */
+class RangeError extends InputError {
+  constructor(message = 'Invalid type', code) {
+    super(message, code);
+  }
+}
+
+/**
+ * @extends InputError
+ * @param {string} [message]
+ * @param {string} [code]
+ * @returns {string}
+ */
+class TypeError extends InputError {
+  constructor(message = 'Invalid array length', code) {
+    super(message, code);
+  }
+}
+
+Object.assign(InputError, {
+  RangeError,
+  TypeError,
+});
+
+module.exports = ProteusError.InputError = InputError;
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
  * Copyright (C) 2016 Wire Swiss GmbH
  *
  * This program is free software: you can redistribute it and/or modify
@@ -2477,6 +2597,7 @@ const CBOR = __webpack_require__(2);
 
 const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
+const InputError = __webpack_require__(23);
 const TypeUtil = __webpack_require__(1);
 
 const KeyPair = __webpack_require__(7);
@@ -2502,13 +2623,14 @@ class PreKey {
   /**
    * @param {!number} pre_key_id
    * @returns {PreKey} - `this`
+   * @throws {errors.InputError.RangeError}
    */
   static new(pre_key_id) {
     TypeUtil.assert_is_integer(pre_key_id);
 
     if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
-      throw new RangeError(
-        `Argument pre_key_id (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`
+      throw new InputError.RangeError(
+        `PreKey ID (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_400
       );
     }
 
@@ -2529,14 +2651,15 @@ class PreKey {
    * @param {!number} start
    * @param {!number} size
    * @returns {Array<PreKey>}
+   * @throws {errors.InputError.RangeError}
    */
   static generate_prekeys(start, size) {
     const check_integer = (value) => {
       TypeUtil.assert_is_integer(value);
 
       if (value < 0 || value > PreKey.MAX_PREKEY_ID) {
-        throw new RangeError(
-          `Arguments must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`
+        throw new InputError.RangeError(
+          `PreKey ID (${value}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_401
         );
       }
     };
@@ -2620,7 +2743,7 @@ module.exports = PreKey;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2654,8 +2777,8 @@ const TypeUtil = __webpack_require__(1);
 
 const IdentityKey = __webpack_require__(8);
 const IdentityKeyPair = __webpack_require__(13);
-const PreKey = __webpack_require__(23);
-const PreKeyAuth = __webpack_require__(29);
+const PreKey = __webpack_require__(24);
+const PreKeyAuth = __webpack_require__(30);
 const PublicKey = __webpack_require__(5);
 
 /** @module keys */
@@ -2827,7 +2950,7 @@ module.exports = PreKeyBundle;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2952,7 +3075,7 @@ module.exports = SecretKey;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2986,7 +3109,7 @@ const ClassUtil = __webpack_require__(3);
 const TypeUtil = __webpack_require__(1);
 
 const DecodeError = __webpack_require__(11);
-const RandomUtil = __webpack_require__(44);
+const RandomUtil = __webpack_require__(45);
 
 /** @module message */
 
@@ -3029,7 +3152,7 @@ class SessionTag {
     const bytes = new Uint8Array(d.bytes());
     if (bytes.byteLength !== 16) {
       throw DecodeError.InvalidArrayLen(
-        `SessionTag should be 16 bytes, not ${bytes.byteLength} bytes.`
+        `SessionTag should be 16 bytes, not ${bytes.byteLength} bytes.`, DecodeError.CODE.CASE_303
       );
     }
 
@@ -3043,7 +3166,7 @@ module.exports = SessionTag;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3089,7 +3212,7 @@ module.exports = (function() {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3114,7 +3237,7 @@ module.exports = (function() {
 
 
 
-const BaseError = __webpack_require__(27);
+const BaseError = __webpack_require__(28);
 
 /**
  * @class DecodeError
@@ -3150,7 +3273,7 @@ module.exports = DecodeError;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3200,7 +3323,7 @@ module.exports = PreKeyAuth;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3341,7 +3464,7 @@ module.exports = MessageKeys;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3398,7 +3521,7 @@ module.exports = PreKeyStore;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3437,16 +3560,16 @@ const ProteusError = __webpack_require__(6);
 const IdentityKey = __webpack_require__(8);
 const IdentityKeyPair = __webpack_require__(13);
 const KeyPair = __webpack_require__(7);
-const PreKey = __webpack_require__(23);
-const PreKeyBundle = __webpack_require__(24);
+const PreKey = __webpack_require__(24);
+const PreKeyBundle = __webpack_require__(25);
 const PublicKey = __webpack_require__(5);
 
 const CipherMessage = __webpack_require__(9);
 const Envelope = __webpack_require__(14);
 const PreKeyMessage = __webpack_require__(16);
-const SessionTag = __webpack_require__(26);
+const SessionTag = __webpack_require__(27);
 
-const PreKeyStore = __webpack_require__(31);
+const PreKeyStore = __webpack_require__(32);
 
 /** @module session */
 
@@ -3522,12 +3645,14 @@ class Session {
       const pkmsg = (() => {
         if (envelope.message instanceof CipherMessage) {
           throw new DecryptError.InvalidMessage(
-            'Can\'t initialise a session from a CipherMessage.'
+            'Can\'t initialise a session from a CipherMessage.', DecryptError.CODE.CASE_201
           );
         } else if (envelope.message instanceof PreKeyMessage) {
           return envelope.message;
         } else {
-          throw new DecryptError.InvalidMessage();
+          throw new DecryptError.InvalidMessage(
+            'Unknown message format: The message is neither a "CipherMessage" nor a "PreKeyMessage".', DecryptError.CODE.CASE_202
+          );
         }
       })();
 
@@ -3539,21 +3664,21 @@ class Session {
       session.session_states = {};
 
       return session._new_state(prekey_store, pkmsg)
-      .then((state) => {
-        const plain = state.decrypt(envelope, pkmsg.message);
-        session._insert_session_state(pkmsg.message.session_tag, state);
+        .then((state) => {
+          const plain = state.decrypt(envelope, pkmsg.message);
+          session._insert_session_state(pkmsg.message.session_tag, state);
 
-        if (pkmsg.prekey_id < PreKey.MAX_PREKEY_ID) {
-          MemoryUtil.zeroize(prekey_store.prekeys[pkmsg.prekey_id]);
-          return prekey_store.remove(pkmsg.prekey_id)
-          .then(() => resolve([session, plain]))
-          .catch((error) =>
-            reject(new DecryptError.PrekeyNotFound(`Could not delete PreKey: ${error.message}`))
-          );
-        } else {
-          return resolve([session, plain]);
-        }
-      }).catch(reject);
+          if (pkmsg.prekey_id < PreKey.MAX_PREKEY_ID) {
+            MemoryUtil.zeroize(prekey_store.prekeys[pkmsg.prekey_id]);
+            return prekey_store.remove(pkmsg.prekey_id)
+              .then(() => resolve([session, plain]))
+              .catch((error) => {
+                reject(new DecryptError.PrekeyNotFound(`Could not delete PreKey: ${error.message}`, DecryptError.CODE.CASE_203));
+              });
+          } else {
+            return resolve([session, plain]);
+          }
+        }).catch(reject);
     });
   }
 
@@ -3566,17 +3691,17 @@ class Session {
    */
   _new_state(pre_key_store, pre_key_message) {
     return pre_key_store.get_prekey(pre_key_message.prekey_id)
-    .then((pre_key) => {
-      if (pre_key) {
-        return SessionState.init_as_bob(
-          this.local_identity,
-          pre_key.key_pair,
-          pre_key_message.identity_key,
-          pre_key_message.base_key
-        );
-      }
-      throw new ProteusError('Unable to get PreKey');
-    });
+      .then((pre_key) => {
+        if (pre_key) {
+          return SessionState.init_as_bob(
+            this.local_identity,
+            pre_key.key_pair,
+            pre_key_message.identity_key,
+            pre_key_message.base_key
+          );
+        }
+        throw new ProteusError('Unable to get PreKey from PreKey store.', ProteusError.prototype.CODE.CASE_101);
+      });
   }
 
   /**
@@ -3623,10 +3748,10 @@ class Session {
    */
   _evict_oldest_session_state() {
     const oldest = Object.keys(this.session_states)
-    .filter((obj) => obj.toString() !== this.session_tag)
-    .reduce((lowest, obj, index) => {
-      return this.session_states[obj].idx < this.session_states[lowest].idx ? obj.toString() : lowest;
-    });
+      .filter((obj) => obj.toString() !== this.session_tag)
+      .reduce((lowest, obj, index) => {
+        return this.session_states[obj].idx < this.session_states[lowest].idx ? obj.toString() : lowest;
+      });
 
     MemoryUtil.zeroize(this.session_states[oldest]);
     delete this.session_states[oldest];
@@ -3647,7 +3772,7 @@ class Session {
 
       if (!state) {
         return reject(new ProteusError(
-          `Could not find session for tag '${(this.session_tag || '').toString()}'.`
+          `Could not find session for tag '${(this.session_tag || '').toString()}'.`, ProteusError.prototype.CODE.CASE_102
         ));
       }
 
@@ -3678,11 +3803,11 @@ class Session {
         const expected_fingerprint = this.remote_identity.fingerprint();
         if (actual_fingerprint !== expected_fingerprint) {
           const message = `Fingerprints do not match: We expected '${expected_fingerprint}', but received '${actual_fingerprint}'.`;
-          throw new DecryptError.RemoteIdentityChanged(message);
+          throw new DecryptError.RemoteIdentityChanged(message, DecryptError.CODE.CASE_204);
         }
         return resolve(this._decrypt_prekey_message(envelope, msg, prekey_store));
       } else {
-        throw new DecryptError('Unknown message type.');
+        throw new DecryptError('Unknown message type.', DecryptError.CODE.CASE_200);
       }
     });
   }
@@ -3697,26 +3822,26 @@ class Session {
    */
   _decrypt_prekey_message(envelope, msg, prekey_store) {
     return Promise.resolve()
-    .then(() => this._decrypt_cipher_message(envelope, msg.message))
-    .catch((error) => {
-      if (error instanceof DecryptError.InvalidSignature
+      .then(() => this._decrypt_cipher_message(envelope, msg.message))
+      .catch((error) => {
+        if (error instanceof DecryptError.InvalidSignature
           || error instanceof DecryptError.InvalidMessage) {
-        return this._new_state(prekey_store, msg).then((state) => {
-          const plaintext = state.decrypt(envelope, msg.message);
+          return this._new_state(prekey_store, msg).then((state) => {
+            const plaintext = state.decrypt(envelope, msg.message);
 
-          if (msg.prekey_id !== PreKey.MAX_PREKEY_ID) {
-            MemoryUtil.zeroize(prekey_store.prekeys[msg.prekey_id]);
-            prekey_store.remove(msg.prekey_id);
-          }
+            if (msg.prekey_id !== PreKey.MAX_PREKEY_ID) {
+              MemoryUtil.zeroize(prekey_store.prekeys[msg.prekey_id]);
+              prekey_store.remove(msg.prekey_id);
+            }
 
-          this._insert_session_state(msg.message.session_tag, state);
-          this.pending_prekey = null;
+            this._insert_session_state(msg.message.session_tag, state);
+            this.pending_prekey = null;
 
-          return plaintext;
-        });
-      }
-      throw error;
-    });
+            return plaintext;
+          });
+        }
+        throw error;
+      });
   }
 
   /**
@@ -3729,8 +3854,7 @@ class Session {
     let state = this.session_states[msg.session_tag];
     if (!state) {
       throw new DecryptError.InvalidMessage(
-        `We received a message with session tag '${(msg.session_tag || '').toString()}', but we ` +
-        `don't have a session for this tag.`
+        `We received a message with session tag '${(msg.session_tag || '').toString()}', but we don't have a session for this tag.`, DecryptError.CODE.CASE_205
       );
     }
 
@@ -3828,7 +3952,7 @@ class Session {
         case 2:
           const ik = IdentityKey.decode(d);
           if (local_identity.public_key.fingerprint() !== ik.fingerprint()) {
-            throw new DecodeError.LocalIdentityChanged();
+            throw new DecodeError.LocalIdentityChanged(null, DecodeError.CODE.CASE_300);
           }
           self.local_identity = local_identity;
           break;
@@ -3853,7 +3977,7 @@ class Session {
               }
               break;
             default:
-              throw new DecodeError.InvalidType();
+              throw new DecodeError.InvalidType(null, DecodeError.CODE.CASE_301);
           }
           break;
         case 5:
@@ -3885,11 +4009,11 @@ class Session {
 
 module.exports = Session;
 
-const SessionState = __webpack_require__(42);
+const SessionState = __webpack_require__(43);
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3953,7 +4077,7 @@ const ArrayUtil = {
     }
 
     if (only_zeroes === true) {
-      throw new ProteusError('Array consists only of zeroes.');
+      throw new ProteusError('Array consists only of zeroes.', ProteusError.prototype.CODE.CASE_100);
     }
   },
 };
@@ -3962,7 +4086,7 @@ module.exports = ArrayUtil;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3992,17 +4116,18 @@ module.exports = {
     ProteusError: __webpack_require__(6),
     DecodeError: __webpack_require__(11),
     DecryptError: __webpack_require__(12),
+    InputError: __webpack_require__(23),
   },
 
   keys: {
     IdentityKey: __webpack_require__(8),
     IdentityKeyPair: __webpack_require__(13),
     KeyPair: __webpack_require__(7),
-    PreKeyAuth: __webpack_require__(29),
-    PreKeyBundle: __webpack_require__(24),
-    PreKey: __webpack_require__(23),
+    PreKeyAuth: __webpack_require__(30),
+    PreKeyBundle: __webpack_require__(25),
+    PreKey: __webpack_require__(24),
     PublicKey: __webpack_require__(5),
-    SecretKey: __webpack_require__(25),
+    SecretKey: __webpack_require__(26),
   },
 
   message: {
@@ -4013,20 +4138,20 @@ module.exports = {
   },
 
   session: {
-    PreKeyStore: __webpack_require__(31),
-    Session: __webpack_require__(32),
+    PreKeyStore: __webpack_require__(32),
+    Session: __webpack_require__(33),
   },
 };
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function(nacl) {
@@ -6405,7 +6530,7 @@ nacl.setPRNG = function(fn) {
     });
   } else if (true) {
     // Node.js.
-    crypto = __webpack_require__(45);
+    crypto = __webpack_require__(46);
     if (crypto && crypto.randomBytes) {
       nacl.setPRNG(function(x, n) {
         var i, v = crypto.randomBytes(n);
@@ -6420,7 +6545,7 @@ nacl.setPRNG = function(fn) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6445,7 +6570,7 @@ nacl.setPRNG = function(fn) {
 
 
 
-const DecodeError = __webpack_require__(28);
+const DecodeError = __webpack_require__(29);
 const Types = __webpack_require__(20);
 
 const DEFAULT_CONFIG = {
@@ -7021,7 +7146,7 @@ class Decoder {
    * @throws DecodeError
    */
   _skip_until_break(type) {
-    while (true) {
+    for (;;) {
       const [t, minor] = this._read_type_info();
       if (t === Types.BREAK) {
         return;
@@ -7116,7 +7241,7 @@ module.exports = Decoder;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7161,14 +7286,22 @@ class Encoder {
 
   /**
    * @param {!number} need_nbytes
+   * @returns {number}
+   * @private
+   */
+  _new_buffer_length(need_nbytes) {
+    return Math.floor(Math.max((this.buffer.byteLength * 1.5), (this.buffer.byteLength + need_nbytes)));
+  }
+
+  /**
+   * @param {!number} need_nbytes
    * @returns {void}
    * @private
    */
   _grow_buffer(need_nbytes) {
-    const new_len = Math.max((this.buffer.byteLength * 1.5), (this.buffer.byteLength + need_nbytes));
+    const new_len = this._new_buffer_length(need_nbytes);
     const new_buf = new ArrayBuffer(new_len);
     new Uint8Array(new_buf).set(new Uint8Array(this.buffer));
-
     this.buffer = new_buf;
     this.view = new DataView(this.buffer, this.view.byteOffset);
   }
@@ -7600,7 +7733,7 @@ module.exports = Encoder;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7640,7 +7773,7 @@ const CipherMessage = __webpack_require__(9);
 const Envelope = __webpack_require__(14);
 
 const ChainKey = __webpack_require__(17);
-const MessageKeys = __webpack_require__(30);
+const MessageKeys = __webpack_require__(31);
 
 /** @module session */
 
@@ -7679,7 +7812,7 @@ class RecvChain {
     TypeUtil.assert_is_instance(CipherMessage, msg);
 
     if (this.message_keys[0] && this.message_keys[0].counter > msg.counter) {
-      throw new DecryptError.OutdatedMessage();
+      throw new DecryptError.OutdatedMessage(`Message is out of sync. Message counter: ${msg.counter}. Message chain counter: ${this.message_keys[0].counter}.`, DecryptError.CODE.CASE_208);
     }
 
     const idx = this.message_keys.findIndex((mk) => {
@@ -7687,12 +7820,12 @@ class RecvChain {
     });
 
     if (idx === -1) {
-      throw new DecryptError.DuplicateMessage();
+      throw new DecryptError.DuplicateMessage(null, DecryptError.CODE.CASE_209);
     }
 
     const mk = this.message_keys.splice(idx, 1)[0];
     if (!envelope.verify(mk.mac_key)) {
-      throw new DecryptError.InvalidSignature(`Decryption of a previous (older) message failed. Remote index is at '${msg.counter}'. Local index is at '${this.chain_key.idx}'.`);
+      throw new DecryptError.InvalidSignature(`Decryption of a previous (older) message failed. Remote index is at '${msg.counter}'. Local index is at '${this.chain_key.idx}'.`, DecryptError.CODE.CASE_210);
     }
 
     return mk.decrypt(msg.cipher_text);
@@ -7707,7 +7840,7 @@ class RecvChain {
 
     const num = msg.counter - this.chain_key.idx;
     if (num > RecvChain.MAX_COUNTER_GAP) {
-      throw new DecryptError.TooDistantFuture();
+      throw new DecryptError.TooDistantFuture(null, DecryptError.CODE.CASE_211);
     }
 
     let keys = [];
@@ -7731,7 +7864,7 @@ class RecvChain {
     keys.map((k) => TypeUtil.assert_is_instance(MessageKeys, k));
 
     if (keys.length > RecvChain.MAX_COUNTER_GAP) {
-      throw new ProteusError('More keys than MAX_COUNTER_GAP');
+      throw new ProteusError(`Number of message keys (${keys.length}) exceed message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, ProteusError.prototype.CODE.CASE_103);
     }
 
     const excess = this.message_keys.length + keys.length - RecvChain.MAX_COUNTER_GAP;
@@ -7743,7 +7876,7 @@ class RecvChain {
     keys.map((k) => this.message_keys.push(k));
 
     if (keys.length > RecvChain.MAX_COUNTER_GAP) {
-      throw new ProteusError('Skipped keys greater than MAX_COUNTER_GAP');
+      throw new ProteusError(`Skipped message keys which exceed the message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, ProteusError.prototype.CODE.CASE_104);
     }
   }
 
@@ -7810,7 +7943,7 @@ module.exports = RecvChain;
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7925,7 +8058,7 @@ module.exports = RootKey;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8022,7 +8155,7 @@ module.exports = SendChain;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8049,7 +8182,7 @@ module.exports = SendChain;
 
 const CBOR = __webpack_require__(2);
 
-const ArrayUtil = __webpack_require__(33);
+const ArrayUtil = __webpack_require__(34);
 const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const MemoryUtil = __webpack_require__(18);
@@ -8062,19 +8195,19 @@ const DerivedSecrets = __webpack_require__(22);
 const IdentityKey = __webpack_require__(8);
 const IdentityKeyPair = __webpack_require__(13);
 const KeyPair = __webpack_require__(7);
-const PreKeyBundle = __webpack_require__(24);
+const PreKeyBundle = __webpack_require__(25);
 const PublicKey = __webpack_require__(5);
 
 const CipherMessage = __webpack_require__(9);
 const Envelope = __webpack_require__(14);
 const PreKeyMessage = __webpack_require__(16);
-const SessionTag = __webpack_require__(26);
+const SessionTag = __webpack_require__(27);
 
 const ChainKey = __webpack_require__(17);
-const RecvChain = __webpack_require__(39);
-const RootKey = __webpack_require__(40);
-const SendChain = __webpack_require__(41);
-const Session = __webpack_require__(32);
+const RecvChain = __webpack_require__(40);
+const RootKey = __webpack_require__(41);
+const SendChain = __webpack_require__(42);
+const Session = __webpack_require__(33);
 
 /** @module session */
 
@@ -8250,7 +8383,7 @@ class SessionState {
       const mks = rc.chain_key.message_keys();
 
       if (!envelope.verify(mks.mac_key)) {
-        throw new DecryptError.InvalidSignature(`Decryption of a message in sync failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`);
+        throw new DecryptError.InvalidSignature(`Decryption of a message in sync failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`, DecryptError.CODE.CASE_206);
       }
 
       const plain = mks.decrypt(msg.cipher_text);
@@ -8261,7 +8394,7 @@ class SessionState {
       const [chk, mk, mks] = rc.stage_message_keys(msg);
 
       if (!envelope.verify(mk.mac_key)) {
-        throw new DecryptError.InvalidSignature(`Decryption of a newer message failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`);
+        throw new DecryptError.InvalidSignature(`Decryption of a newer message failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`, DecryptError.CODE.CASE_207);
       }
 
       const plain = mk.decrypt(msg.cipher_text);
@@ -8348,7 +8481,7 @@ module.exports = SessionState;
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8375,7 +8508,7 @@ module.exports = SessionState;
 
 const sodium = __webpack_require__(4);
 
-const ArrayUtil = __webpack_require__(33);
+const ArrayUtil = __webpack_require__(34);
 const MemoryUtil = __webpack_require__(18);
 const TypeUtil = __webpack_require__(1);
 
@@ -8465,7 +8598,7 @@ module.exports = KeyDerivationUtil;
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8504,7 +8637,7 @@ if (crypto) {
   };
 } else {
   // node
-  crypto = __webpack_require__(35);
+  crypto = __webpack_require__(36);
   random_bytes = (len) => {
     return new Uint8Array(crypto.randomBytes(len));
   };
@@ -8514,16 +8647,16 @@ module.exports = { random_bytes };
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-window.Proteus = __webpack_require__(34);
+window.Proteus = __webpack_require__(35);
 window.sodium = __webpack_require__(4);
 
 
