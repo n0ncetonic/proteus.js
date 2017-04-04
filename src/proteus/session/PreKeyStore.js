@@ -22,29 +22,28 @@
 /** @module session */
 
 /** @class PreKeyStore */
-class PreKeyStore {
-  constructor() {
-    /** @type {Array<number>} */
-    this.prekeys = [];
-  }
-
-  /**
-   * @param {!number} prekey_id
-   * @returns {void}
-   * @throws {Error}
-   */
-  get_prekey(prekey_id) {
-    throw Error('Virtual function unimplemented');
-  }
-
-  /**
-   * @param {!number} prekey_id
-   * @returns {void}
-   * @throws {Error}
-   */
-  remove(prekey_id) {
-    throw Error('Virtual function unimplemented');
-  }
+function PreKeyStore() {
 }
+
+/** @type {Array<number>} */
+PreKeyStore.prekeys = [];
+
+/**
+ * @param {!number} prekey_id
+ * @returns {void}
+ * @throws {Error}
+ */
+PreKeyStore.prototype.get_prekey = function (prekey_id) {
+  throw Error('Virtual function unimplemented');
+};
+
+/**
+ * @param {!number} prekey_id
+ * @returns {void}
+ * @throws {Error}
+ */
+PreKeyStore.prototype.remove = function (prekey_id) {
+  throw Error('Virtual function unimplemented');
+};
 
 module.exports = PreKeyStore;
