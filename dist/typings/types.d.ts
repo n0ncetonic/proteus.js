@@ -1037,6 +1037,9 @@ export module session {
        /** @class PreKeyStore */
        constructor();
 
+       /** @type {Array<number>} */
+       static prekeys: number[];
+
        /**
         * @param {!number} prekey_id
         * @returns {void}
