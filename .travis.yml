@@ -27,3 +27,13 @@ before_install:
 
 install:
   - npm install
+
+# https://docs.travis-ci.com/user/deployment/npm/
+deploy:
+  provider: npm
+  email: webapp@wire.com
+  api_key:
+    secure: 0IHNmVSuxHJGj1jNoOrVl56RNpDEGJiFFohHl2wnIz2uZthsvE13Vuwg/2FsIAv6B7a4mlxAP6AKXIEQnh/ZHjDu2HlDMZmrubfgbRXLU4GoUP9c2EfceUdgYDj7o94M1Ll6MkydqvVDRYFs0QuNkCJ4Z11JD27wAWcLK4tZenlvpvrpP59D6X8+3sPEKK40s9BKlDkNevK03njxJE0zonnSqXyvr5zoeuO5DfU/4rP+IJoIA+lvzuHqQd+SdrYRMk8np5hL4tmHrcnpQ/ubhfdXD+ngCYqKYkkLxuXRSs5xvjCGpNVeuMR0Ik8mDP/VqLySLeTBftWo9mVIKtLaZakPURLehp3RZnqW+q8ZEU7DDqKeVbaL2h9M2xOJXkUBnFMZqEm6+YRje1rkV2+Pd5JXpDlU5MSrXAikU1HXSrDqt1gyWVoXmgEWK8ORPGEkIy6d9GZAcvlDbDu22w1VWLWaGBaA+jtmlvz1NVxwSyuzVdhtmb0mI4hqED6CpLWYbymGvTpTPKheN9kfZLW7GBfjpHdbAaRGf8rpbONkVdCLJjB4XZU/sCoyNdpDHGXkRjBbzVD3EX2W+dLBKny3B5RQc10Jp+ImtmjEPS/Tunh/9/HJTN3yxuoopE8Y2rycFnLmf4w49g9OU/7a7GM7xuLghGRmV8jV6cSGQNc7i18=
+  on:
+    repo: wireapp/proteus.js
+    tags: true
