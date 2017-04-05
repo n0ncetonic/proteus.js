@@ -1,4 +1,4 @@
-/*! wire-webapp-proteus v5.0.2 */
+/*! wire-webapp-proteus v5.0.3 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -1882,7 +1882,7 @@ const MemoryUtil = {
     } else if (object instanceof ArrayBuffer) {
       sodium.memzero(new Uint8Array(object));
     } else if (typeof object === 'object') {
-      Object.values(object).forEach((val) => this.zeroize(val));
+      Object.keys(object).map((key) => object[key]).forEach((val) => this.zeroize(val));
     }
   },
 };
