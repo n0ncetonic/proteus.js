@@ -10,29 +10,28 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 [![Build Status](https://travis-ci.org/wireapp/proteus.js.svg?branch=master)](https://travis-ci.org/wireapp/proteus.js)
 
-## Instructions
+## Installation
 
-### Installation
+### Yarn
 
 ```bash
-npm install wire-webapp-proteus
+yarn add wire-webapp-proteus
 ```
 
-### Import
+## Import
 
-**CommonJS**
+### CommonJS
 
 ```javascript
 const Proteus = require('wire-webapp-proteus');
 ```
 
-### Usage
+## Usage
 
-**Browser**
+### Browser
 
 - [index.html](./dist/index.html)
 
-**Node.js**
+### Node.js
 
-- [index.js](./dist/index.js) 
-
+- [index.js](./dist/index.js)

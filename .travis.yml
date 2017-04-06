@@ -10,6 +10,12 @@ node_js:
 notifications:
   email: false
 
+# https://blog.travis-ci.com/2016-11-21-travis-ci-now-supports-yarn
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
 # https://docs.travis-ci.com/user/languages/javascript-with-nodejs#Node.js-v4-(or-io.js-v3)-compiler-requirements
 env:
   - CXX=g++-4.8
@@ -24,9 +30,6 @@ addons:
 before_install:
   - curl https://sh.rustup.rs -sSf | sh -s -- -y
   - source "$HOME/.cargo/env"
-
-install:
-  - npm install
 
 # https://docs.travis-ci.com/user/deployment/npm/
 deploy:
