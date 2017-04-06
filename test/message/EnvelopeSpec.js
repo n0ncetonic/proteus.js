@@ -17,6 +17,8 @@
  *
  */
 
+/* eslint no-undef: "off" */
+
 'use strict';
 
 describe('Envelope', () => {
@@ -61,5 +63,14 @@ describe('Envelope', () => {
     const env_cpy = Proteus.message.Envelope.deserialise(env_bytes);
 
     assert(env_cpy.verify(mk));
+  });
+
+  it('fails when passing invalid input', () => {
+    const empty_buffer = new ArrayBuffer(0);
+    try {
+      Proteus.message.Envelope.deserialise(empty_buffer);
+    } catch (error) {
+      assert.instanceOf(error, RangeError);
+    }
   });
 });
