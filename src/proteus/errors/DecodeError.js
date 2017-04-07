@@ -32,7 +32,7 @@ const ProteusError = require('./ProteusError');
  * @returns {string}
  */
 class DecodeError extends ProteusError {
-  constructor(message = 'Unknown decoding error', code) {
+  constructor(message = 'Unknown decoding error', code = 3) {
     super(message, code);
   }
 

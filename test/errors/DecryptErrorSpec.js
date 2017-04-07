@@ -1,6 +1,6 @@
 /*
  * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
+ * Copyright (C) 2017 Wire Swiss GmbH
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,34 +19,16 @@
 
 'use strict';
 
-/** @module errors */
+/* eslint no-undef: "off" */
 
-/**
- * @class ProteusError
- * @param {!string} message
- * @param {string} [code]
- * @extends Error
- * @returns {ProteusError} - `this`
- */
-const ProteusError = (function() {
-  const func = function(message, code = 1) {
-    this.code = code;
-    this.message = message;
-    this.name = this.constructor.name;
-    this.stack = (new Error).stack;
-  };
+describe('DecryptError', () => {
+  describe('constructor', () => {
+    it('constructs a default error code', () => {
+      let error = new Proteus.errors.DecryptError.InvalidMessage();
+      assert(error.code === 2);
 
-  func.prototype = new Error;
-  func.prototype.constructor = func;
-  func.prototype.CODE = {
-    CASE_100: 100,
-    CASE_101: 101,
-    CASE_102: 102,
-    CASE_103: 103,
-    CASE_104: 104,
-  };
-
-  return func;
-})();
-
-module.exports = ProteusError;
+      error = new Proteus.errors.DecryptError.InvalidMessage('Custom Text');
+      assert(error.code === 2);
+    });
+  });
+});

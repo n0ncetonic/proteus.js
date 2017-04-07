@@ -30,7 +30,7 @@ const ProteusError = require('./ProteusError');
  * @returns {string}
  */
 class InputError extends ProteusError {
-  constructor(message = 'Invalid input', code) {
+  constructor(message = 'Invalid input', code = 4) {
     super(message, code);
   }
 

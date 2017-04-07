@@ -29,7 +29,7 @@ const ProteusError = require('./ProteusError');
  * @param {string} [code]
  */
 class DecryptError extends ProteusError {
-  constructor(message = 'Unknown decryption error', code) {
+  constructor(message = 'Unknown decryption error', code = 2) {
     super(message, code);
   }
 
