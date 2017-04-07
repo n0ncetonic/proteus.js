@@ -136,22 +136,19 @@ class Session {
       session.pending_prekey = null;
       session.session_states = {};
 
-      return session._new_state(prekey_store, pkmsg)
-        .then((state) => {
-          const plain = state.decrypt(envelope, pkmsg.message);
-          session._insert_session_state(pkmsg.message.session_tag, state);
+      return session._new_state(prekey_store, pkmsg).then((state) => {
+        const plain = state.decrypt(envelope, pkmsg.message);
+        session._insert_session_state(pkmsg.message.session_tag, state);
 
-          if (pkmsg.prekey_id < PreKey.MAX_PREKEY_ID) {
-            MemoryUtil.zeroize(prekey_store.prekeys[pkmsg.prekey_id]);
-            return prekey_store.remove(pkmsg.prekey_id)
-              .then(() => resolve([session, plain]))
-              .catch((error) => {
-                reject(new DecryptError.PrekeyNotFound(`Could not delete PreKey: ${error.message}`, DecryptError.CODE.CASE_203));
-              });
-          } else {
-            return resolve([session, plain]);
-          }
-        }).catch(reject);
+        if (pkmsg.prekey_id < PreKey.MAX_PREKEY_ID) {
+          MemoryUtil.zeroize(prekey_store.prekeys[pkmsg.prekey_id]);
+          return prekey_store.remove(pkmsg.prekey_id).then(() => resolve([session, plain])).catch((error) => {
+            reject(new DecryptError.PrekeyNotFound(`Could not delete PreKey: ${error.message}`, DecryptError.CODE.CASE_203));
+          });
+        } else {
+          return resolve([session, plain]);
+        }
+      }).catch(reject);
     });
   }
 
@@ -163,18 +160,17 @@ class Session {
    * @throws {errors.ProteusError}
    */
   _new_state(pre_key_store, pre_key_message) {
-    return pre_key_store.get_prekey(pre_key_message.prekey_id)
-      .then((pre_key) => {
-        if (pre_key) {
-          return SessionState.init_as_bob(
-            this.local_identity,
-            pre_key.key_pair,
-            pre_key_message.identity_key,
-            pre_key_message.base_key
-          );
-        }
-        throw new ProteusError('Unable to get PreKey from PreKey store.', ProteusError.prototype.CODE.CASE_101);
-      });
+    return pre_key_store.get_prekey(pre_key_message.prekey_id).then((pre_key) => {
+      if (pre_key) {
+        return SessionState.init_as_bob(
+          this.local_identity,
+          pre_key.key_pair,
+          pre_key_message.identity_key,
+          pre_key_message.base_key
+        );
+      }
+      throw new ProteusError('Unable to get PreKey from PreKey store.', ProteusError.prototype.CODE.CASE_101);
+    });
   }
 
   /**
@@ -220,11 +216,9 @@ class Session {
    * @private
    */
   _evict_oldest_session_state() {
-    const oldest = Object.keys(this.session_states)
-      .filter((obj) => obj.toString() !== this.session_tag)
-      .reduce((lowest, obj, index) => {
-        return this.session_states[obj].idx < this.session_states[lowest].idx ? obj.toString() : lowest;
-      });
+    const oldest = Object.keys(this.session_states).filter((obj) => obj.toString() !== this.session_tag).reduce((lowest, obj, index) => {
+      return this.session_states[obj].idx < this.session_states[lowest].idx ? obj.toString() : lowest;
+    });
 
     MemoryUtil.zeroize(this.session_states[oldest]);
     delete this.session_states[oldest];
@@ -294,27 +288,25 @@ class Session {
    * @throws {errors.DecryptError}
    */
   _decrypt_prekey_message(envelope, msg, prekey_store) {
-    return Promise.resolve()
-      .then(() => this._decrypt_cipher_message(envelope, msg.message))
-      .catch((error) => {
-        if (error instanceof DecryptError.InvalidSignature
-          || error instanceof DecryptError.InvalidMessage) {
-          return this._new_state(prekey_store, msg).then((state) => {
-            const plaintext = state.decrypt(envelope, msg.message);
+    return Promise.resolve().then(() => this._decrypt_cipher_message(envelope, msg.message)).catch((error) => {
+      if (error instanceof DecryptError.InvalidSignature
+        || error instanceof DecryptError.InvalidMessage) {
+        return this._new_state(prekey_store, msg).then((state) => {
+          const plaintext = state.decrypt(envelope, msg.message);
 
-            if (msg.prekey_id !== PreKey.MAX_PREKEY_ID) {
-              MemoryUtil.zeroize(prekey_store.prekeys[msg.prekey_id]);
-              prekey_store.remove(msg.prekey_id);
-            }
+          if (msg.prekey_id !== PreKey.MAX_PREKEY_ID) {
+            MemoryUtil.zeroize(prekey_store.prekeys[msg.prekey_id]);
+            prekey_store.remove(msg.prekey_id);
+          }
 
-            this._insert_session_state(msg.message.session_tag, state);
-            this.pending_prekey = null;
+          this._insert_session_state(msg.message.session_tag, state);
+          this.pending_prekey = null;
 
-            return plaintext;
-          });
-        }
-        throw error;
-      });
+          return plaintext;
+        });
+      }
+      throw error;
+    });
   }
 
   /**
@@ -414,25 +406,29 @@ class Session {
     const self = ClassUtil.new_instance(this);
 
     const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
+    for (let n = 0; n <= nprops - 1; n++) {
       switch (d.u8()) {
-        case 0:
+        case 0: {
           self.version = d.u8();
           break;
-        case 1:
+        }
+        case 1: {
           self.session_tag = SessionTag.decode(d);
           break;
-        case 2:
+        }
+        case 2: {
           const ik = IdentityKey.decode(d);
           if (local_identity.public_key.fingerprint() !== ik.fingerprint()) {
             throw new DecodeError.LocalIdentityChanged(null, DecodeError.CODE.CASE_300);
           }
           self.local_identity = local_identity;
           break;
-        case 3:
+        }
+        case 3: {
           self.remote_identity = IdentityKey.decode(d);
           break;
-        case 4:
+        }
+        case 4: {
           switch (d.optional(() => d.object())) {
             case null:
               self.pending_prekey = null;
@@ -453,7 +449,8 @@ class Session {
               throw new DecodeError.InvalidType(null, DecodeError.CODE.CASE_301);
           }
           break;
-        case 5:
+        }
+        case 5: {
           self.session_states = {};
           // needs simplification
           for (let i = 0, j = 0, ref = d.object() - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
@@ -465,8 +462,10 @@ class Session {
             };
           }
           break;
-        default:
+        }
+        default: {
           d.skip();
+        }
       }
     }
 

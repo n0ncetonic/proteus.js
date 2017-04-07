@@ -118,10 +118,11 @@ class Envelope {
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {
       switch (d.u8()) {
-        case 0:
+        case 0: {
           env.version = d.u8();
           break;
-        case 1:
+        }
+        case 1: {
           const nprops_mac = d.object();
           for (let j = 0; j <= nprops_mac - 1; j++) {
             switch (d.u8()) {
@@ -133,11 +134,14 @@ class Envelope {
             }
           }
           break;
-        case 2:
+        }
+        case 2: {
           env._message_enc = new Uint8Array(d.bytes());
           break;
-        default:
+        }
+        default: {
           d.skip();
+        }
       }
     }
 

@@ -169,13 +169,15 @@ class RecvChain {
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {
       switch (d.u8()) {
-        case 0:
+        case 0: {
           self.chain_key = ChainKey.decode(d);
           break;
-        case 1:
+        }
+        case 1: {
           self.ratchet_key = PublicKey.decode(d);
           break;
-        case 2:
+        }
+        case 2: {
           self.message_keys = [];
 
           let len = d.array();
@@ -183,9 +185,10 @@ class RecvChain {
             self.message_keys.push(MessageKeys.decode(d));
           }
           break;
-
-        default:
+        }
+        default: {
           d.skip();
+        }
       }
     }
 

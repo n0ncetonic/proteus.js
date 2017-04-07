@@ -55,47 +55,47 @@ const KeyDerivationUtil = {
     const HASH_LEN = 32;
 
     /**
-     * @param {*} salt
+     * @param {*} received_salt
      * @returns {Uint8Array}
      */
-    const salt_to_key = (salt) => {
+    const salt_to_key = (received_salt) => {
       const keybytes = sodium.crypto_auth_hmacsha256_KEYBYTES;
-      if (salt.length > keybytes) {
-        return sodium.crypto_hash_sha256(salt);
+      if (received_salt.length > keybytes) {
+        return sodium.crypto_hash_sha256(received_salt);
       }
 
       const key = new Uint8Array(keybytes);
-      key.set(salt);
+      key.set(received_salt);
       return key;
     };
 
     /**
-     * @param {*} salt
-     * @param {*} input
+     * @param {*} received_salt
+     * @param {*} received_input
      * @returns {*}
      */
-    const extract = (salt, input) => {
-      return sodium.crypto_auth_hmacsha256(input, salt_to_key(salt));
+    const extract = (received_salt, received_input) => {
+      return sodium.crypto_auth_hmacsha256(received_input, salt_to_key(received_salt));
     };
 
     /**
      * @param {*} tag
-     * @param {*} info
-     * @param {!number} length
+     * @param {*} received_info
+     * @param {!number} received_length
      * @returns {Uint8Array}
      */
-    const expand = (tag, info, length) => {
-      let num_blocks = Math.ceil(length / HASH_LEN);
+    const expand = (tag, received_info, received_length) => {
+      let num_blocks = Math.ceil(received_length / HASH_LEN);
       let hmac = new Uint8Array(0);
       let result = new Uint8Array(0);
 
       for (let i = 0; i <= num_blocks - 1; i++) {
-        const buf = ArrayUtil.concatenate_array_buffers([hmac, info, new Uint8Array([i + 1])]);
+        const buf = ArrayUtil.concatenate_array_buffers([hmac, received_info, new Uint8Array([i + 1])]);
         hmac = sodium.crypto_auth_hmacsha256(buf, tag);
         result = ArrayUtil.concatenate_array_buffers([result, hmac]);
       }
 
-      return new Uint8Array(result.buffer.slice(0, length));
+      return new Uint8Array(result.buffer.slice(0, received_length));
     };
 
     const key = extract(salt, input);

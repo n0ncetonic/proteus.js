@@ -286,24 +286,29 @@ class SessionState {
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {
       switch (d.u8()) {
-        case 0:
+        case 0: {
           self.recv_chains = [];
           let len = d.array();
           while (len--) {
             self.recv_chains.push(RecvChain.decode(d));
           }
           break;
-        case 1:
+        }
+        case 1: {
           self.send_chain = SendChain.decode(d);
           break;
-        case 2:
+        }
+        case 2: {
           self.root_key = RootKey.decode(d);
           break;
-        case 3:
+        }
+        case 3: {
           self.prev_counter = d.u32();
           break;
-        default:
+        }
+        default: {
           d.skip();
+        }
       }
     }
 
