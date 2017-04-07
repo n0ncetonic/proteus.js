@@ -1,4 +1,5 @@
-/*! wire-webapp-proteus v5.0.3 */
+/*! wire-webapp-proteus v5.1.0 */
+var Proteus =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -64,7 +65,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 47);
+/******/ 	return __webpack_require__(__webpack_require__.s = 34);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -157,7 +158,7 @@ module.exports = DontCallConstructor;
 
 
 
-const InputError = __webpack_require__(23);
+const InputError = __webpack_require__(19);
 
 /** @module util */
 
@@ -226,41 +227,6 @@ module.exports = TypeUtil;
 
 
 
-module.exports = {
-  BaseError:   __webpack_require__(28),
-  DecodeError: __webpack_require__(29),
-  Decoder:     __webpack_require__(38),
-  Encoder:     __webpack_require__(39),
-  Types:       __webpack_require__(20),
-};
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
 const DontCallConstructor = __webpack_require__(0);
 
 /** @module util */
@@ -286,13 +252,13 @@ module.exports = ClassUtil;
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports) {
 
-module.exports = sodium;
+module.exports = CBOR;
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -317,11 +283,11 @@ module.exports = sodium;
 
 
 
-const CBOR = __webpack_require__(2);
-const ed2curve = __webpack_require__(19);
-const sodium = __webpack_require__(4);
+const CBOR = __webpack_require__(3);
+const ed2curve = __webpack_require__(23);
+const sodium = __webpack_require__(5);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
@@ -413,6 +379,12 @@ module.exports = PublicKey;
 
 
 /***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+module.exports = sodium;
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -448,7 +420,7 @@ module.exports = PublicKey;
  * @returns {ProteusError} - `this`
  */
 const ProteusError = (function() {
-  const func = function(message, code) {
+  const func = function(message, code = 1) {
     this.code = code;
     this.message = message;
     this.name = this.constructor.name;
@@ -497,16 +469,16 @@ module.exports = ProteusError;
 
 
 
-const CBOR = __webpack_require__(2);
-const ed2curve = __webpack_require__(19);
-const sodium = __webpack_require__(4);
+const CBOR = __webpack_require__(3);
+const ed2curve = __webpack_require__(23);
+const sodium = __webpack_require__(5);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const PublicKey = __webpack_require__(5);
-const SecretKey = __webpack_require__(26);
+const PublicKey = __webpack_require__(4);
+const SecretKey = __webpack_require__(22);
 
 /** @module keys */
 
@@ -635,14 +607,14 @@ module.exports = KeyPair;
 
 
 
-const CBOR = __webpack_require__(2);
-const sodium = __webpack_require__(4);
+const CBOR = __webpack_require__(3);
+const sodium = __webpack_require__(5);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const PublicKey = __webpack_require__(5);
+const PublicKey = __webpack_require__(4);
 
 /** @module keys */
 
@@ -742,16 +714,16 @@ module.exports = IdentityKey;
 
 
 
-const CBOR = __webpack_require__(2);
+const CBOR = __webpack_require__(3);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const PublicKey = __webpack_require__(5);
+const PublicKey = __webpack_require__(4);
 
-const Message = __webpack_require__(15);
-const SessionTag = __webpack_require__(27);
+const Message = __webpack_require__(14);
+const SessionTag = __webpack_require__(26);
 
 /** @module message */
 
@@ -877,119 +849,6 @@ module.exports = CipherMessage;
  *
  */
 
-
-
-const CBOR = __webpack_require__(2);
-const sodium = __webpack_require__(4);
-
-const ClassUtil = __webpack_require__(3);
-const DontCallConstructor = __webpack_require__(0);
-const TypeUtil = __webpack_require__(1);
-
-/** @module derived */
-
-/**
- * @class MacKey
- * @throws {DontCallConstructor}
- */
-class MacKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!Uint8Array} key - Mac Key in byte array format generated by derived secrets
-   * @returns {MacKey} - `this`
-   */
-  static new(key) {
-    TypeUtil.assert_is_instance(Uint8Array, key);
-
-    const mk = ClassUtil.new_instance(MacKey);
-    /** @type {Uint8Array} */
-    mk.key = key;
-    return mk;
-  }
-
-  /**
-   * Hash-based message authentication code
-   * @param {!(string|Uint8Array)} msg
-   * @returns {Uint8Array}
-   */
-  sign(msg) {
-    return sodium.crypto_auth_hmacsha256(msg, this.key);
-  }
-
-  /**
-   * Verifies the signature of a given message by resigning it.
-   * @param {!Uint8Array} signature Mac signature (HMAC) which needs to get verified
-   * @param {!Uint8Array} msg Unsigned message
-   * @returns {boolean}
-   */
-  verify(signature, msg) {
-    return sodium.crypto_auth_hmacsha256_verify(signature, msg, this.key);
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    e.object(1);
-    e.u8(0);
-    return e.bytes(this.key);
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {MacKey}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    let key_bytes = null;
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          key_bytes = new Uint8Array(d.bytes());
-          break;
-        default:
-          d.skip();
-      }
-    }
-
-    return MacKey.new(key_bytes);
-  }
-}
-
-module.exports = MacKey;
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
 /* eslint no-unused-vars: "off" */
 
 
@@ -1005,7 +864,7 @@ const ProteusError = __webpack_require__(6);
  * @returns {string}
  */
 class DecodeError extends ProteusError {
-  constructor(message = 'Unknown decoding error', code) {
+  constructor(message = 'Unknown decoding error', code = 3) {
     super(message, code);
   }
 
@@ -1065,7 +924,7 @@ module.exports = ProteusError.DecodeError = DecodeError;
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1100,7 +959,7 @@ const ProteusError = __webpack_require__(6);
  * @param {string} [code]
  */
 class DecryptError extends ProteusError {
-  constructor(message = 'Unknown decryption error', code) {
+  constructor(message = 'Unknown decryption error', code = 2) {
     super(message, code);
   }
 
@@ -1213,7 +1072,7 @@ module.exports = ProteusError.DecryptError = DecryptError;
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1238,15 +1097,15 @@ module.exports = ProteusError.DecryptError = DecryptError;
 
 
 
-const CBOR = __webpack_require__(2);
+const CBOR = __webpack_require__(3);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
 const IdentityKey = __webpack_require__(8);
 const KeyPair = __webpack_require__(7);
-const SecretKey = __webpack_require__(26);
+const SecretKey = __webpack_require__(22);
 
 /** @module keys */
 
@@ -1342,7 +1201,7 @@ module.exports = IdentityKeyPair;
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1367,14 +1226,14 @@ module.exports = IdentityKeyPair;
 
 
 
-const CBOR = __webpack_require__(2);
+const CBOR = __webpack_require__(3);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const MacKey = __webpack_require__(10);
-const Message = __webpack_require__(15);
+const MacKey = __webpack_require__(16);
+const Message = __webpack_require__(14);
 
 /** @module message */
 
@@ -1466,10 +1325,11 @@ class Envelope {
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {
       switch (d.u8()) {
-        case 0:
+        case 0: {
           env.version = d.u8();
           break;
-        case 1:
+        }
+        case 1: {
           const nprops_mac = d.object();
           for (let j = 0; j <= nprops_mac - 1; j++) {
             switch (d.u8()) {
@@ -1481,11 +1341,14 @@ class Envelope {
             }
           }
           break;
-        case 2:
+        }
+        case 2: {
           env._message_enc = new Uint8Array(d.bytes());
           break;
-        default:
+        }
+        default: {
           d.skip();
+        }
       }
     }
 
@@ -1503,7 +1366,7 @@ module.exports = Envelope;
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1528,12 +1391,12 @@ module.exports = Envelope;
 
 
 
-const CBOR = __webpack_require__(2);
+const CBOR = __webpack_require__(3);
 
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const DecodeError = __webpack_require__(11);
+const DecodeError = __webpack_require__(10);
 
 /** @module message */
 
@@ -1586,11 +1449,11 @@ module.exports = Message;
 // these require lines have to come after the Message definition because otherwise
 // it creates a circular dependency with the message subtypes
 const CipherMessage = __webpack_require__(9);
-const PreKeyMessage = __webpack_require__(16);
+const PreKeyMessage = __webpack_require__(15);
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1615,17 +1478,17 @@ const PreKeyMessage = __webpack_require__(16);
 
 
 
-const CBOR = __webpack_require__(2);
+const CBOR = __webpack_require__(3);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
 const IdentityKey = __webpack_require__(8);
-const PublicKey = __webpack_require__(5);
+const PublicKey = __webpack_require__(4);
 
 const CipherMessage = __webpack_require__(9);
-const Message = __webpack_require__(15);
+const Message = __webpack_require__(14);
 
 /** @module message */
 
@@ -1720,6 +1583,119 @@ module.exports = PreKeyMessage;
 
 
 /***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(3);
+const sodium = __webpack_require__(5);
+
+const ClassUtil = __webpack_require__(2);
+const DontCallConstructor = __webpack_require__(0);
+const TypeUtil = __webpack_require__(1);
+
+/** @module derived */
+
+/**
+ * @class MacKey
+ * @throws {DontCallConstructor}
+ */
+class MacKey {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /**
+   * @param {!Uint8Array} key - Mac Key in byte array format generated by derived secrets
+   * @returns {MacKey} - `this`
+   */
+  static new(key) {
+    TypeUtil.assert_is_instance(Uint8Array, key);
+
+    const mk = ClassUtil.new_instance(MacKey);
+    /** @type {Uint8Array} */
+    mk.key = key;
+    return mk;
+  }
+
+  /**
+   * Hash-based message authentication code
+   * @param {!(string|Uint8Array)} msg
+   * @returns {Uint8Array}
+   */
+  sign(msg) {
+    return sodium.crypto_auth_hmacsha256(msg, this.key);
+  }
+
+  /**
+   * Verifies the signature of a given message by resigning it.
+   * @param {!Uint8Array} signature Mac signature (HMAC) which needs to get verified
+   * @param {!Uint8Array} msg Unsigned message
+   * @returns {boolean}
+   */
+  verify(signature, msg) {
+    return sodium.crypto_auth_hmacsha256_verify(signature, msg, this.key);
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    e.object(1);
+    e.u8(0);
+    return e.bytes(this.key);
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {MacKey}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    let key_bytes = null;
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          key_bytes = new Uint8Array(d.bytes());
+          break;
+        default:
+          d.skip();
+      }
+    }
+
+    return MacKey.new(key_bytes);
+  }
+}
+
+module.exports = MacKey;
+
+
+/***/ }),
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1745,15 +1721,15 @@ module.exports = PreKeyMessage;
 
 
 
-const CBOR = __webpack_require__(2);
+const CBOR = __webpack_require__(3);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const DerivedSecrets = __webpack_require__(22);
-const MacKey = __webpack_require__(10);
-const MessageKeys = __webpack_require__(31);
+const DerivedSecrets = __webpack_require__(25);
+const MacKey = __webpack_require__(16);
+const MessageKeys = __webpack_require__(30);
 
 /** @module session */
 
@@ -1867,7 +1843,7 @@ module.exports = ChainKey;
 
 
 
-const sodium = __webpack_require__(4);
+const sodium = __webpack_require__(5);
 
 /** @module util */
 
@@ -1894,6 +1870,598 @@ module.exports = MemoryUtil;
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2017 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const ProteusError = __webpack_require__(6);
+
+/** @module errors */
+
+/**
+ * @extends ProteusError
+ * @param {string} [message]
+ * @param {string} [code]
+ * @returns {string}
+ */
+class InputError extends ProteusError {
+  constructor(message = 'Invalid input', code = 4) {
+    super(message, code);
+  }
+
+  static get CODE() {
+    return {
+      CASE_400: 400,
+      CASE_401: 401,
+      CASE_402: 402,
+      CASE_403: 403,
+      CASE_404: 404,
+      CASE_405: 405,
+    };
+  }
+}
+
+/**
+ * @extends InputError
+ * @param {string} [message]
+ * @param {string} [code]
+ * @returns {string}
+ */
+class RangeError extends InputError {
+  constructor(message = 'Invalid type', code) {
+    super(message, code);
+  }
+}
+
+/**
+ * @extends InputError
+ * @param {string} [message]
+ * @param {string} [code]
+ * @returns {string}
+ */
+class TypeError extends InputError {
+  constructor(message = 'Invalid array length', code) {
+    super(message, code);
+  }
+}
+
+Object.assign(InputError, {
+  RangeError,
+  TypeError,
+});
+
+module.exports = ProteusError.InputError = InputError;
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(3);
+
+const ClassUtil = __webpack_require__(2);
+const DontCallConstructor = __webpack_require__(0);
+const InputError = __webpack_require__(19);
+const TypeUtil = __webpack_require__(1);
+
+const KeyPair = __webpack_require__(7);
+
+/** @module keys **/
+
+/**
+ * @class PreKey
+ * @classdesc Pre-generated (and regularly refreshed) pre-keys.
+ * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
+ * @throws {DontCallConstructor}
+ */
+class PreKey {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /** @type {number} */
+  static get MAX_PREKEY_ID() {
+    return 0xFFFF;
+  }
+
+  /**
+   * @param {!number} pre_key_id
+   * @returns {PreKey} - `this`
+   * @throws {errors.InputError.RangeError}
+   */
+  static new(pre_key_id) {
+    TypeUtil.assert_is_integer(pre_key_id);
+
+    if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
+      throw new InputError.RangeError(
+        `PreKey ID (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_400
+      );
+    }
+
+    const pk = ClassUtil.new_instance(PreKey);
+
+    pk.version = 1;
+    pk.key_id = pre_key_id;
+    pk.key_pair = KeyPair.new();
+    return pk;
+  }
+
+  /** @returns {PreKey} */
+  static last_resort() {
+    return PreKey.new(PreKey.MAX_PREKEY_ID);
+  }
+
+  /**
+   * @param {!number} start
+   * @param {!number} size
+   * @returns {Array<PreKey>}
+   * @throws {errors.InputError.RangeError}
+   */
+  static generate_prekeys(start, size) {
+    const check_integer = (value) => {
+      TypeUtil.assert_is_integer(value);
+
+      if (value < 0 || value > PreKey.MAX_PREKEY_ID) {
+        throw new InputError.RangeError(
+          `PreKey ID (${value}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_401
+        );
+      }
+    };
+
+    check_integer(start);
+    check_integer(size);
+
+    if (size === 0) {
+      return [];
+    }
+
+    return [...Array(size).keys()].map((x) => PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
+  }
+
+  /** @returns {ArrayBuffer} */
+  serialise() {
+    const e = new CBOR.Encoder();
+    this.encode(e);
+    return e.get_buffer();
+  }
+
+  /**
+   * @param {!ArrayBuffer} buf
+   * @returns {PreKey}
+   */
+  static deserialise(buf) {
+    TypeUtil.assert_is_instance(ArrayBuffer, buf);
+    return PreKey.decode(new CBOR.Decoder(buf));
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    TypeUtil.assert_is_instance(CBOR.Encoder, e);
+    e.object(3);
+    e.u8(0);
+    e.u8(this.version);
+    e.u8(1);
+    e.u16(this.key_id);
+    e.u8(2);
+    return this.key_pair.encode(e);
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {PreKey}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    const self = ClassUtil.new_instance(PreKey);
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          self.version = d.u8();
+          break;
+        case 1:
+          self.key_id = d.u16();
+          break;
+        case 2:
+          self.key_pair = KeyPair.decode(d);
+          break;
+        default:
+          d.skip();
+      }
+    }
+
+    TypeUtil.assert_is_integer(self.version);
+    TypeUtil.assert_is_integer(self.key_id);
+    TypeUtil.assert_is_instance(KeyPair, self.key_pair);
+
+    return self;
+  }
+}
+
+module.exports = PreKey;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(3);
+const sodium = __webpack_require__(5);
+
+const ClassUtil = __webpack_require__(2);
+const DontCallConstructor = __webpack_require__(0);
+const TypeUtil = __webpack_require__(1);
+
+const IdentityKey = __webpack_require__(8);
+const IdentityKeyPair = __webpack_require__(12);
+const PreKey = __webpack_require__(20);
+const PreKeyAuth = __webpack_require__(27);
+const PublicKey = __webpack_require__(4);
+
+/** @module keys */
+
+/**
+ * @class PreKeyBundle
+ * @throws {DontCallConstructor}
+ */
+class PreKeyBundle {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /**
+   * @param {!keys.IdentityKey} public_identity_key
+   * @param {!keys.PreKey} prekey
+   * @returns {PreKeyBundle} - `this`
+   */
+  static new(public_identity_key, prekey) {
+    TypeUtil.assert_is_instance(IdentityKey, public_identity_key);
+    TypeUtil.assert_is_instance(PreKey, prekey);
+
+    /** @type {keys.PreyKeyBundle} */
+    const bundle = ClassUtil.new_instance(PreKeyBundle);
+
+    bundle.version = 1;
+    bundle.prekey_id = prekey.key_id;
+    bundle.public_key = prekey.key_pair.public_key;
+    bundle.identity_key = public_identity_key;
+    bundle.signature = null;
+
+    return bundle;
+  }
+
+  /**
+   * @param {!keys.IdentityKeyPair} identity_pair
+   * @param {!keys.PreKey} prekey
+   * @returns {PreKeyBundle}
+   */
+  static signed(identity_pair, prekey) {
+    TypeUtil.assert_is_instance(IdentityKeyPair, identity_pair);
+    TypeUtil.assert_is_instance(PreKey, prekey);
+
+    /** @type {keys.PublicKey} */
+    const ratchet_key = prekey.key_pair.public_key;
+    /** @type {Uint8Array} */
+    const signature = identity_pair.secret_key.sign(ratchet_key.pub_edward);
+
+    /** @type {keys.PreyKeyBundle} */
+    const bundle = ClassUtil.new_instance(PreKeyBundle);
+
+    bundle.version = 1;
+    bundle.prekey_id = prekey.key_id;
+    bundle.public_key = ratchet_key;
+    bundle.identity_key = identity_pair.public_key;
+    bundle.signature = signature;
+
+    return bundle;
+  }
+
+  /** @returns {keys.PreKeyAuth} */
+  verify() {
+    if (!this.signature) {
+      return PreKeyAuth.UNKNOWN;
+    }
+
+    if (this.identity_key.public_key.verify(this.signature, this.public_key.pub_edward)) {
+      return PreKeyAuth.VALID;
+    }
+    return PreKeyAuth.INVALID;
+  }
+
+  /** @returns {ArrayBuffer} */
+  serialise() {
+    const e = new CBOR.Encoder();
+    this.encode(e);
+    return e.get_buffer();
+  }
+
+  /**
+   * @typedef {Object} type_serialised_json
+   * @property {number} id
+   * @property {string} key
+   */
+  /** @returns {type_serialised_json} */
+  serialised_json() {
+    return {
+      'id': this.prekey_id,
+      'key': sodium.to_base64(new Uint8Array(this.serialise()), true),
+    };
+  }
+
+  /**
+   * @param {!ArrayBuffer} buf
+   * @returns {PreKeyBundle}
+   */
+  static deserialise(buf) {
+    TypeUtil.assert_is_instance(ArrayBuffer, buf);
+    return PreKeyBundle.decode(new CBOR.Decoder(buf));
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    TypeUtil.assert_is_instance(CBOR.Encoder, e);
+
+    e.object(5);
+    e.u8(0);
+    e.u8(this.version);
+    e.u8(1);
+    e.u16(this.prekey_id);
+    e.u8(2);
+    this.public_key.encode(e);
+    e.u8(3);
+    this.identity_key.encode(e);
+
+    e.u8(4);
+    if (!this.signature) {
+      return e.null();
+    } else {
+      return e.bytes(this.signature);
+    }
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {PreKeyBundle}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    const self = ClassUtil.new_instance(PreKeyBundle);
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          self.version = d.u8();
+          break;
+        case 1:
+          self.prekey_id = d.u16();
+          break;
+        case 2:
+          self.public_key = PublicKey.decode(d);
+          break;
+        case 3:
+          self.identity_key = IdentityKey.decode(d);
+          break;
+        case 4:
+          self.signature = d.optional(() => new Uint8Array(d.bytes()));
+          break;
+        default:
+          d.skip();
+      }
+    }
+
+    TypeUtil.assert_is_integer(self.version);
+    TypeUtil.assert_is_integer(self.prekey_id);
+    TypeUtil.assert_is_instance(PublicKey, self.public_key);
+    TypeUtil.assert_is_instance(IdentityKey, self.identity_key);
+
+    return self;
+  }
+}
+
+module.exports = PreKeyBundle;
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(3);
+const ed2curve = __webpack_require__(23);
+const sodium = __webpack_require__(5);
+
+const ClassUtil = __webpack_require__(2);
+const DontCallConstructor = __webpack_require__(0);
+const PublicKey = __webpack_require__(4);
+const TypeUtil = __webpack_require__(1);
+
+/** @module keys */
+
+/**
+ * @class SecretKey
+ * @throws {DontCallConstructor}
+ */
+class SecretKey {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /**
+   * @param {!Uint8Array} sec_edward
+   * @param {!Uint8Array} sec_curve
+   * @returns {SecretKey} - `this`
+   */
+  static new(sec_edward, sec_curve) {
+    TypeUtil.assert_is_instance(Uint8Array, sec_edward);
+    TypeUtil.assert_is_instance(Uint8Array, sec_curve);
+
+    const sk = ClassUtil.new_instance(SecretKey);
+
+    /** @type {Uint8Array} */
+    sk.sec_edward = sec_edward;
+    /** @type {Uint8Array} */
+    sk.sec_curve = sec_curve;
+    return sk;
+  }
+
+  /**
+   * This function can be used to compute a message signature.
+   * @param {!string} message - Message to be signed
+   * @returns {Uint8Array} - A message signature
+   */
+  sign(message) {
+    return sodium.crypto_sign_detached(message, this.sec_edward);
+  }
+
+  /**
+   * This function can be used to compute a shared secret given a user's secret key and another
+   * user's public key.
+   * @param {!keys.PublicKey} public_key - Another user's public key
+   * @returns {Uint8Array} - Array buffer view of the computed shared secret
+   */
+  shared_secret(public_key) {
+    TypeUtil.assert_is_instance(PublicKey, public_key);
+
+    return sodium.crypto_scalarmult(this.sec_curve, public_key.pub_curve);
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    e.object(1);
+    e.u8(0);
+    return e.bytes(this.sec_edward);
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {SecretKey}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    const self = ClassUtil.new_instance(SecretKey);
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          self.sec_edward = new Uint8Array(d.bytes());
+          break;
+        default:
+          d.skip();
+      }
+    }
+
+    TypeUtil.assert_is_instance(Uint8Array, self.sec_edward);
+
+    self.sec_curve = ed2curve.convertSecretKey(self.sec_edward);
+    return self;
+  }
+}
+
+module.exports = SecretKey;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
 /*
  * ed2curve: convert Ed25519 signing key pair into Curve25519
  * key pair suitable for Diffie-Hellman key exchange.
@@ -1903,7 +2471,7 @@ module.exports = MemoryUtil;
 /* jshint newcap: false */
 (function(root, f) {
   'use strict';
-  if (typeof module !== 'undefined' && module.exports) module.exports = f(__webpack_require__(37));
+  if (typeof module !== 'undefined' && module.exports) module.exports = f(__webpack_require__(33));
   else root.ed2curve = f(root.nacl);
 }(this, function(nacl) {
   'use strict';
@@ -2155,7 +2723,7 @@ module.exports = MemoryUtil;
 
 
 /***/ }),
-/* 20 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2180,140 +2748,10 @@ module.exports = MemoryUtil;
 
 
 
-/**
- * @class Types
- * @throws Error
- */
-class Types {
-  constructor() {
-    throw new Error('Can\'t create instance of singleton');
-  }
+const CBOR = __webpack_require__(3);
+const sodium = __webpack_require__(5);
 
-  /** @type {number} */
-  static get ARRAY() { return 1; }
-
-  /** @type {number} */
-  static get BOOL() { return 2; }
-
-  /** @type {number} */
-  static get BREAK() { return 3; }
-
-  /** @type {number} */
-  static get BYTES() {return 4; }
-
-  /** @type {number} */
-  static get FLOAT16() { return 5; }
-
-  /** @type {number} */
-  static get FLOAT32() { return 6; }
-
-  /** @type {number} */
-  static get FLOAT64() { return 7; }
-
-  /** @type {number} */
-  static get UINT8() { return 8; }
-
-  /** @type {number} */
-  static get UINT16() { return 9; }
-
-  /** @type {number} */
-  static get UINT32() { return 10; }
-
-  /** @type {number} */
-  static get UINT64() { return 11; }
-
-  /** @type {number} */
-  static get INT8() { return 12; }
-
-  /** @type {number} */
-  static get INT16() { return 13; }
-
-  /** @type {number} */
-  static get INT32() { return 14; }
-
-  /** @type {number} */
-  static get INT64() { return 15; }
-
-  /** @type {number} */
-  static get NULL() { return 16; }
-
-  /** @type {number} */
-  static get OBJECT() { return 17; }
-
-  /** @type {number} */
-  static get TAGGED() { return 18; }
-
-  /** @type {number} */
-  static get TEXT() { return 19; }
-
-  /** @type {number} */
-  static get UNDEFINED() { return 20; }
-
-  /**
-   * @param {!Types} t
-   * @returns {number}
-   * @throws TypeError
-   */
-  static major(t) {
-    switch (t) {
-      case this.ARRAY: return 4;
-      case this.BOOL: return 7;
-      case this.BREAK: return 7;
-      case this.BYTES: return 2;
-      case this.FLOAT16: return 7;
-      case this.FLOAT32: return 7;
-      case this.FLOAT64: return 7;
-      case this.UINT8: return 0;
-      case this.UINT16: return 0;
-      case this.UINT32: return 0;
-      case this.UINT64: return 0;
-      case this.INT8: return 1;
-      case this.INT16: return 1;
-      case this.INT32: return 1;
-      case this.INT64: return 1;
-      case this.NULL: return 7;
-      case this.OBJECT: return 5;
-      case this.TAGGED: return 6;
-      case this.TEXT: return 3;
-      case this.UNDEFINED: return 7;
-      default: throw new TypeError('Invalid CBOR type');
-    }
-  }
-}
-
-module.exports = Types;
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(2);
-const sodium = __webpack_require__(4);
-
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
@@ -2401,7 +2839,7 @@ module.exports = CipherKey;
 
 
 /***/ }),
-/* 22 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2426,13 +2864,13 @@ module.exports = CipherKey;
 
 
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
-const KeyDerivationUtil = __webpack_require__(44);
+const KeyDerivationUtil = __webpack_require__(39);
 const MemoryUtil = __webpack_require__(18);
 
-const CipherKey = __webpack_require__(21);
-const MacKey = __webpack_require__(10);
+const CipherKey = __webpack_require__(24);
+const MacKey = __webpack_require__(16);
 
 /** @module derived */
 
@@ -2483,473 +2921,6 @@ module.exports = DerivedSecrets;
 
 
 /***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2017 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const ProteusError = __webpack_require__(6);
-
-/** @module errors */
-
-/**
- * @extends ProteusError
- * @param {string} [message]
- * @param {string} [code]
- * @returns {string}
- */
-class InputError extends ProteusError {
-  constructor(message = 'Invalid input', code) {
-    super(message, code);
-  }
-
-  static get CODE() {
-    return {
-      CASE_400: 400,
-      CASE_401: 401,
-      CASE_402: 402,
-      CASE_403: 403,
-      CASE_404: 404,
-      CASE_405: 405,
-    };
-  }
-}
-
-/**
- * @extends InputError
- * @param {string} [message]
- * @param {string} [code]
- * @returns {string}
- */
-class RangeError extends InputError {
-  constructor(message = 'Invalid type', code) {
-    super(message, code);
-  }
-}
-
-/**
- * @extends InputError
- * @param {string} [message]
- * @param {string} [code]
- * @returns {string}
- */
-class TypeError extends InputError {
-  constructor(message = 'Invalid array length', code) {
-    super(message, code);
-  }
-}
-
-Object.assign(InputError, {
-  RangeError,
-  TypeError,
-});
-
-module.exports = ProteusError.InputError = InputError;
-
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(2);
-
-const ClassUtil = __webpack_require__(3);
-const DontCallConstructor = __webpack_require__(0);
-const InputError = __webpack_require__(23);
-const TypeUtil = __webpack_require__(1);
-
-const KeyPair = __webpack_require__(7);
-
-/** @module keys **/
-
-/**
- * @class PreKey
- * @classdesc Pre-generated (and regularly refreshed) pre-keys.
- * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
- * @throws {DontCallConstructor}
- */
-class PreKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /** @type {number} */
-  static get MAX_PREKEY_ID() {
-    return 0xFFFF;
-  }
-
-  /**
-   * @param {!number} pre_key_id
-   * @returns {PreKey} - `this`
-   * @throws {errors.InputError.RangeError}
-   */
-  static new(pre_key_id) {
-    TypeUtil.assert_is_integer(pre_key_id);
-
-    if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
-      throw new InputError.RangeError(
-        `PreKey ID (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_400
-      );
-    }
-
-    const pk = ClassUtil.new_instance(PreKey);
-
-    pk.version = 1;
-    pk.key_id = pre_key_id;
-    pk.key_pair = KeyPair.new();
-    return pk;
-  }
-
-  /** @returns {PreKey} */
-  static last_resort() {
-    return PreKey.new(PreKey.MAX_PREKEY_ID);
-  }
-
-  /**
-   * @param {!number} start
-   * @param {!number} size
-   * @returns {Array<PreKey>}
-   * @throws {errors.InputError.RangeError}
-   */
-  static generate_prekeys(start, size) {
-    const check_integer = (value) => {
-      TypeUtil.assert_is_integer(value);
-
-      if (value < 0 || value > PreKey.MAX_PREKEY_ID) {
-        throw new InputError.RangeError(
-          `PreKey ID (${value}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_401
-        );
-      }
-    };
-
-    check_integer(start);
-    check_integer(size);
-
-    if (size === 0) {
-      return [];
-    }
-
-    return [...Array(size).keys()].map((x) => PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
-  }
-
-  /** @returns {ArrayBuffer} */
-  serialise() {
-    const e = new CBOR.Encoder();
-    this.encode(e);
-    return e.get_buffer();
-  }
-
-  /**
-   * @param {!ArrayBuffer} buf
-   * @returns {PreKey}
-   */
-  static deserialise(buf) {
-    TypeUtil.assert_is_instance(ArrayBuffer, buf);
-    return PreKey.decode(new CBOR.Decoder(buf));
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    TypeUtil.assert_is_instance(CBOR.Encoder, e);
-    e.object(3);
-    e.u8(0);
-    e.u8(this.version);
-    e.u8(1);
-    e.u16(this.key_id);
-    e.u8(2);
-    return this.key_pair.encode(e);
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {PreKey}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    const self = ClassUtil.new_instance(PreKey);
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          self.version = d.u8();
-          break;
-        case 1:
-          self.key_id = d.u16();
-          break;
-        case 2:
-          self.key_pair = KeyPair.decode(d);
-          break;
-        default:
-          d.skip();
-      }
-    }
-
-    TypeUtil.assert_is_integer(self.version);
-    TypeUtil.assert_is_integer(self.key_id);
-    TypeUtil.assert_is_instance(KeyPair, self.key_pair);
-
-    return self;
-  }
-}
-
-module.exports = PreKey;
-
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(2);
-const sodium = __webpack_require__(4);
-
-const ClassUtil = __webpack_require__(3);
-const DontCallConstructor = __webpack_require__(0);
-const TypeUtil = __webpack_require__(1);
-
-const IdentityKey = __webpack_require__(8);
-const IdentityKeyPair = __webpack_require__(13);
-const PreKey = __webpack_require__(24);
-const PreKeyAuth = __webpack_require__(30);
-const PublicKey = __webpack_require__(5);
-
-/** @module keys */
-
-/**
- * @class PreKeyBundle
- * @throws {DontCallConstructor}
- */
-class PreKeyBundle {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!keys.IdentityKey} public_identity_key
-   * @param {!keys.PreKey} prekey
-   * @returns {PreKeyBundle} - `this`
-   */
-  static new(public_identity_key, prekey) {
-    TypeUtil.assert_is_instance(IdentityKey, public_identity_key);
-    TypeUtil.assert_is_instance(PreKey, prekey);
-
-    /** @type {keys.PreyKeyBundle} */
-    const bundle = ClassUtil.new_instance(PreKeyBundle);
-
-    bundle.version = 1;
-    bundle.prekey_id = prekey.key_id;
-    bundle.public_key = prekey.key_pair.public_key;
-    bundle.identity_key = public_identity_key;
-    bundle.signature = null;
-
-    return bundle;
-  }
-
-  /**
-   * @param {!keys.IdentityKeyPair} identity_pair
-   * @param {!keys.PreKey} prekey
-   * @returns {PreKeyBundle}
-   */
-  static signed(identity_pair, prekey) {
-    TypeUtil.assert_is_instance(IdentityKeyPair, identity_pair);
-    TypeUtil.assert_is_instance(PreKey, prekey);
-
-    /** @type {keys.PublicKey} */
-    const ratchet_key = prekey.key_pair.public_key;
-    /** @type {Uint8Array} */
-    const signature = identity_pair.secret_key.sign(ratchet_key.pub_edward);
-
-    /** @type {keys.PreyKeyBundle} */
-    const bundle = ClassUtil.new_instance(PreKeyBundle);
-
-    bundle.version = 1;
-    bundle.prekey_id = prekey.key_id;
-    bundle.public_key = ratchet_key;
-    bundle.identity_key = identity_pair.public_key;
-    bundle.signature = signature;
-
-    return bundle;
-  }
-
-  /** @returns {keys.PreKeyAuth} */
-  verify() {
-    if (!this.signature) {
-      return PreKeyAuth.UNKNOWN;
-    }
-
-    if (this.identity_key.public_key.verify(this.signature, this.public_key.pub_edward)) {
-      return PreKeyAuth.VALID;
-    }
-    return PreKeyAuth.INVALID;
-  }
-
-  /** @returns {ArrayBuffer} */
-  serialise() {
-    const e = new CBOR.Encoder();
-    this.encode(e);
-    return e.get_buffer();
-  }
-
-  /**
-   * @typedef {Object} type_serialised_json
-   * @property {number} id
-   * @property {string} key
-   */
-  /** @returns {type_serialised_json} */
-  serialised_json() {
-    return {
-      'id': this.prekey_id,
-      'key': sodium.to_base64(new Uint8Array(this.serialise()), true),
-    };
-  }
-
-  /**
-   * @param {!ArrayBuffer} buf
-   * @returns {PreKeyBundle}
-   */
-  static deserialise(buf) {
-    TypeUtil.assert_is_instance(ArrayBuffer, buf);
-    return PreKeyBundle.decode(new CBOR.Decoder(buf));
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    TypeUtil.assert_is_instance(CBOR.Encoder, e);
-
-    e.object(5);
-    e.u8(0);
-    e.u8(this.version);
-    e.u8(1);
-    e.u16(this.prekey_id);
-    e.u8(2);
-    this.public_key.encode(e);
-    e.u8(3);
-    this.identity_key.encode(e);
-
-    e.u8(4);
-    if (!this.signature) {
-      return e.null();
-    } else {
-      return e.bytes(this.signature);
-    }
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {PreKeyBundle}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    const self = ClassUtil.new_instance(PreKeyBundle);
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          self.version = d.u8();
-          break;
-        case 1:
-          self.prekey_id = d.u16();
-          break;
-        case 2:
-          self.public_key = PublicKey.decode(d);
-          break;
-        case 3:
-          self.identity_key = IdentityKey.decode(d);
-          break;
-        case 4:
-          self.signature = d.optional(() => new Uint8Array(d.bytes()));
-          break;
-        default:
-          d.skip();
-      }
-    }
-
-    TypeUtil.assert_is_integer(self.version);
-    TypeUtil.assert_is_integer(self.prekey_id);
-    TypeUtil.assert_is_instance(PublicKey, self.public_key);
-    TypeUtil.assert_is_instance(IdentityKey, self.identity_key);
-
-    return self;
-  }
-}
-
-module.exports = PreKeyBundle;
-
-
-/***/ }),
 /* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2975,141 +2946,16 @@ module.exports = PreKeyBundle;
 
 
 
-const CBOR = __webpack_require__(2);
-const ed2curve = __webpack_require__(19);
-const sodium = __webpack_require__(4);
-
-const ClassUtil = __webpack_require__(3);
-const DontCallConstructor = __webpack_require__(0);
-const PublicKey = __webpack_require__(5);
-const TypeUtil = __webpack_require__(1);
-
-/** @module keys */
-
-/**
- * @class SecretKey
- * @throws {DontCallConstructor}
- */
-class SecretKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!Uint8Array} sec_edward
-   * @param {!Uint8Array} sec_curve
-   * @returns {SecretKey} - `this`
-   */
-  static new(sec_edward, sec_curve) {
-    TypeUtil.assert_is_instance(Uint8Array, sec_edward);
-    TypeUtil.assert_is_instance(Uint8Array, sec_curve);
-
-    const sk = ClassUtil.new_instance(SecretKey);
-
-    /** @type {Uint8Array} */
-    sk.sec_edward = sec_edward;
-    /** @type {Uint8Array} */
-    sk.sec_curve = sec_curve;
-    return sk;
-  }
-
-  /**
-   * This function can be used to compute a message signature.
-   * @param {!string} message - Message to be signed
-   * @returns {Uint8Array} - A message signature
-   */
-  sign(message) {
-    return sodium.crypto_sign_detached(message, this.sec_edward);
-  }
-
-  /**
-   * This function can be used to compute a shared secret given a user's secret key and another
-   * user's public key.
-   * @param {!keys.PublicKey} public_key - Another user's public key
-   * @returns {Uint8Array} - Array buffer view of the computed shared secret
-   */
-  shared_secret(public_key) {
-    TypeUtil.assert_is_instance(PublicKey, public_key);
-
-    return sodium.crypto_scalarmult(this.sec_curve, public_key.pub_curve);
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    e.object(1);
-    e.u8(0);
-    return e.bytes(this.sec_edward);
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {SecretKey}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    const self = ClassUtil.new_instance(SecretKey);
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          self.sec_edward = new Uint8Array(d.bytes());
-          break;
-        default:
-          d.skip();
-      }
-    }
-
-    TypeUtil.assert_is_instance(Uint8Array, self.sec_edward);
-
-    self.sec_curve = ed2curve.convertSecretKey(self.sec_edward);
-    return self;
-  }
-}
-
-module.exports = SecretKey;
-
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(2);
-const sodium = __webpack_require__(4);
+const CBOR = __webpack_require__(3);
+const sodium = __webpack_require__(5);
 
 const DontCallConstructor = __webpack_require__(0);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const TypeUtil = __webpack_require__(1);
 
-const DecodeError = __webpack_require__(11);
-const RandomUtil = __webpack_require__(45);
+const DecodeError = __webpack_require__(10);
+const RandomUtil = __webpack_require__(40);
 
 /** @module message */
 
@@ -3166,114 +3012,7 @@ module.exports = SessionTag;
 
 
 /***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-/**
- * @class BaseError
- * @extends Error
- * @param {string} message
- * @returns {string}
- */
-module.exports = (function() {
-  const BaseError = function(message) {
-    this.name = this.constructor.name;
-    this.message = message;
-    this.stack = (new Error).stack;
-  };
-
-  BaseError.prototype = new Error;
-  BaseError.prototype.constructor = BaseError;
-
-  return BaseError;
-})();
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const BaseError = __webpack_require__(28);
-
-/**
- * @class DecodeError
- * @param {string} message
- * @param {*} [extra]
- */
-class DecodeError extends BaseError {
-  constructor (message, extra) {
-    super(message);
-    this.extra = extra;
-  }
-
-  /** @type {string} */
-  static get INVALID_TYPE () { return 'Invalid type'; }
-
-  /** @type {string} */
-  static get UNEXPECTED_EOF () { return 'Unexpected end-of-buffer'; }
-
-  /** @type {string} */
-  static get UNEXPECTED_TYPE () { return 'Unexpected type'; }
-
-  /** @type {string} */
-  static get INT_OVERFLOW () { return 'Integer overflow'; }
-
-  /** @type {string} */
-  static get TOO_LONG () { return 'Field too long'; }
-
-  /** @type {string} */
-  static get TOO_NESTED () { return 'Object nested too deep'; }
-}
-
-module.exports = DecodeError;
-
-
-/***/ }),
-/* 30 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3323,7 +3062,7 @@ module.exports = PreKeyAuth;
 
 
 /***/ }),
-/* 31 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3348,14 +3087,561 @@ module.exports = PreKeyAuth;
 
 
 
-const CBOR = __webpack_require__(2);
+/** @module session */
 
-const ClassUtil = __webpack_require__(3);
+/** @class PreKeyStore */
+function PreKeyStore() {
+}
+
+/** @type {Array<number>} */
+PreKeyStore.prekeys = [];
+
+/**
+ * @param {!number} prekey_id
+ * @returns {void}
+ * @throws {Error}
+ */
+PreKeyStore.prototype.get_prekey = function (prekey_id) {
+  throw Error('Virtual function unimplemented');
+};
+
+/**
+ * @param {!number} prekey_id
+ * @returns {void}
+ * @throws {Error}
+ */
+PreKeyStore.prototype.remove = function (prekey_id) {
+  throw Error('Virtual function unimplemented');
+};
+
+module.exports = PreKeyStore;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(3);
+
+const ClassUtil = __webpack_require__(2);
+const DontCallConstructor = __webpack_require__(0);
+const MemoryUtil = __webpack_require__(18);
+const TypeUtil = __webpack_require__(1);
+
+const DecodeError = __webpack_require__(10);
+const DecryptError = __webpack_require__(11);
+const ProteusError = __webpack_require__(6);
+
+const IdentityKey = __webpack_require__(8);
+const IdentityKeyPair = __webpack_require__(12);
+const KeyPair = __webpack_require__(7);
+const PreKey = __webpack_require__(20);
+const PreKeyBundle = __webpack_require__(21);
+const PublicKey = __webpack_require__(4);
+
+const CipherMessage = __webpack_require__(9);
+const Envelope = __webpack_require__(13);
+const PreKeyMessage = __webpack_require__(15);
+const SessionTag = __webpack_require__(26);
+
+const PreKeyStore = __webpack_require__(28);
+
+/** @module session */
+
+/**
+ * @class Session
+ * @throws {DontCallConstructor}
+ */
+class Session {
+  constructor() {
+    this.counter = 0;
+    this.local_identity = null;
+    this.pending_prekey = null;
+    this.remote_identity = null;
+    this.session_states = null;
+    this.session_tag = null;
+    this.version = 1;
+
+    throw new DontCallConstructor(this);
+  }
+
+  /** @type {number} */
+  static get MAX_RECV_CHAINS() {
+    return 5;
+  }
+
+  /** @type {number} */
+  static get MAX_SESSION_STATES() {
+    return 100;
+  }
+
+  /**
+   * @param {!keys.IdentityKeyPair} local_identity - Alice's Identity Key Pair
+   * @param {!keys.PreKeyBundle} remote_pkbundle - Bob's Pre-Key Bundle
+   * @returns {Promise<Session>}
+   */
+  static init_from_prekey(local_identity, remote_pkbundle) {
+    return new Promise((resolve) => {
+      TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
+      TypeUtil.assert_is_instance(PreKeyBundle, remote_pkbundle);
+
+      const alice_base = KeyPair.new();
+
+      const state = SessionState.init_as_alice(local_identity, alice_base, remote_pkbundle);
+
+      const session_tag = SessionTag.new();
+
+      const session = ClassUtil.new_instance(this);
+      session.session_tag = session_tag;
+      session.local_identity = local_identity;
+      session.remote_identity = remote_pkbundle.identity_key;
+      session.pending_prekey = [remote_pkbundle.prekey_id, alice_base.public_key];
+      session.session_states = {};
+
+      session._insert_session_state(session_tag, state);
+      return resolve(session);
+    });
+  }
+
+  /**
+   * @param {!keys.IdentityKeyPair} our_identity
+   * @param {!session.PreKeyStore} prekey_store
+   * @param {!message.Envelope} envelope
+   * @returns {Promise<Array<Session|string>>}
+   * @throws {errors.DecryptError.InvalidMessage}
+   * @throws {errors.DecryptError.PrekeyNotFound}
+   */
+  static init_from_message(our_identity, prekey_store, envelope) {
+    return new Promise((resolve, reject) => {
+      TypeUtil.assert_is_instance(IdentityKeyPair, our_identity);
+      TypeUtil.assert_is_instance(PreKeyStore, prekey_store);
+      TypeUtil.assert_is_instance(Envelope, envelope);
+
+      const pkmsg = (() => {
+        if (envelope.message instanceof CipherMessage) {
+          throw new DecryptError.InvalidMessage(
+            'Can\'t initialise a session from a CipherMessage.', DecryptError.CODE.CASE_201
+          );
+        } else if (envelope.message instanceof PreKeyMessage) {
+          return envelope.message;
+        } else {
+          throw new DecryptError.InvalidMessage(
+            'Unknown message format: The message is neither a "CipherMessage" nor a "PreKeyMessage".', DecryptError.CODE.CASE_202
+          );
+        }
+      })();
+
+      const session = ClassUtil.new_instance(Session);
+      session.session_tag = pkmsg.message.session_tag;
+      session.local_identity = our_identity;
+      session.remote_identity = pkmsg.identity_key;
+      session.pending_prekey = null;
+      session.session_states = {};
+
+      return session._new_state(prekey_store, pkmsg).then((state) => {
+        const plain = state.decrypt(envelope, pkmsg.message);
+        session._insert_session_state(pkmsg.message.session_tag, state);
+
+        if (pkmsg.prekey_id < PreKey.MAX_PREKEY_ID) {
+          MemoryUtil.zeroize(prekey_store.prekeys[pkmsg.prekey_id]);
+          return prekey_store.remove(pkmsg.prekey_id).then(() => resolve([session, plain])).catch((error) => {
+            reject(new DecryptError.PrekeyNotFound(`Could not delete PreKey: ${error.message}`, DecryptError.CODE.CASE_203));
+          });
+        } else {
+          return resolve([session, plain]);
+        }
+      }).catch(reject);
+    });
+  }
+
+  /**
+   * @param {!session.PreKeyStore} pre_key_store
+   * @param {!message.PreKeyMessage} pre_key_message
+   * @returns {Promise<session.SessionState>}
+   * @private
+   * @throws {errors.ProteusError}
+   */
+  _new_state(pre_key_store, pre_key_message) {
+    return pre_key_store.get_prekey(pre_key_message.prekey_id).then((pre_key) => {
+      if (pre_key) {
+        return SessionState.init_as_bob(
+          this.local_identity,
+          pre_key.key_pair,
+          pre_key_message.identity_key,
+          pre_key_message.base_key
+        );
+      }
+      throw new ProteusError('Unable to get PreKey from PreKey store.', ProteusError.prototype.CODE.CASE_101);
+    });
+  }
+
+  /**
+   * @param {!message.SessionTag} tag
+   * @param {!session.SessionState} state
+   * @returns {boolean}
+   * @private
+   */
+  _insert_session_state(tag, state) {
+    if (this.session_states.hasOwnProperty(tag)) {
+      this.session_states[tag].state = state;
+    } else {
+      if (this.counter >= Number.MAX_SAFE_INTEGER) {
+        this.session_states = {};
+        this.counter = 0;
+      }
+
+      this.session_states[tag] = {
+        idx: this.counter,
+        tag: tag,
+        state: state,
+      };
+      this.counter++;
+    }
+
+    if (this.session_tag.toString() !== tag.toString()) {
+      this.session_tag = tag;
+    }
+
+    const obj_size = (obj) => Object.keys(obj).length;
+
+    if (obj_size(this.session_states) < Session.MAX_SESSION_STATES) {
+      return;
+    }
+
+    // if we get here, it means that we have more than MAX_SESSION_STATES and
+    // we need to evict the oldest one.
+    return this._evict_oldest_session_state();
+  }
+
+  /**
+   * @returns {void}
+   * @private
+   */
+  _evict_oldest_session_state() {
+    const oldest = Object.keys(this.session_states).filter((obj) => obj.toString() !== this.session_tag).reduce((lowest, obj, index) => {
+      return this.session_states[obj].idx < this.session_states[lowest].idx ? obj.toString() : lowest;
+    });
+
+    MemoryUtil.zeroize(this.session_states[oldest]);
+    delete this.session_states[oldest];
+  }
+
+  /** @returns {keys.PublicKey} */
+  get_local_identity() {
+    return this.local_identity.public_key;
+  }
+
+  /**
+   * @param {!(String|Uint8Array)} plaintext - The plaintext which needs to be encrypted
+   * @return {Promise<message.Envelope>} Encrypted message
+   */
+  encrypt(plaintext) {
+    return new Promise((resolve, reject) => {
+      const state = this.session_states[this.session_tag];
+
+      if (!state) {
+        return reject(new ProteusError(
+          `Could not find session for tag '${(this.session_tag || '').toString()}'.`, ProteusError.prototype.CODE.CASE_102
+        ));
+      }
+
+      return resolve(state.state.encrypt(
+        this.local_identity.public_key,
+        this.pending_prekey,
+        this.session_tag, plaintext
+      ));
+    });
+  }
+
+  /**
+   * @param {!session.PreKeyStore} prekey_store
+   * @param {!message.Envelope} envelope
+   * @returns {Promise<string>}
+   * @throws {errors.DecryptError}
+   */
+  decrypt(prekey_store, envelope) {
+    return new Promise((resolve) => {
+      TypeUtil.assert_is_instance(PreKeyStore, prekey_store);
+      TypeUtil.assert_is_instance(Envelope, envelope);
+
+      const msg = envelope.message;
+      if (msg instanceof CipherMessage) {
+        return resolve(this._decrypt_cipher_message(envelope, envelope.message));
+      } else if (msg instanceof PreKeyMessage) {
+        const actual_fingerprint = msg.identity_key.fingerprint();
+        const expected_fingerprint = this.remote_identity.fingerprint();
+        if (actual_fingerprint !== expected_fingerprint) {
+          const message = `Fingerprints do not match: We expected '${expected_fingerprint}', but received '${actual_fingerprint}'.`;
+          throw new DecryptError.RemoteIdentityChanged(message, DecryptError.CODE.CASE_204);
+        }
+        return resolve(this._decrypt_prekey_message(envelope, msg, prekey_store));
+      } else {
+        throw new DecryptError('Unknown message type.', DecryptError.CODE.CASE_200);
+      }
+    });
+  }
+
+  /**
+   * @param {!message.Envelope} envelope
+   * @param {!message.Message} msg
+   * @param {!session.PreKeyStore} prekey_store
+   * @private
+   * @returns {Promise<string>}
+   * @throws {errors.DecryptError}
+   */
+  _decrypt_prekey_message(envelope, msg, prekey_store) {
+    return Promise.resolve().then(() => this._decrypt_cipher_message(envelope, msg.message)).catch((error) => {
+      if (error instanceof DecryptError.InvalidSignature
+        || error instanceof DecryptError.InvalidMessage) {
+        return this._new_state(prekey_store, msg).then((state) => {
+          const plaintext = state.decrypt(envelope, msg.message);
+
+          if (msg.prekey_id !== PreKey.MAX_PREKEY_ID) {
+            MemoryUtil.zeroize(prekey_store.prekeys[msg.prekey_id]);
+            prekey_store.remove(msg.prekey_id);
+          }
+
+          this._insert_session_state(msg.message.session_tag, state);
+          this.pending_prekey = null;
+
+          return plaintext;
+        });
+      }
+      throw error;
+    });
+  }
+
+  /**
+   * @param {!message.Envelope} envelope
+   * @param {!message.Message} msg
+   * @private
+   * @returns {string}
+   */
+  _decrypt_cipher_message(envelope, msg) {
+    let state = this.session_states[msg.session_tag];
+    if (!state) {
+      throw new DecryptError.InvalidMessage(
+        `We received a message with session tag '${(msg.session_tag || '').toString()}', but we don't have a session for this tag.`, DecryptError.CODE.CASE_205
+      );
+    }
+
+    // serialise and de-serialise for a deep clone
+    // THIS IS IMPORTANT, DO NOT MUTATE THE SESSION STATE IN-PLACE
+    // mutating in-place can lead to undefined behavior and undefined state in edge cases
+    state = SessionState.deserialise(state.state.serialise());
+
+    const plaintext = state.decrypt(envelope, msg);
+
+    this.pending_prekey = null;
+
+    this._insert_session_state(msg.session_tag, state);
+    return plaintext;
+  }
+
+  /**
+   * @returns {ArrayBuffer}
+   */
+  serialise() {
+    const e = new CBOR.Encoder();
+    this.encode(e);
+    return e.get_buffer();
+  }
+
+  /**
+   * @param {!keys.IdentityKeyPair} local_identity
+   * @param {!ArrayBuffer} buf
+   * @returns {Session}
+   */
+  static deserialise(local_identity, buf) {
+    TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
+    TypeUtil.assert_is_instance(ArrayBuffer, buf);
+
+    const d = new CBOR.Decoder(buf);
+    return this.decode(local_identity, d);
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {void}
+   */
+  encode(e) {
+    e.object(6);
+    e.u8(0);
+    e.u8(this.version);
+    e.u8(1);
+    this.session_tag.encode(e);
+    e.u8(2);
+    this.local_identity.public_key.encode(e);
+    e.u8(3);
+    this.remote_identity.encode(e);
+
+    e.u8(4);
+    if (this.pending_prekey) {
+      e.object(2);
+      e.u8(0);
+      e.u16(this.pending_prekey[0]);
+      e.u8(1);
+      this.pending_prekey[1].encode(e);
+    } else {
+      e.null();
+    }
+
+    e.u8(5);
+    e.object(Object.keys(this.session_states).length);
+
+    for (let i in this.session_states) {
+      const state = this.session_states[i];
+      state.tag.encode(e);
+      state.state.encode(e);
+    }
+  }
+
+  /**
+   * @param {!keys.IdentityKeyPair} local_identity
+   * @param {!CBOR.Decoder} d
+   * @returns {Session}
+   */
+  static decode(local_identity, d) {
+    TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    const self = ClassUtil.new_instance(this);
+
+    const nprops = d.object();
+    for (let n = 0; n <= nprops - 1; n++) {
+      switch (d.u8()) {
+        case 0: {
+          self.version = d.u8();
+          break;
+        }
+        case 1: {
+          self.session_tag = SessionTag.decode(d);
+          break;
+        }
+        case 2: {
+          const ik = IdentityKey.decode(d);
+          if (local_identity.public_key.fingerprint() !== ik.fingerprint()) {
+            throw new DecodeError.LocalIdentityChanged(null, DecodeError.CODE.CASE_300);
+          }
+          self.local_identity = local_identity;
+          break;
+        }
+        case 3: {
+          self.remote_identity = IdentityKey.decode(d);
+          break;
+        }
+        case 4: {
+          switch (d.optional(() => d.object())) {
+            case null:
+              self.pending_prekey = null;
+              break;
+            case 2:
+              self.pending_prekey = [null, null];
+              for (let k = 0; k <= 1; ++k) {
+                switch (d.u8()) {
+                  case 0:
+                    self.pending_prekey[0] = d.u16();
+                    break;
+                  case 1:
+                    self.pending_prekey[1] = PublicKey.decode(d);
+                }
+              }
+              break;
+            default:
+              throw new DecodeError.InvalidType(null, DecodeError.CODE.CASE_301);
+          }
+          break;
+        }
+        case 5: {
+          self.session_states = {};
+          // needs simplification
+          for (let i = 0, j = 0, ref = d.object() - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
+            const tag = SessionTag.decode(d);
+            self.session_states[tag] = {
+              idx: i,
+              tag: tag,
+              state: SessionState.decode(d),
+            };
+          }
+          break;
+        }
+        default: {
+          d.skip();
+        }
+      }
+    }
+
+    TypeUtil.assert_is_integer(self.version);
+    TypeUtil.assert_is_instance(SessionTag, self.session_tag);
+    TypeUtil.assert_is_instance(IdentityKeyPair, self.local_identity);
+    TypeUtil.assert_is_instance(IdentityKey, self.remote_identity);
+    TypeUtil.assert_is_instance(Object, self.session_states);
+
+    return self;
+  }
+}
+
+module.exports = Session;
+
+const SessionState = __webpack_require__(38);
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(3);
+
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const CipherKey = __webpack_require__(21);
-const MacKey = __webpack_require__(10);
+const CipherKey = __webpack_require__(24);
+const MacKey = __webpack_require__(16);
 
 /** @module session */
 
@@ -3464,555 +3750,7 @@ module.exports = MessageKeys;
 
 
 /***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-/** @module session */
-
-/** @class PreKeyStore */
-function PreKeyStore() {
-}
-
-/** @type {Array<number>} */
-PreKeyStore.prekeys = [];
-
-/**
- * @param {!number} prekey_id
- * @returns {void}
- * @throws {Error}
- */
-PreKeyStore.prototype.get_prekey = function (prekey_id) {
-  throw Error('Virtual function unimplemented');
-};
-
-/**
- * @param {!number} prekey_id
- * @returns {void}
- * @throws {Error}
- */
-PreKeyStore.prototype.remove = function (prekey_id) {
-  throw Error('Virtual function unimplemented');
-};
-
-module.exports = PreKeyStore;
-
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(2);
-
-const ClassUtil = __webpack_require__(3);
-const DontCallConstructor = __webpack_require__(0);
-const MemoryUtil = __webpack_require__(18);
-const TypeUtil = __webpack_require__(1);
-
-const DecodeError = __webpack_require__(11);
-const DecryptError = __webpack_require__(12);
-const ProteusError = __webpack_require__(6);
-
-const IdentityKey = __webpack_require__(8);
-const IdentityKeyPair = __webpack_require__(13);
-const KeyPair = __webpack_require__(7);
-const PreKey = __webpack_require__(24);
-const PreKeyBundle = __webpack_require__(25);
-const PublicKey = __webpack_require__(5);
-
-const CipherMessage = __webpack_require__(9);
-const Envelope = __webpack_require__(14);
-const PreKeyMessage = __webpack_require__(16);
-const SessionTag = __webpack_require__(27);
-
-const PreKeyStore = __webpack_require__(32);
-
-/** @module session */
-
-/**
- * @class Session
- * @throws {DontCallConstructor}
- */
-class Session {
-  constructor() {
-    this.counter = 0;
-    this.local_identity = null;
-    this.pending_prekey = null;
-    this.remote_identity = null;
-    this.session_states = null;
-    this.session_tag = null;
-    this.version = 1;
-
-    throw new DontCallConstructor(this);
-  }
-
-  /** @type {number} */
-  static get MAX_RECV_CHAINS() {
-    return 5;
-  }
-
-  /** @type {number} */
-  static get MAX_SESSION_STATES() {
-    return 100;
-  }
-
-  /**
-   * @param {!keys.IdentityKeyPair} local_identity - Alice's Identity Key Pair
-   * @param {!keys.PreKeyBundle} remote_pkbundle - Bob's Pre-Key Bundle
-   * @returns {Promise<Session>}
-   */
-  static init_from_prekey(local_identity, remote_pkbundle) {
-    return new Promise((resolve) => {
-      TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
-      TypeUtil.assert_is_instance(PreKeyBundle, remote_pkbundle);
-
-      const alice_base = KeyPair.new();
-
-      const state = SessionState.init_as_alice(local_identity, alice_base, remote_pkbundle);
-
-      const session_tag = SessionTag.new();
-
-      const session = ClassUtil.new_instance(this);
-      session.session_tag = session_tag;
-      session.local_identity = local_identity;
-      session.remote_identity = remote_pkbundle.identity_key;
-      session.pending_prekey = [remote_pkbundle.prekey_id, alice_base.public_key];
-      session.session_states = {};
-
-      session._insert_session_state(session_tag, state);
-      return resolve(session);
-    });
-  }
-
-  /**
-   * @param {!keys.IdentityKeyPair} our_identity
-   * @param {!session.PreKeyStore} prekey_store
-   * @param {!message.Envelope} envelope
-   * @returns {Promise<Array<Session|string>>}
-   * @throws {errors.DecryptError.InvalidMessage}
-   * @throws {errors.DecryptError.PrekeyNotFound}
-   */
-  static init_from_message(our_identity, prekey_store, envelope) {
-    return new Promise((resolve, reject) => {
-      TypeUtil.assert_is_instance(IdentityKeyPair, our_identity);
-      TypeUtil.assert_is_instance(PreKeyStore, prekey_store);
-      TypeUtil.assert_is_instance(Envelope, envelope);
-
-      const pkmsg = (() => {
-        if (envelope.message instanceof CipherMessage) {
-          throw new DecryptError.InvalidMessage(
-            'Can\'t initialise a session from a CipherMessage.', DecryptError.CODE.CASE_201
-          );
-        } else if (envelope.message instanceof PreKeyMessage) {
-          return envelope.message;
-        } else {
-          throw new DecryptError.InvalidMessage(
-            'Unknown message format: The message is neither a "CipherMessage" nor a "PreKeyMessage".', DecryptError.CODE.CASE_202
-          );
-        }
-      })();
-
-      const session = ClassUtil.new_instance(Session);
-      session.session_tag = pkmsg.message.session_tag;
-      session.local_identity = our_identity;
-      session.remote_identity = pkmsg.identity_key;
-      session.pending_prekey = null;
-      session.session_states = {};
-
-      return session._new_state(prekey_store, pkmsg)
-        .then((state) => {
-          const plain = state.decrypt(envelope, pkmsg.message);
-          session._insert_session_state(pkmsg.message.session_tag, state);
-
-          if (pkmsg.prekey_id < PreKey.MAX_PREKEY_ID) {
-            MemoryUtil.zeroize(prekey_store.prekeys[pkmsg.prekey_id]);
-            return prekey_store.remove(pkmsg.prekey_id)
-              .then(() => resolve([session, plain]))
-              .catch((error) => {
-                reject(new DecryptError.PrekeyNotFound(`Could not delete PreKey: ${error.message}`, DecryptError.CODE.CASE_203));
-              });
-          } else {
-            return resolve([session, plain]);
-          }
-        }).catch(reject);
-    });
-  }
-
-  /**
-   * @param {!session.PreKeyStore} pre_key_store
-   * @param {!message.PreKeyMessage} pre_key_message
-   * @returns {Promise<session.SessionState>}
-   * @private
-   * @throws {errors.ProteusError}
-   */
-  _new_state(pre_key_store, pre_key_message) {
-    return pre_key_store.get_prekey(pre_key_message.prekey_id)
-      .then((pre_key) => {
-        if (pre_key) {
-          return SessionState.init_as_bob(
-            this.local_identity,
-            pre_key.key_pair,
-            pre_key_message.identity_key,
-            pre_key_message.base_key
-          );
-        }
-        throw new ProteusError('Unable to get PreKey from PreKey store.', ProteusError.prototype.CODE.CASE_101);
-      });
-  }
-
-  /**
-   * @param {!message.SessionTag} tag
-   * @param {!session.SessionState} state
-   * @returns {boolean}
-   * @private
-   */
-  _insert_session_state(tag, state) {
-    if (this.session_states.hasOwnProperty(tag)) {
-      this.session_states[tag].state = state;
-    } else {
-      if (this.counter >= Number.MAX_SAFE_INTEGER) {
-        this.session_states = {};
-        this.counter = 0;
-      }
-
-      this.session_states[tag] = {
-        idx: this.counter,
-        tag: tag,
-        state: state,
-      };
-      this.counter++;
-    }
-
-    if (this.session_tag.toString() !== tag.toString()) {
-      this.session_tag = tag;
-    }
-
-    const obj_size = (obj) => Object.keys(obj).length;
-
-    if (obj_size(this.session_states) < Session.MAX_SESSION_STATES) {
-      return;
-    }
-
-    // if we get here, it means that we have more than MAX_SESSION_STATES and
-    // we need to evict the oldest one.
-    return this._evict_oldest_session_state();
-  }
-
-  /**
-   * @returns {void}
-   * @private
-   */
-  _evict_oldest_session_state() {
-    const oldest = Object.keys(this.session_states)
-      .filter((obj) => obj.toString() !== this.session_tag)
-      .reduce((lowest, obj, index) => {
-        return this.session_states[obj].idx < this.session_states[lowest].idx ? obj.toString() : lowest;
-      });
-
-    MemoryUtil.zeroize(this.session_states[oldest]);
-    delete this.session_states[oldest];
-  }
-
-  /** @returns {keys.PublicKey} */
-  get_local_identity() {
-    return this.local_identity.public_key;
-  }
-
-  /**
-   * @param {!(String|Uint8Array)} plaintext - The plaintext which needs to be encrypted
-   * @return {Promise<message.Envelope>} Encrypted message
-   */
-  encrypt(plaintext) {
-    return new Promise((resolve, reject) => {
-      const state = this.session_states[this.session_tag];
-
-      if (!state) {
-        return reject(new ProteusError(
-          `Could not find session for tag '${(this.session_tag || '').toString()}'.`, ProteusError.prototype.CODE.CASE_102
-        ));
-      }
-
-      return resolve(state.state.encrypt(
-        this.local_identity.public_key,
-        this.pending_prekey,
-        this.session_tag, plaintext
-      ));
-    });
-  }
-
-  /**
-   * @param {!session.PreKeyStore} prekey_store
-   * @param {!message.Envelope} envelope
-   * @returns {Promise<string>}
-   * @throws {errors.DecryptError}
-   */
-  decrypt(prekey_store, envelope) {
-    return new Promise((resolve) => {
-      TypeUtil.assert_is_instance(PreKeyStore, prekey_store);
-      TypeUtil.assert_is_instance(Envelope, envelope);
-
-      const msg = envelope.message;
-      if (msg instanceof CipherMessage) {
-        return resolve(this._decrypt_cipher_message(envelope, envelope.message));
-      } else if (msg instanceof PreKeyMessage) {
-        const actual_fingerprint = msg.identity_key.fingerprint();
-        const expected_fingerprint = this.remote_identity.fingerprint();
-        if (actual_fingerprint !== expected_fingerprint) {
-          const message = `Fingerprints do not match: We expected '${expected_fingerprint}', but received '${actual_fingerprint}'.`;
-          throw new DecryptError.RemoteIdentityChanged(message, DecryptError.CODE.CASE_204);
-        }
-        return resolve(this._decrypt_prekey_message(envelope, msg, prekey_store));
-      } else {
-        throw new DecryptError('Unknown message type.', DecryptError.CODE.CASE_200);
-      }
-    });
-  }
-
-  /**
-   * @param {!message.Envelope} envelope
-   * @param {!message.Message} msg
-   * @param {!session.PreKeyStore} prekey_store
-   * @private
-   * @returns {Promise<string>}
-   * @throws {errors.DecryptError}
-   */
-  _decrypt_prekey_message(envelope, msg, prekey_store) {
-    return Promise.resolve()
-      .then(() => this._decrypt_cipher_message(envelope, msg.message))
-      .catch((error) => {
-        if (error instanceof DecryptError.InvalidSignature
-          || error instanceof DecryptError.InvalidMessage) {
-          return this._new_state(prekey_store, msg).then((state) => {
-            const plaintext = state.decrypt(envelope, msg.message);
-
-            if (msg.prekey_id !== PreKey.MAX_PREKEY_ID) {
-              MemoryUtil.zeroize(prekey_store.prekeys[msg.prekey_id]);
-              prekey_store.remove(msg.prekey_id);
-            }
-
-            this._insert_session_state(msg.message.session_tag, state);
-            this.pending_prekey = null;
-
-            return plaintext;
-          });
-        }
-        throw error;
-      });
-  }
-
-  /**
-   * @param {!message.Envelope} envelope
-   * @param {!message.Message} msg
-   * @private
-   * @returns {string}
-   */
-  _decrypt_cipher_message(envelope, msg) {
-    let state = this.session_states[msg.session_tag];
-    if (!state) {
-      throw new DecryptError.InvalidMessage(
-        `We received a message with session tag '${(msg.session_tag || '').toString()}', but we don't have a session for this tag.`, DecryptError.CODE.CASE_205
-      );
-    }
-
-    // serialise and de-serialise for a deep clone
-    // THIS IS IMPORTANT, DO NOT MUTATE THE SESSION STATE IN-PLACE
-    // mutating in-place can lead to undefined behavior and undefined state in edge cases
-    state = SessionState.deserialise(state.state.serialise());
-
-    const plaintext = state.decrypt(envelope, msg);
-
-    this.pending_prekey = null;
-
-    this._insert_session_state(msg.session_tag, state);
-    return plaintext;
-  }
-
-  /**
-   * @returns {ArrayBuffer}
-   */
-  serialise() {
-    const e = new CBOR.Encoder();
-    this.encode(e);
-    return e.get_buffer();
-  }
-
-  /**
-   * @param {!keys.IdentityKeyPair} local_identity
-   * @param {!ArrayBuffer} buf
-   * @returns {Session}
-   */
-  static deserialise(local_identity, buf) {
-    TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
-    TypeUtil.assert_is_instance(ArrayBuffer, buf);
-
-    const d = new CBOR.Decoder(buf);
-    return this.decode(local_identity, d);
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {void}
-   */
-  encode(e) {
-    e.object(6);
-    e.u8(0);
-    e.u8(this.version);
-    e.u8(1);
-    this.session_tag.encode(e);
-    e.u8(2);
-    this.local_identity.public_key.encode(e);
-    e.u8(3);
-    this.remote_identity.encode(e);
-
-    e.u8(4);
-    if (this.pending_prekey) {
-      e.object(2);
-      e.u8(0);
-      e.u16(this.pending_prekey[0]);
-      e.u8(1);
-      this.pending_prekey[1].encode(e);
-    } else {
-      e.null();
-    }
-
-    e.u8(5);
-    e.object(Object.keys(this.session_states).length);
-
-    for (let i in this.session_states) {
-      const state = this.session_states[i];
-      state.tag.encode(e);
-      state.state.encode(e);
-    }
-  }
-
-  /**
-   * @param {!keys.IdentityKeyPair} local_identity
-   * @param {!CBOR.Decoder} d
-   * @returns {Session}
-   */
-  static decode(local_identity, d) {
-    TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    const self = ClassUtil.new_instance(this);
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          self.version = d.u8();
-          break;
-        case 1:
-          self.session_tag = SessionTag.decode(d);
-          break;
-        case 2:
-          const ik = IdentityKey.decode(d);
-          if (local_identity.public_key.fingerprint() !== ik.fingerprint()) {
-            throw new DecodeError.LocalIdentityChanged(null, DecodeError.CODE.CASE_300);
-          }
-          self.local_identity = local_identity;
-          break;
-        case 3:
-          self.remote_identity = IdentityKey.decode(d);
-          break;
-        case 4:
-          switch (d.optional(() => d.object())) {
-            case null:
-              self.pending_prekey = null;
-              break;
-            case 2:
-              self.pending_prekey = [null, null];
-              for (let k = 0; k <= 1; ++k) {
-                switch (d.u8()) {
-                  case 0:
-                    self.pending_prekey[0] = d.u16();
-                    break;
-                  case 1:
-                    self.pending_prekey[1] = PublicKey.decode(d);
-                }
-              }
-              break;
-            default:
-              throw new DecodeError.InvalidType(null, DecodeError.CODE.CASE_301);
-          }
-          break;
-        case 5:
-          self.session_states = {};
-          // needs simplification
-          for (let i = 0, j = 0, ref = d.object() - 1; 0 <= ref ? j <= ref : j >= ref; i = 0 <= ref ? ++j : --j) {
-            const tag = SessionTag.decode(d);
-            self.session_states[tag] = {
-              idx: i,
-              tag: tag,
-              state: SessionState.decode(d),
-            };
-          }
-          break;
-        default:
-          d.skip();
-      }
-    }
-
-    TypeUtil.assert_is_integer(self.version);
-    TypeUtil.assert_is_instance(SessionTag, self.session_tag);
-    TypeUtil.assert_is_instance(IdentityKeyPair, self.local_identity);
-    TypeUtil.assert_is_instance(IdentityKey, self.remote_identity);
-    TypeUtil.assert_is_instance(Object, self.session_states);
-
-    return self;
-  }
-}
-
-module.exports = Session;
-
-const SessionState = __webpack_require__(43);
-
-
-/***/ }),
-/* 34 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4085,72 +3823,13 @@ module.exports = ArrayUtil;
 
 
 /***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-module.exports = {
-  errors: {
-    ProteusError: __webpack_require__(6),
-    DecodeError: __webpack_require__(11),
-    DecryptError: __webpack_require__(12),
-    InputError: __webpack_require__(23),
-  },
-
-  keys: {
-    IdentityKey: __webpack_require__(8),
-    IdentityKeyPair: __webpack_require__(13),
-    KeyPair: __webpack_require__(7),
-    PreKeyAuth: __webpack_require__(30),
-    PreKeyBundle: __webpack_require__(25),
-    PreKey: __webpack_require__(24),
-    PublicKey: __webpack_require__(5),
-    SecretKey: __webpack_require__(26),
-  },
-
-  message: {
-    Message: __webpack_require__(15),
-    CipherMessage: __webpack_require__(9),
-    PreKeyMessage: __webpack_require__(16),
-    Envelope: __webpack_require__(14),
-  },
-
-  session: {
-    PreKeyStore: __webpack_require__(32),
-    Session: __webpack_require__(33),
-  },
-};
-
-
-/***/ }),
-/* 36 */
+/* 32 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 37 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function(nacl) {
@@ -6529,7 +6208,7 @@ nacl.setPRNG = function(fn) {
     });
   } else if (true) {
     // Node.js.
-    crypto = __webpack_require__(46);
+    crypto = __webpack_require__(41);
     if (crypto && crypto.randomBytes) {
       nacl.setPRNG(function(x, n) {
         var i, v = crypto.randomBytes(n);
@@ -6544,7 +6223,7 @@ nacl.setPRNG = function(fn) {
 
 
 /***/ }),
-/* 38 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6569,678 +6248,41 @@ nacl.setPRNG = function(fn) {
 
 
 
-const DecodeError = __webpack_require__(29);
-const Types = __webpack_require__(20);
+module.exports = {
+  errors: {
+    ProteusError: __webpack_require__(6),
+    DecodeError: __webpack_require__(10),
+    DecryptError: __webpack_require__(11),
+    InputError: __webpack_require__(19),
+  },
 
-const DEFAULT_CONFIG = {
-  max_array_length: 1000,
-  max_bytes_length: 5242880,
-  max_text_length: 5242880,
-  max_object_size: 1000,
-  max_nesting: 16,
+  keys: {
+    IdentityKey: __webpack_require__(8),
+    IdentityKeyPair: __webpack_require__(12),
+    KeyPair: __webpack_require__(7),
+    PreKeyAuth: __webpack_require__(27),
+    PreKeyBundle: __webpack_require__(21),
+    PreKey: __webpack_require__(20),
+    PublicKey: __webpack_require__(4),
+    SecretKey: __webpack_require__(22),
+  },
+
+  message: {
+    Message: __webpack_require__(14),
+    CipherMessage: __webpack_require__(9),
+    PreKeyMessage: __webpack_require__(15),
+    Envelope: __webpack_require__(13),
+  },
+
+  session: {
+    PreKeyStore: __webpack_require__(28),
+    Session: __webpack_require__(29),
+  },
 };
 
-/**
- * @class Decoder
- * @param {!ArrayBuffer} buffer
- * @param {Object} [config=DEFAULT_CONFIG] config
- * @returns {Decoder} `this`
- */
-class Decoder {
-  /**
-   * @callback closureCallback
-   */
-
-  constructor(buffer, config = DEFAULT_CONFIG) {
-    // buffer *must* be an ArrayBuffer
-
-    this.buffer = buffer;
-    this.config = config;
-    this.view = new DataView(this.buffer);
-    return this;
-  }
-
-  /**
-   * @param {!number} x
-   * @param {!number} overflow
-   * @returns {number}
-   * @private
-   * @throws DecodeError
-   */
-  static _check_overflow(x, overflow) {
-    if (x > overflow) {
-      throw new DecodeError(DecodeError.INT_OVERFLOW);
-    }
-    return x;
-  }
-
-  /**
-   * @param {!number} bytes
-   * @returns {void}
-   * @private
-   */
-  _advance(bytes) {
-    this.view = new DataView(this.buffer, (this.view.byteOffset + bytes));
-  }
-
-  /**
-   * @returns {!number}
-   * @private
-   */
-  _available() {
-    return this.view.byteLength;
-  }
-
-  /**
-   * @param {!number} bytes
-   * @param {!closureCallback} closure
-   * @returns {number}
-   * @private
-   * @throws DecodeError
-   */
-  _read(bytes, closure) {
-    if (this._available < bytes) {
-      throw new DecodeError(DecodeError.UNEXPECTED_EOF);
-    }
-
-    const value = closure();
-    this._advance(bytes);
-    return value;
-  }
-
-  /*
-   * reader-like interface for @buffer
-   */
-
-  /**
-   * @returns {number}
-   * @private
-   */
-  _u8() {
-    return this._read(1, () => this.view.getUint8(0));
-  }
-
-  /**
-   * @returns {number}
-   * @private
-   */
-  _u16() {
-    return this._read(2, () => this.view.getUint16(0));
-  }
-
-  /**
-   * @returns {number}
-   * @private
-   */
-  _u32() {
-    return this._read(4, () => this.view.getUint32(0));
-  }
-
-  /**
-   * @returns {number}
-   * @private
-   */
-  _u64() {
-    const r64 = (x) => (this.view.getUint32(0) * Math.pow(2, 32)) + this.view.getUint32(4);
-    return this._read(8, r64);
-  }
-
-  /**
-   * @returns {number}
-   * @private
-   */
-  _f32() {
-    return this._read(4, () => this.view.getFloat32(0));
-  }
-
-  /**
-   * @returns {number}
-   * @private
-   */
-  _f64() {
-    return this._read(8, () => this.view.getFloat64(0));
-  }
-
-  /**
-   * @param {!number} minor
-   * @returns {number}
-   * @private
-   * @throws DecodeError
-   */
-  _read_length(minor) {
-    if ((0 <= minor) && (minor <= 23)) {
-      return minor;
-    }
-
-    switch (minor) {
-      case 24:
-        return this._u8();
-      case 25:
-        return this._u16();
-      case 26:
-        return this._u32();
-      case 27:
-        return Decoder._check_overflow(this._u64(), Number.MAX_SAFE_INTEGER);
-    }
-
-    throw new DecodeError(DecodeError.UNEXPECTED_TYPE);
-  }
-
-  /**
-   * @param {!number} minor
-   * @param {!number} max_len
-   * @returns {number}
-   * @private
-   * @throws DecodeError
-   */
-  _bytes(minor, max_len) {
-    const len = this._read_length(minor);
-    if (len > max_len) {
-      throw new DecodeError(DecodeError.TOO_LONG);
-    }
-
-    return this._read(len, () => this.buffer.slice(this.view.byteOffset, (this.view.byteOffset + len)));
-  }
-
-  /**
-   * @returns {Array<Types|number>}
-   * @private
-   * @throws DecodeError
-   */
-  _read_type_info() {
-    let type = this._u8();
-
-    const major = (type & 0xE0) >> 5;
-    const minor = type & 0x1F;
-
-    switch (major) {
-      case 0:
-        type = (0 <= minor) && (minor <= 24) ? Types.UINT8 : (
-          () => {
-            switch (minor) {
-              case 25:
-                return Types.UINT16;
-              case 26:
-                return Types.UINT32;
-              case 27:
-                return Types.UINT64;
-              default:
-                throw new DecodeError(DecodeError.INVALID_TYPE);
-            }
-          })();
-        return [type, minor];
-
-      case 1:
-        type = (0 <= minor) && (minor <= 24) ? Types.INT8 : (
-          () => {
-            switch (minor) {
-              case 25:
-                return Types.INT16;
-              case 26:
-                return Types.INT32;
-              case 27:
-                return Types.INT64;
-              default:
-                throw new DecodeError(DecodeError.INVALID_TYPE);
-            }
-          })();
-        return [type, minor];
-
-      case 2:
-        return [Types.BYTES, minor];
-      case 3:
-        return [Types.TEXT, minor];
-      case 4:
-        return [Types.ARRAY, minor];
-      case 5:
-        return [Types.OBJECT, minor];
-
-      case 7:
-        switch (minor) {
-          case 20:
-          case 21:
-            return [Types.BOOL, minor];
-          case 22:
-            return [Types.NULL, minor];
-          case 25:
-            return [Types.FLOAT16, minor];
-          case 26:
-            return [Types.FLOAT32, minor];
-          case 27:
-            return [Types.FLOAT64, minor];
-          case 31:
-            return [Types.BREAK, minor];
-        }
-        break;
-    }
-
-    throw new DecodeError(DecodeError.INVALID_TYPE);
-  }
-
-  /**
-   * @param {!(number|Array<number>)} expected
-   * @returns {Array<Types|number>}
-   * @private
-   * @throws DecodeError
-   */
-  _type_info_with_assert(expected) {
-    const [type, minor] = this._read_type_info();
-
-    if (!Array.isArray(expected)) {
-      expected = [expected];
-    }
-
-    if (!expected.some((e) => type === e)) {
-      throw new DecodeError(DecodeError.UNEXPECTED_TYPE, [type, minor]);
-    }
-
-    return [type, minor];
-  }
-
-  /**
-   * @param {Types} type
-   * @param {!number} minor
-   * @returns {number}
-   * @private
-   * @throws DecodeError
-   */
-  _read_unsigned(type, minor) {
-    switch (type) {
-      case Types.UINT8:
-        return (minor <= 23) ? minor : this._u8();
-
-      case Types.UINT16:
-        return this._u16();
-
-      case Types.UINT32:
-        return this._u32();
-
-      case Types.UINT64:
-        return this._u64();
-    }
-
-    throw new DecodeError(DecodeError.UNEXPECTED_TYPE, [type, minor]);
-  }
-
-  /**
-   * @param {!number} overflow
-   * @param {*} type
-   * @param {!number} minor
-   * @returns {number}
-   * @private
-   * @throws DecodeError
-   */
-  _read_signed(overflow, type, minor) {
-    switch (type) {
-      case Types.INT8:
-        if (minor <= 23) {
-          return (-1 - minor);
-        }
-        return (-1 - Decoder._check_overflow(this._u8(), overflow));
-
-      case Types.INT16:
-        return (-1 - Decoder._check_overflow(this._u16(), overflow));
-
-      case Types.INT32:
-        return (-1 - Decoder._check_overflow(this._u32(), overflow));
-
-      case Types.INT64:
-        return (-1 - Decoder._check_overflow(this._u64(), overflow));
-
-      case Types.UINT8:
-      case Types.UINT16:
-      case Types.UINT32:
-      case Types.UINT64:
-        return Decoder._check_overflow(this._read_unsigned(type, minor), overflow);
-    }
-
-    throw new DecodeError(DecodeError.UNEXPECTED_TYPE, [type, minor]);
-  }
-
-
-  /*
-   * public API
-   */
-
-  /** @returns {number} */
-  u8() {
-    return this._read_unsigned(...this._type_info_with_assert([
-      Types.UINT8,
-    ]));
-  }
-
-  /** @returns {number} */
-  u16() {
-    return this._read_unsigned(...this._type_info_with_assert([
-      Types.UINT8,
-      Types.UINT16,
-    ]));
-  }
-
-  /** @returns {number} */
-  u32() {
-    return this._read_unsigned(...this._type_info_with_assert([
-      Types.UINT8,
-      Types.UINT16,
-      Types.UINT32,
-    ]));
-  }
-
-  /** @returns {number} */
-  u64() {
-    return this._read_unsigned(...this._type_info_with_assert([
-      Types.UINT8,
-      Types.UINT16,
-      Types.UINT32,
-      Types.UINT64,
-    ]));
-  }
-
-  /** @returns {number} */
-  i8() {
-    return this._read_signed(127, ...this._type_info_with_assert([
-      Types.INT8,
-      Types.UINT8,
-    ]));
-  }
-
-  /** @returns {number} */
-  i16() {
-    return this._read_signed(32767, ...this._type_info_with_assert([
-      Types.INT8,
-      Types.INT16,
-
-      Types.UINT8,
-      Types.UINT16,
-    ]));
-  }
-
-  /** @returns {number} */
-  i32() {
-    return this._read_signed(2147483647, ...this._type_info_with_assert([
-      Types.INT8,
-      Types.INT16,
-      Types.INT32,
-
-      Types.UINT8,
-      Types.UINT16,
-      Types.UINT32,
-    ]));
-  }
-
-  /** @returns {number} */
-  i64() {
-    return this._read_signed(Number.MAX_SAFE_INTEGER, ...this._type_info_with_assert([
-      Types.INT8,
-      Types.INT16,
-      Types.INT32,
-      Types.INT64,
-
-      Types.UINT8,
-      Types.UINT16,
-      Types.UINT32,
-      Types.UINT64,
-    ]));
-  }
-
-  /** @returns {number} */
-  unsigned() {
-    return this.u64();
-  }
-
-  /** @returns {number} */
-  int() {
-    return this.i64();
-  }
-
-  /** @returns {number} */
-  f16() {
-    this._type_info_with_assert(Types.FLOAT16);
-
-    const half = this._u16();
-    const exp = (half >> 10) & 0x1F;
-    const mant = half & 0x3FF;
-
-    const ldexp = (x, exponent) => x * Math.pow(2, exponent);
-
-    let val;
-    switch (exp) {
-      case 0:
-        val = ldexp(mant, -24);
-        break;
-      case 31:
-        val = (mant === 0) ? Number.POSITIVE_INFINITY : Number.NaN;
-        break;
-      default:
-        val = ldexp(mant + 1024, exp - 25);
-        break;
-    }
-
-    return (half & 0x8000) ? -val : val;
-  }
-
-  /** @returns {number} */
-  f32() {
-    this._type_info_with_assert(Types.FLOAT32);
-    return this._f32();
-  }
-
-  /** @returns {number} */
-  f64() {
-    this._type_info_with_assert(Types.FLOAT64);
-    return this._f64();
-  }
-
-  /**
-   * @returns {boolean}
-   * @throws DecodeError
-   */
-  bool() {
-    const minor = this._type_info_with_assert(Types.BOOL)[1];
-
-    switch (minor) {
-      case 20:
-        return false;
-      case 21:
-        return true;
-      default:
-        throw new DecodeError(DecodeError.UNEXPECTED_TYPE);
-    }
-  }
-
-  /**
-   * @returns {number}
-   * @throws DecodeError
-   */
-  bytes() {
-    const minor = this._type_info_with_assert(Types.BYTES)[1];
-
-    if (minor === 31) {
-      // XXX: handle indefinite encoding
-      throw new DecodeError(DecodeError.UNEXPECTED_TYPE);
-    }
-
-    return this._bytes(minor, this.config['max_bytes_length']);
-  }
-
-  /**
-   * @returns {string}
-   * @throws DecodeError
-   */
-  text() {
-    const minor = this._type_info_with_assert(Types.TEXT)[1];
-
-    if (minor === 31) {
-      // XXX: handle indefinite encoding
-      throw new DecodeError(DecodeError.UNEXPECTED_TYPE);
-    }
-
-    const buf = this._bytes(minor, this.config['max_text_length']);
-    const utf8 = String.fromCharCode(...(new Uint8Array(buf)));
-
-    // http://ecmanaut.blogspot.de/2006/07/encoding-decoding-utf8-in-javascript.html
-    return decodeURIComponent(escape(utf8));
-  }
-
-  /**
-   * @param {!closureCallback} closure
-   * @returns {(closureCallback|null)}
-   * @throws DecodeError
-   */
-  optional(closure) {
-    try {
-      return closure();
-    } catch (error) {
-      if (error instanceof DecodeError && (error.extra[0] === Types.NULL)) {
-        return null;
-      }
-      throw error;
-    }
-  }
-
-  /**
-   * @returns {number}
-   * @throws DecodeError
-   */
-  array() {
-    const minor = this._type_info_with_assert(Types.ARRAY)[1];
-
-    if (minor === 31) {
-      // XXX: handle indefinite encoding
-      throw new DecodeError(DecodeError.UNEXPECTED_TYPE);
-    }
-
-    const len = this._read_length(minor);
-    if (len > this.config['max_array_length']) {
-      throw new DecodeError(DecodeError.TOO_LONG);
-    }
-
-    return len;
-  }
-
-  /**
-   * @returns {number}
-   * @throws DecodeError
-   */
-  object() {
-    const minor = this._type_info_with_assert(Types.OBJECT)[1];
-
-    if (minor === 31) {
-      // XXX: handle indefinite encoding
-      throw new DecodeError(DecodeError.UNEXPECTED_TYPE);
-    }
-
-    const len = this._read_length(minor);
-    if (len > this.config['max_object_size']) {
-      throw new DecodeError(DecodeError.TOO_LONG);
-    }
-
-    return len;
-  }
-
-  /**
-   * @param {*} type
-   * @returns {void}
-   * @private
-   * @throws DecodeError
-   */
-  _skip_until_break(type) {
-    for (;;) {
-      const [t, minor] = this._read_type_info();
-      if (t === Types.BREAK) {
-        return;
-      }
-
-      if ((t !== type) || (minor === 31)) {
-        throw new DecodeError(DecodeError.UNEXPECTED_TYPE);
-      }
-
-      const len = this._read_length(minor);
-      this._advance(len);
-    }
-  }
-
-  /**
-   * @param {!number} level
-   * @returns {boolean}
-   * @private
-   * @throws DecodeError
-   */
-  _skip_value(level) {
-    if (level === 0) {
-      throw new DecodeError(DecodeError.TOO_NESTED);
-    }
-
-    const [type, minor] = this._read_type_info();
-    let len;
-    switch (type) {
-      case Types.UINT8:
-      case Types.UINT16:
-      case Types.UINT32:
-      case Types.UINT64:
-      case Types.INT8:
-      case Types.INT16:
-      case Types.INT32:
-      case Types.INT64:
-        this._read_length(minor);
-        return true;
-
-      case Types.BOOL:
-      case Types.NULL:
-        return true;
-
-      case Types.BREAK:
-        return false;
-
-      case Types.FLOAT16:
-        this._advance(2);
-        return true;
-
-      case Types.FLOAT32:
-        this._advance(4);
-        return true;
-
-      case Types.FLOAT64:
-        this._advance(8);
-        return true;
-
-      case Types.BYTES:
-      case Types.TEXT:
-        if (minor === 31) {
-          this._skip_until_break(type);
-          return true;
-        }
-        len = this._read_length(minor);
-        this._advance(len);
-        return true;
-
-      case Types.ARRAY:
-      case Types.OBJECT:
-        if (minor === 31) {
-          while (this._skip_value(level - 1)) {
-            // do nothing
-          }
-          return true;
-        }
-        len = this._read_length(minor);
-        while (len--) {
-          this._skip_value((level - 1));
-        }
-        return true;
-    }
-  }
-
-  /** @returns {boolean} */
-  skip() {
-    return this._skip_value(this.config['max_nesting']);
-  }
-}
-
-module.exports = Decoder;
-
 
 /***/ }),
-/* 39 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7265,514 +6307,22 @@ module.exports = Decoder;
 
 
 
-const Types = __webpack_require__(20);
+const CBOR = __webpack_require__(3);
 
-/**
- * @class Encoder
- * @returns {Encoder} `this`
- */
-class Encoder {
-  constructor() {
-    this.buffer = new ArrayBuffer(4);
-    this.view = new DataView(this.buffer);
-    return this;
-  }
-
-  /** @returns {ArrayBuffer} */
-  get_buffer() {
-    return this.buffer.slice(0, this.view.byteOffset);
-  }
-
-  /**
-   * @param {!number} need_nbytes
-   * @returns {number}
-   * @private
-   */
-  _new_buffer_length(need_nbytes) {
-    return Math.floor(Math.max((this.buffer.byteLength * 1.5), (this.buffer.byteLength + need_nbytes)));
-  }
-
-  /**
-   * @param {!number} need_nbytes
-   * @returns {void}
-   * @private
-   */
-  _grow_buffer(need_nbytes) {
-    const new_len = this._new_buffer_length(need_nbytes);
-    const new_buf = new ArrayBuffer(new_len);
-    new Uint8Array(new_buf).set(new Uint8Array(this.buffer));
-    this.buffer = new_buf;
-    this.view = new DataView(this.buffer, this.view.byteOffset);
-  }
-
-  /**
-   * @param {!number} bytes
-   * @returns {void}
-   * @private
-   */
-  _ensure(bytes) {
-    if (!(this.view.byteLength < bytes)) { return; }
-    return this._grow_buffer(bytes);
-  }
-
-  /**
-   * @param {!number} bytes
-   * @returns {void}
-   * @private
-   */
-  _advance(bytes) {
-    this.view = new DataView(this.buffer, (this.view.byteOffset + bytes));
-  }
-
-  /**
-   * @callback closureCallback
-   */
-
-  /**
-   * @param {!number} bytes
-   * @param {!closureCallback} closure
-   * @returns {void}
-   * @private
-   */
-  _write(bytes, closure) {
-    this._ensure(bytes);
-    closure();
-    return this._advance(bytes);
-  }
-
-  /**
-   * @param {Types} type
-   * @param {!number} len
-   * @returns {void}
-   * @private
-   * @throws RangeError
-   */
-  _write_type_and_len(type, len) {
-    const major = (Types.major(type)) << 5;
-
-    if ((0 <= len) && (len <= 23)) {
-      return this._u8(major | len);
-    } else if ((24 <= len) && (len <= 255)) {
-      this._u8(major | 24);
-      return this._u8(len);
-    } else if ((0x100 <= len) && (len <= 0xFFFF)) {
-      this._u8(major | 25);
-      return this._u16(len);
-    } else if ((0x10000 <= len) && (len <= 0xFFFFFFFF)) {
-      this._u8(major | 26);
-      return this._u32(len);
-    } else if (len <= Number.MAX_SAFE_INTEGER) {
-      this._u8(major | 27);
-      return this._u64(len);
-    } else {
-      throw new RangeError('Invalid size for CBOR object');
-    }
-  }
-
-  /*
-   * writer-like interface over our ArrayBuffer
-   */
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @private
-   */
-  _u8(x) {
-    return this._write(1, () => this.view.setUint8(0, x));
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @private
-   */
-  _u16(x) {
-    return this._write(2, () => this.view.setUint16(0, x));
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @private
-   */
-  _u32(x) {
-    return this._write(4, () => this.view.setUint32(0, x));
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @private
-   */
-  _u64(x) {
-    const low = x % Math.pow(2, 32);
-    const high = (x - low) / Math.pow(2, 32);
-    const w64 = () => {
-      this.view.setUint32(0, high);
-      return this.view.setUint32(4, low);
-    };
-    return this._write(8, w64);
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @private
-   */
-  _f32(x) {
-    return this._write(4, () => this.view.setFloat32(0, x));
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @private
-   */
-  _f64(x) {
-    return this._write(8, () => this.view.setFloat64(0, x));
-  }
-
-  /**
-   * @param {!Uint8Array} x
-   * @returns {void}
-   * @private
-   */
-  _bytes(x) {
-    const nbytes = x.byteLength;
-
-    this._ensure(nbytes);
-    new Uint8Array(this.buffer, this.view.byteOffset).set(x);
-    return this._advance(nbytes);
-  }
-
-  /*
-   * public API
-   */
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @throws RangeError
-   */
-  u8(x) {
-    if ((0 <= x) && (x <= 23)) {
-      return this._u8(x);
-    } else if ((24 <= x) && (x <= 255)) {
-      this._u8(24);
-      return this._u8(x);
-    } else {
-      throw new RangeError('Invalid u8');
-    }
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @throws RangeError
-   */
-  u16(x) {
-    if ((0 <= x) && (x <= 23)) {
-      return this._u8(x);
-    } else if ((24 <= x) && (x <= 255)) {
-      this._u8(24);
-      return this._u8(x);
-    } else if ((0x100 <= x) && (x <= 0xFFFF)) {
-      this._u8(25);
-      return this._u16(x);
-    } else {
-      throw new RangeError('Invalid u16');
-    }
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @throws RangeError
-   */
-  u32(x) {
-    if ((0 <= x) && (x <= 23)) {
-      return this._u8(x);
-    } else if ((24 <= x) && (x <= 255)) {
-      this._u8(24);
-      return this._u8(x);
-    } else if ((0x100 <= x) && (x <= 0xFFFF)) {
-      this._u8(25);
-      return this._u16(x);
-    } else if ((0x10000 <= x) && (x <= 0xFFFFFFFF)) {
-      this._u8(26);
-      return this._u32(x);
-    } else {
-      throw new RangeError('Invalid u32');
-    }
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @throws RangeError
-   */
-  u64(x) {
-    if ((0 <= x) && (x <= 23)) {
-      return this._u8(x);
-    } else if ((24 <= x) && (x <= 255)) {
-      this._u8(24);
-      return this._u8(x);
-    } else if ((0x100 <= x) && (x <= 0xFFFF)) {
-      this._u8(25);
-      return this._u16(x);
-    } else if ((0x10000 <= x) && (x <= 0xFFFFFFFF)) {
-      this._u8(26);
-      return this._u32(x);
-    } else if (x <= Number.MAX_SAFE_INTEGER) {
-      this._u8(27);
-      return this._u64(x);
-    } else {
-      throw new RangeError('Invalid unsigned integer');
-    }
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @throws RangeError
-   */
-  i8(x) {
-    if (x >= 0) {
-      return this._u8(x);
-    }
-
-    x = -1 - x;
-    if ((0 <= x) && (x <= 23)) {
-      return this._u8(0x20 | x);
-    } else if ((24 <= x) && (x <= 255)) {
-      this._u8(0x20 | 24);
-      return this._u8(x);
-    } else {
-      throw new RangeError('Invalid i8');
-    }
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @throws RangeError
-   */
-  i16(x) {
-    if (x >= 0) {
-      return this._u16(x);
-    }
-
-    x = -1 - x;
-    if ((0 <= x) && (x <= 23)) {
-      return this._u8(0x20 | x);
-    } else if ((24 <= x) && (x <= 255)) {
-      this._u8(0x20 | 24);
-      return this._u8(x);
-    } else if ((0x100 <= x) && (x <= 0xFFFF)) {
-      this._u8(0x20 | 25);
-      return this._u16(x);
-    } else {
-      throw new RangeError('Invalid i16');
-    }
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @throws RangeError
-   */
-  i32(x) {
-    if (x >= 0) {
-      return this._u32(x);
-    }
-
-    x = -1 - x;
-    if ((0 <= x) && (x <= 23)) {
-      return this._u8(0x20 | x);
-    } else if ((24 <= x) && (x <= 255)) {
-      this._u8(0x20 | 24);
-      return this._u8(x);
-    } else if ((0x100 <= x) && (x <= 0xFFFF)) {
-      this._u8(0x20 | 25);
-      return this._u16(x);
-    } else if ((0x10000 <= x) && (x <= 0xFFFFFFFF)) {
-      this._u8(0x20 | 26);
-      return this._u32(x);
-    } else {
-      throw new RangeError('Invalid i32');
-    }
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   * @throws RangeError
-   */
-  i64(x) {
-    if (x >= 0) {
-      return this._u64(x);
-    }
-
-    x = -1 - x;
-    if ((0 <= x) && (x <= 23)) {
-      return this._u8(0x20 | x);
-    } else if ((24 <= x) && (x <= 255)) {
-      this._u8(0x20 | 24);
-      return this._u8(x);
-    } else if ((0x100 <= x) && (x <= 0xFFFF)) {
-      this._u8(0x20 | 25);
-      return this._u16(x);
-    } else if ((0x10000 <= x) && (x <= 0xFFFFFFFF)) {
-      this._u8(0x20 | 26);
-      return this._u32(x);
-    } else if (x <= Number.MAX_SAFE_INTEGER) {
-      this._u8(0x20 | 27);
-      return this._u64(x);
-    } else {
-      throw new RangeError('Invalid i64');
-    }
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   */
-  f32(x) {
-    this._u8(0xE0 | 26);
-    return this._f32(x);
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   */
-  f64(x) {
-    this._u8(0xE0 | 27);
-    return this._f64(x);
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   */
-  bool(x) {
-    return this._u8(0xE0 | (x ? 21 : 20));
-  }
-
-  /**
-   * @param {!(ArrayBuffer|Uint8Array)} x
-   * @returns {void}
-   */
-  bytes(x) {
-    this._write_type_and_len(Types.BYTES, x.byteLength);
-    return this._bytes(x);
-  }
-
-  /**
-   * @param {!number} x
-   * @returns {void}
-   */
-  text(x) {
-    // http://ecmanaut.blogspot.de/2006/07/encoding-decoding-utf8-in-javascript.html
-    const utf8 = unescape(encodeURIComponent(x));
-
-    this._write_type_and_len(Types.TEXT, utf8.length);
-    return this._bytes(new Uint8Array(utf8.split('').map((c) => c.charCodeAt(0))));
-  }
-
-  /** @returns {void} */
-  null() {
-    return this._u8(0xE0 | 22);
-  }
-
-  /** @returns {void} */
-  undefined() {
-    return this._u8(0xE0 | 23);
-  }
-
-  /**
-   * @param {!number} len
-   * @returns {void}
-   */
-  array(len) {
-    return this._write_type_and_len(Types.ARRAY, len);
-  }
-
-  /** @returns {void} */
-  array_begin() {
-    return this._u8(0x9F);
-  }
-
-  /** @returns {void} */
-  array_end() {
-    return this._u8(0xFF);
-  }
-
-  /**
-   * @param {!number} len
-   * @returns {void}
-   */
-  object(len) {
-    return this._write_type_and_len(Types.OBJECT, len);
-  }
-
-  /** @returns {void} */
-  object_begin() {
-    return this._u8(0xBF);
-  }
-
-  /** @returns {void} */
-  object_end() {
-    return this._u8(0xFF);
-  }
-}
-
-module.exports = Encoder;
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(2);
-
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const PublicKey = __webpack_require__(5);
+const PublicKey = __webpack_require__(4);
 
-const DecryptError = __webpack_require__(12);
+const DecryptError = __webpack_require__(11);
 const ProteusError = __webpack_require__(6);
 
 const CipherMessage = __webpack_require__(9);
-const Envelope = __webpack_require__(14);
+const Envelope = __webpack_require__(13);
 
 const ChainKey = __webpack_require__(17);
-const MessageKeys = __webpack_require__(31);
+const MessageKeys = __webpack_require__(30);
 
 /** @module session */
 
@@ -7907,13 +6457,15 @@ class RecvChain {
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {
       switch (d.u8()) {
-        case 0:
+        case 0: {
           self.chain_key = ChainKey.decode(d);
           break;
-        case 1:
+        }
+        case 1: {
           self.ratchet_key = PublicKey.decode(d);
           break;
-        case 2:
+        }
+        case 2: {
           self.message_keys = [];
 
           let len = d.array();
@@ -7921,9 +6473,10 @@ class RecvChain {
             self.message_keys.push(MessageKeys.decode(d));
           }
           break;
-
-        default:
+        }
+        default: {
           d.skip();
+        }
       }
     }
 
@@ -7942,7 +6495,7 @@ module.exports = RecvChain;
 
 
 /***/ }),
-/* 41 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7967,17 +6520,17 @@ module.exports = RecvChain;
 
 
 
-const CBOR = __webpack_require__(2);
+const CBOR = __webpack_require__(3);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
 const ChainKey = __webpack_require__(17);
-const CipherKey = __webpack_require__(21);
-const DerivedSecrets = __webpack_require__(22);
+const CipherKey = __webpack_require__(24);
+const DerivedSecrets = __webpack_require__(25);
 const KeyPair = __webpack_require__(7);
-const PublicKey = __webpack_require__(5);
+const PublicKey = __webpack_require__(4);
 
 /** @module session */
 
@@ -8057,7 +6610,7 @@ module.exports = RootKey;
 
 
 /***/ }),
-/* 42 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8082,9 +6635,9 @@ module.exports = RootKey;
 
 
 
-const CBOR = __webpack_require__(2);
+const CBOR = __webpack_require__(3);
 
-const ClassUtil = __webpack_require__(3);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
@@ -8154,7 +6707,7 @@ module.exports = SendChain;
 
 
 /***/ }),
-/* 43 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8179,34 +6732,34 @@ module.exports = SendChain;
 
 
 
-const CBOR = __webpack_require__(2);
+const CBOR = __webpack_require__(3);
 
-const ArrayUtil = __webpack_require__(34);
-const ClassUtil = __webpack_require__(3);
+const ArrayUtil = __webpack_require__(31);
+const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const MemoryUtil = __webpack_require__(18);
 const TypeUtil = __webpack_require__(1);
 
-const DecryptError = __webpack_require__(12);
+const DecryptError = __webpack_require__(11);
 
-const DerivedSecrets = __webpack_require__(22);
+const DerivedSecrets = __webpack_require__(25);
 
 const IdentityKey = __webpack_require__(8);
-const IdentityKeyPair = __webpack_require__(13);
+const IdentityKeyPair = __webpack_require__(12);
 const KeyPair = __webpack_require__(7);
-const PreKeyBundle = __webpack_require__(25);
-const PublicKey = __webpack_require__(5);
+const PreKeyBundle = __webpack_require__(21);
+const PublicKey = __webpack_require__(4);
 
 const CipherMessage = __webpack_require__(9);
-const Envelope = __webpack_require__(14);
-const PreKeyMessage = __webpack_require__(16);
-const SessionTag = __webpack_require__(27);
+const Envelope = __webpack_require__(13);
+const PreKeyMessage = __webpack_require__(15);
+const SessionTag = __webpack_require__(26);
 
 const ChainKey = __webpack_require__(17);
-const RecvChain = __webpack_require__(40);
-const RootKey = __webpack_require__(41);
-const SendChain = __webpack_require__(42);
-const Session = __webpack_require__(33);
+const RecvChain = __webpack_require__(35);
+const RootKey = __webpack_require__(36);
+const SendChain = __webpack_require__(37);
+const Session = __webpack_require__(29);
 
 /** @module session */
 
@@ -8446,24 +6999,29 @@ class SessionState {
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {
       switch (d.u8()) {
-        case 0:
+        case 0: {
           self.recv_chains = [];
           let len = d.array();
           while (len--) {
             self.recv_chains.push(RecvChain.decode(d));
           }
           break;
-        case 1:
+        }
+        case 1: {
           self.send_chain = SendChain.decode(d);
           break;
-        case 2:
+        }
+        case 2: {
           self.root_key = RootKey.decode(d);
           break;
-        case 3:
+        }
+        case 3: {
           self.prev_counter = d.u32();
           break;
-        default:
+        }
+        default: {
           d.skip();
+        }
       }
     }
 
@@ -8480,7 +7038,7 @@ module.exports = SessionState;
 
 
 /***/ }),
-/* 44 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8505,9 +7063,9 @@ module.exports = SessionState;
 
 
 
-const sodium = __webpack_require__(4);
+const sodium = __webpack_require__(5);
 
-const ArrayUtil = __webpack_require__(34);
+const ArrayUtil = __webpack_require__(31);
 const MemoryUtil = __webpack_require__(18);
 const TypeUtil = __webpack_require__(1);
 
@@ -8541,47 +7099,47 @@ const KeyDerivationUtil = {
     const HASH_LEN = 32;
 
     /**
-     * @param {*} salt
+     * @param {*} received_salt
      * @returns {Uint8Array}
      */
-    const salt_to_key = (salt) => {
+    const salt_to_key = (received_salt) => {
       const keybytes = sodium.crypto_auth_hmacsha256_KEYBYTES;
-      if (salt.length > keybytes) {
-        return sodium.crypto_hash_sha256(salt);
+      if (received_salt.length > keybytes) {
+        return sodium.crypto_hash_sha256(received_salt);
       }
 
       const key = new Uint8Array(keybytes);
-      key.set(salt);
+      key.set(received_salt);
       return key;
     };
 
     /**
-     * @param {*} salt
-     * @param {*} input
+     * @param {*} received_salt
+     * @param {*} received_input
      * @returns {*}
      */
-    const extract = (salt, input) => {
-      return sodium.crypto_auth_hmacsha256(input, salt_to_key(salt));
+    const extract = (received_salt, received_input) => {
+      return sodium.crypto_auth_hmacsha256(received_input, salt_to_key(received_salt));
     };
 
     /**
      * @param {*} tag
-     * @param {*} info
-     * @param {!number} length
+     * @param {*} received_info
+     * @param {!number} received_length
      * @returns {Uint8Array}
      */
-    const expand = (tag, info, length) => {
-      let num_blocks = Math.ceil(length / HASH_LEN);
+    const expand = (tag, received_info, received_length) => {
+      let num_blocks = Math.ceil(received_length / HASH_LEN);
       let hmac = new Uint8Array(0);
       let result = new Uint8Array(0);
 
       for (let i = 0; i <= num_blocks - 1; i++) {
-        const buf = ArrayUtil.concatenate_array_buffers([hmac, info, new Uint8Array([i + 1])]);
+        const buf = ArrayUtil.concatenate_array_buffers([hmac, received_info, new Uint8Array([i + 1])]);
         hmac = sodium.crypto_auth_hmacsha256(buf, tag);
         result = ArrayUtil.concatenate_array_buffers([result, hmac]);
       }
 
-      return new Uint8Array(result.buffer.slice(0, length));
+      return new Uint8Array(result.buffer.slice(0, received_length));
     };
 
     const key = extract(salt, input);
@@ -8597,7 +7155,7 @@ module.exports = KeyDerivationUtil;
 
 
 /***/ }),
-/* 45 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8636,7 +7194,7 @@ if (crypto) {
   };
 } else {
   // node
-  crypto = __webpack_require__(36);
+  crypto = __webpack_require__(32);
   random_bytes = (len) => {
     return new Uint8Array(crypto.randomBytes(len));
   };
@@ -8646,18 +7204,10 @@ module.exports = { random_bytes };
 
 
 /***/ }),
-/* 46 */
+/* 41 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
-
-/***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
-
-window.Proteus = __webpack_require__(35);
-window.sodium = __webpack_require__(4);
-
 
 /***/ })
 /******/ ]);
