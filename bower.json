@@ -1,18 +1,19 @@
 {
-  "authors": [
-    "Wire <webapp@wire.com>"
-  ],
-  "homepage": "https://github.com/wireapp/proteus.js",
+  "dependencies": {
+    "libsodium.js": "0.5.1",
+    "wire-webapp-cbor": "2.1.2"
+  },
   "ignore": [
+    "*.*",
     "**/.*",
-    "node_modules",
     "bower_components",
+    "dist/**/*",
+    "!dist/window/**/*",
+    "node_modules",
+    "spec",
     "src",
-    "dist/commonjs",
-    "dist/index.html",
-    "dist/index.js",
-    "dist/typings",
-    "test"
+    "test",
+    "typings"
   ],
   "license": "GPL-3.0",
   "main": [

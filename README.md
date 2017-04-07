@@ -12,18 +12,16 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 ## Installation
 
-### Yarn
+### Browser
+
+```bash
+bower install wire-webapp-proteus
+```
+
+### Node.js
 
 ```bash
 yarn add wire-webapp-proteus
-```
-
-## Import
-
-### CommonJS
-
-```javascript
-const Proteus = require('wire-webapp-proteus');
 ```
 
 ## Usage
