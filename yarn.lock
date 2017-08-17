@@ -1403,15 +1403,15 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libsodium-sumo@0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/libsodium-sumo/-/libsodium-sumo-0.5.1.tgz#d867cdeb4d865e45c7eec4e2d8e992ce50415585"
+libsodium-sumo@0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/libsodium-sumo/-/libsodium-sumo-0.5.2.tgz#0772cec6445c655de46f5001d33ed09951d82868"
 
-libsodium-wrappers-sumo@0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/libsodium-wrappers-sumo/-/libsodium-wrappers-sumo-0.5.1.tgz#88ade99aa81d7d9736d965d7cfc8190846c56554"
+libsodium-wrappers-sumo@0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/libsodium-wrappers-sumo/-/libsodium-wrappers-sumo-0.5.2.tgz#84645d9073e5d92e9df615497e10a26907115ade"
   dependencies:
-    libsodium-sumo "0.5.1"
+    libsodium-sumo "0.5.2"
 
 load-json-file@^1.0.0:
   version "1.1.0"

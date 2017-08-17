@@ -1,3 +1,5 @@
+.yarnclean
+package-lock.json
 /.idea
 /bower_components
 /dist/commonjs
