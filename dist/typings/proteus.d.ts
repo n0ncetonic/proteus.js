@@ -266,7 +266,7 @@ export declare module session {
   }
 
   abstract class PreKeyStore {
-    public prekeys: Array<number>;
+    public prekeys: Array<keys.PreKey> | Array<number>;
     abstract get_prekey(prekey_id: number): Promise<keys.PreKey>;
     abstract remove(prekey_id: number): Promise<number>;
   }
