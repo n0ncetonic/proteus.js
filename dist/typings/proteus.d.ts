@@ -142,7 +142,7 @@ export declare module keys {
     static new(identity_key: keys.IdentityKey, prekey: keys.PreKey): keys.PreKeyBundle;
     serialise(): ArrayBuffer;
     serialised_json(): {id: number, key: string};
-    static signed(identity_key: keys.IdentityKey, prekey: keys.PreKey): keys.PreKeyBundle;
+    static signed(identity_key: keys.IdentityKeyPair, prekey: keys.PreKey): keys.PreKeyBundle;
     verify(): keys.PreKeyAuth;
   }
 
