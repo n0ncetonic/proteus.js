@@ -7,7 +7,7 @@
   "description": "Axolotl protocol implementation for JavaScript.",
   "devDependencies": {
     "bower": "1.8.0",
-    "chai": "3.5.0",
+    "chai": "4.1.2",
     "eslint": "4.5.0",
     "jsdoc": "3.4.3",
     "mocha": "2.5.3",
