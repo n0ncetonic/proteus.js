@@ -41,7 +41,6 @@ class InputError extends ProteusError {
       CASE_402: 402,
       CASE_403: 403,
       CASE_404: 404,
-      CASE_405: 405,
     };
   }
 }

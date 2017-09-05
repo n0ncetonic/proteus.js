@@ -52,13 +52,7 @@ class PreKey {
    * @throws {errors.InputError.RangeError}
    */
   static new(pre_key_id) {
-    TypeUtil.assert_is_integer(pre_key_id);
-
-    if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
-      throw new InputError.RangeError(
-        `PreKey ID (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_400
-      );
-    }
+    this.validate_pre_key_id(pre_key_id);
 
     const pk = ClassUtil.new_instance(PreKey);
 
@@ -66,6 +60,15 @@ class PreKey {
     pk.key_id = pre_key_id;
     pk.key_pair = KeyPair.new();
     return pk;
+  }
+
+  static validate_pre_key_id(pre_key_id) {
+    TypeUtil.assert_is_integer(pre_key_id);
+
+    if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
+      const message = `PreKey ID (${pre_key_id}) must be between or equal to 0 and ${PreKey.MAX_PREKEY_ID}.`;
+      throw new InputError.RangeError(message, InputError.CODE.CASE_400);
+    }
   }
 
   /** @returns {PreKey} */
@@ -80,18 +83,8 @@ class PreKey {
    * @throws {errors.InputError.RangeError}
    */
   static generate_prekeys(start, size) {
-    const check_integer = (value) => {
-      TypeUtil.assert_is_integer(value);
-
-      if (value < 0 || value > PreKey.MAX_PREKEY_ID) {
-        throw new InputError.RangeError(
-          `PreKey ID (${value}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_401
-        );
-      }
-    };
-
-    check_integer(start);
-    check_integer(size);
+    this.validate_pre_key_id(start);
+    this.validate_pre_key_id(size);
 
     if (size === 0) {
       return [];

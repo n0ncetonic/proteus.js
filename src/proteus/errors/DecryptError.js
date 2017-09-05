@@ -47,6 +47,7 @@ class DecryptError extends ProteusError {
       CASE_209: 209,
       CASE_210: 210,
       CASE_211: 211,
+      CASE_212: 212,
     };
   }
 }

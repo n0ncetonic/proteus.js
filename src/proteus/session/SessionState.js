@@ -222,7 +222,7 @@ class SessionState {
       const mks = rc.chain_key.message_keys();
 
       if (!envelope.verify(mks.mac_key)) {
-        throw new DecryptError.InvalidSignature(`Decryption of a message in sync failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`, DecryptError.CODE.CASE_206);
+        throw new DecryptError.InvalidSignature(`Envelope verification failed for message with counters in sync at '${msg.counter}'`, DecryptError.CODE.CASE_206);
       }
 
       const plain = mks.decrypt(msg.cipher_text);
@@ -233,7 +233,7 @@ class SessionState {
       const [chk, mk, mks] = rc.stage_message_keys(msg);
 
       if (!envelope.verify(mk.mac_key)) {
-        throw new DecryptError.InvalidSignature(`Decryption of a newer message failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`, DecryptError.CODE.CASE_207);
+        throw new DecryptError.InvalidSignature(`Envelope verification failed for message with counter ahead. Message index is '${msg.counter}' while receive chain index is '${rc.chain_key.idx}'.`, DecryptError.CODE.CASE_207);
       }
 
       const plain = mk.decrypt(msg.cipher_text);

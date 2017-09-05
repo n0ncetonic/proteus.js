@@ -47,7 +47,7 @@ describe('PreKey', () => {
         Proteus.keys.PreKey.generate_prekeys(Proteus.keys.PreKey.MAX_PREKEY_ID + 1, 1);
       } catch (error) {
         assert.instanceOf(error, Proteus.errors.InputError.RangeError);
-        assert.strictEqual(error.code, Proteus.errors.InputError.CODE.CASE_401);
+        assert.strictEqual(error.code, Proteus.errors.InputError.CODE.CASE_400);
       }
     });
 

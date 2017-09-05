@@ -39,9 +39,9 @@ const TypeUtil = {
     }
     const valid_types = classes.map((k) => `'${k.name}'`).join(' or ');
     if (inst) {
-      throw new InputError.TypeError(`Expected one of ${valid_types}, got '${inst.constructor.name}'.`, InputError.CODE.CASE_402);
+      throw new InputError.TypeError(`Expected one of ${valid_types}, got '${inst.constructor.name}'.`, InputError.CODE.CASE_401);
     }
-    throw new InputError.TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`, InputError.CODE.CASE_403);
+    throw new InputError.TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`, InputError.CODE.CASE_402);
   },
   /**
    * @param {*} inst
@@ -53,9 +53,9 @@ const TypeUtil = {
       return true;
     }
     if (inst) {
-      throw new InputError.TypeError(`Expected integer, got '${inst.constructor.name}'.`, InputError.CODE.CASE_404);
+      throw new InputError.TypeError(`Expected integer, got '${inst.constructor.name}'.`, InputError.CODE.CASE_403);
     }
-    throw new InputError.TypeError(`Expected integer, got '${String(inst)}'.`, InputError.CODE.CASE_405);
+    throw new InputError.TypeError(`Expected integer, got '${String(inst)}'.`, InputError.CODE.CASE_404);
   },
 };
 

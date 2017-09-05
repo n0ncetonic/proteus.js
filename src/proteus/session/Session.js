@@ -318,9 +318,7 @@ class Session {
   _decrypt_cipher_message(envelope, msg) {
     let state = this.session_states[msg.session_tag];
     if (!state) {
-      throw new DecryptError.InvalidMessage(
-        `We received a message with session tag '${(msg.session_tag || '').toString()}', but we don't have a session for this tag.`, DecryptError.CODE.CASE_205
-      );
+      throw new DecryptError.InvalidMessage(`Local session not found for message session tag '${msg.session_tag}'.`, DecryptError.CODE.CASE_205);
     }
 
     // serialise and de-serialise for a deep clone
