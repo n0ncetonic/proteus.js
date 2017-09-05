@@ -1,4 +1,4 @@
-/*! wire-webapp-proteus v5.1.3 */
+/*! wire-webapp-proteus v5.2.0 */
 var Proteus =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -178,9 +178,9 @@ const TypeUtil = {
     }
     const valid_types = classes.map((k) => `'${k.name}'`).join(' or ');
     if (inst) {
-      throw new InputError.TypeError(`Expected one of ${valid_types}, got '${inst.constructor.name}'.`, InputError.CODE.CASE_402);
+      throw new InputError.TypeError(`Expected one of ${valid_types}, got '${inst.constructor.name}'.`, InputError.CODE.CASE_401);
     }
-    throw new InputError.TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`, InputError.CODE.CASE_403);
+    throw new InputError.TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`, InputError.CODE.CASE_402);
   },
   /**
    * @param {*} inst
@@ -192,9 +192,9 @@ const TypeUtil = {
       return true;
     }
     if (inst) {
-      throw new InputError.TypeError(`Expected integer, got '${inst.constructor.name}'.`, InputError.CODE.CASE_404);
+      throw new InputError.TypeError(`Expected integer, got '${inst.constructor.name}'.`, InputError.CODE.CASE_403);
     }
-    throw new InputError.TypeError(`Expected integer, got '${String(inst)}'.`, InputError.CODE.CASE_405);
+    throw new InputError.TypeError(`Expected integer, got '${String(inst)}'.`, InputError.CODE.CASE_404);
   },
 };
 
@@ -977,6 +977,7 @@ class DecryptError extends ProteusError {
       CASE_209: 209,
       CASE_210: 210,
       CASE_211: 211,
+      CASE_212: 212,
     };
   }
 }
@@ -1914,7 +1915,6 @@ class InputError extends ProteusError {
       CASE_402: 402,
       CASE_403: 403,
       CASE_404: 404,
-      CASE_405: 405,
     };
   }
 }
@@ -2010,13 +2010,7 @@ class PreKey {
    * @throws {errors.InputError.RangeError}
    */
   static new(pre_key_id) {
-    TypeUtil.assert_is_integer(pre_key_id);
-
-    if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
-      throw new InputError.RangeError(
-        `PreKey ID (${pre_key_id}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_400
-      );
-    }
+    this.validate_pre_key_id(pre_key_id);
 
     const pk = ClassUtil.new_instance(PreKey);
 
@@ -2024,6 +2018,15 @@ class PreKey {
     pk.key_id = pre_key_id;
     pk.key_pair = KeyPair.new();
     return pk;
+  }
+
+  static validate_pre_key_id(pre_key_id) {
+    TypeUtil.assert_is_integer(pre_key_id);
+
+    if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
+      const message = `PreKey ID (${pre_key_id}) must be between or equal to 0 and ${PreKey.MAX_PREKEY_ID}.`;
+      throw new InputError.RangeError(message, InputError.CODE.CASE_400);
+    }
   }
 
   /** @returns {PreKey} */
@@ -2038,18 +2041,8 @@ class PreKey {
    * @throws {errors.InputError.RangeError}
    */
   static generate_prekeys(start, size) {
-    const check_integer = (value) => {
-      TypeUtil.assert_is_integer(value);
-
-      if (value < 0 || value > PreKey.MAX_PREKEY_ID) {
-        throw new InputError.RangeError(
-          `PreKey ID (${value}) must be between 0 (inclusive) and ${PreKey.MAX_PREKEY_ID} (inclusive).`, InputError.CODE.CASE_401
-        );
-      }
-    };
-
-    check_integer(start);
-    check_integer(size);
+    this.validate_pre_key_id(start);
+    this.validate_pre_key_id(size);
 
     if (size === 0) {
       return [];
@@ -2997,9 +2990,7 @@ class SessionTag {
 
     const bytes = new Uint8Array(d.bytes());
     if (bytes.byteLength !== 16) {
-      throw DecodeError.InvalidArrayLen(
-        `SessionTag should be 16 bytes, not ${bytes.byteLength} bytes.`, DecodeError.CODE.CASE_303
-      );
+      throw DecodeError.InvalidArrayLen(`Session tag should be 16 bytes, not ${bytes.byteLength} bytes.`, DecodeError.CODE.CASE_303);
     }
 
     const st = ClassUtil.new_instance(SessionTag);
@@ -3442,9 +3433,7 @@ class Session {
   _decrypt_cipher_message(envelope, msg) {
     let state = this.session_states[msg.session_tag];
     if (!state) {
-      throw new DecryptError.InvalidMessage(
-        `We received a message with session tag '${(msg.session_tag || '').toString()}', but we don't have a session for this tag.`, DecryptError.CODE.CASE_205
-      );
+      throw new DecryptError.InvalidMessage(`Local session not found for message session tag '${msg.session_tag}'.`, DecryptError.CODE.CASE_205);
     }
 
     // serialise and de-serialise for a deep clone
@@ -6361,7 +6350,8 @@ class RecvChain {
     TypeUtil.assert_is_instance(CipherMessage, msg);
 
     if (this.message_keys[0] && this.message_keys[0].counter > msg.counter) {
-      throw new DecryptError.OutdatedMessage(`Message is out of sync. Message counter: ${msg.counter}. Message chain counter: ${this.message_keys[0].counter}.`, DecryptError.CODE.CASE_208);
+      const message = `Message too old. Counter for oldest staged chain key is '${this.message_keys[0].counter}' while message counter is '${msg.counter}'.`;
+      throw new DecryptError.OutdatedMessage(message, DecryptError.CODE.CASE_208);
     }
 
     const idx = this.message_keys.findIndex((mk) => {
@@ -6374,7 +6364,8 @@ class RecvChain {
 
     const mk = this.message_keys.splice(idx, 1)[0];
     if (!envelope.verify(mk.mac_key)) {
-      throw new DecryptError.InvalidSignature(`Decryption of a previous (older) message failed. Remote index is at '${msg.counter}'. Local index is at '${this.chain_key.idx}'.`, DecryptError.CODE.CASE_210);
+      const message = `Envelope verification failed for message with counter behind. Message index is '${msg.counter}' while receive chain index is '${this.chain_key.idx}'.`;
+      throw new DecryptError.InvalidSignature(message, DecryptError.CODE.CASE_210);
     }
 
     return mk.decrypt(msg.cipher_text);
@@ -6389,7 +6380,10 @@ class RecvChain {
 
     const num = msg.counter - this.chain_key.idx;
     if (num > RecvChain.MAX_COUNTER_GAP) {
-      throw new DecryptError.TooDistantFuture(null, DecryptError.CODE.CASE_211);
+      if (this.chain_key.idx === 0) {
+        throw new DecryptError.TooDistantFuture('Skipped too many message at the beginning of a receive chain.', DecryptError.CODE.CASE_211);
+      }
+      throw new DecryptError.TooDistantFuture(`Skipped too many message within a used receive chain. Receive chain counter is '${this.chain_key.idx}'`, DecryptError.CODE.CASE_212);
     }
 
     let keys = [];
@@ -6935,7 +6929,7 @@ class SessionState {
       const mks = rc.chain_key.message_keys();
 
       if (!envelope.verify(mks.mac_key)) {
-        throw new DecryptError.InvalidSignature(`Decryption of a message in sync failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`, DecryptError.CODE.CASE_206);
+        throw new DecryptError.InvalidSignature(`Envelope verification failed for message with counters in sync at '${msg.counter}'`, DecryptError.CODE.CASE_206);
       }
 
       const plain = mks.decrypt(msg.cipher_text);
@@ -6946,7 +6940,7 @@ class SessionState {
       const [chk, mk, mks] = rc.stage_message_keys(msg);
 
       if (!envelope.verify(mk.mac_key)) {
-        throw new DecryptError.InvalidSignature(`Decryption of a newer message failed. Remote index is at '${msg.counter}'. Local index is at '${rc.chain_key.idx}'.`, DecryptError.CODE.CASE_207);
+        throw new DecryptError.InvalidSignature(`Envelope verification failed for message with counter ahead. Message index is '${msg.counter}' while receive chain index is '${rc.chain_key.idx}'.`, DecryptError.CODE.CASE_207);
       }
 
       const plain = mk.decrypt(msg.cipher_text);
