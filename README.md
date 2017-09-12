@@ -35,3 +35,10 @@ yarn add wire-webapp-proteus
 ### Node.js
 
 - [index.js](./dist/index.js)
+
+### TypeScript
+
+```typescript
+import * as Proteus from 'wire-webapp-proteus';
+const identity: Proteus.keys.IdentityKeyPair = Proteus.keys.IdentityKeyPair.new();
+```
