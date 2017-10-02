@@ -25,7 +25,7 @@
   },
   "scripts": {
     "dist": "bower install && webpack --progress",
-    "postinstall": "neon build libsodium-neon",
+    "postinstall": "neon build libsodium-neon || echo \"Warning: could not install libsodium-neon.\"",
     "types": "jsdoc --verbose --pedantic --configure jsdoc.json src/ && node replace.js",
     "lint": "eslint src/",
     "preversion": "yarn lint && yarn test && yarn types",
