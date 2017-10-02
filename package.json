@@ -3,6 +3,7 @@
     "ed2curve": "0.2.1",
     "libsodium-neon": "wireapp/libsodium-neon",
     "libsodium-wrappers-sumo": "0.5.4",
+    "neon-cli": "0.1.20",
     "wire-webapp-cbor": "2.1.5"
   },
   "description": "Axolotl protocol implementation for JavaScript.",
