@@ -8,9 +8,9 @@ var Proteus =
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-/******/
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -34,9 +34,6 @@ var Proteus =
 /******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
 /******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
@@ -65,7 +62,7 @@ var Proteus =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 34);
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -94,7 +91,7 @@ var Proteus =
 
 
 
-const ProteusError = __webpack_require__(6);
+const ProteusError = __webpack_require__(7);
 
 /** @module errors */
 
@@ -158,7 +155,7 @@ module.exports = DontCallConstructor;
 
 
 
-const InputError = __webpack_require__(19);
+const InputError = __webpack_require__(20);
 
 /** @module util */
 
@@ -203,6 +200,12 @@ module.exports = TypeUtil;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+module.exports = CBOR;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -252,12 +255,6 @@ module.exports = ClassUtil;
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = CBOR;
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -283,11 +280,13 @@ module.exports = CBOR;
 
 
 
-const CBOR = __webpack_require__(3);
-const ed2curve = __webpack_require__(23);
+const CBOR = __webpack_require__(2);
+const ed2curve = __webpack_require__(21);
 const sodium = __webpack_require__(5);
 
-const ClassUtil = __webpack_require__(2);
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
+
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
@@ -389,6 +388,103 @@ module.exports = sodium;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(Buffer) {/*
+ * Wire
+ * Copyright (C) 2017 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+var path = __webpack_require__(39);
+var sodiumneon = !(function webpackMissingModule() { var e = new Error("Cannot find module \".\""); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+
+var obj_to_buffer = function (obj) {
+  if (typeof Buffer.from === 'function') {
+    return new Uint8Array(Buffer.from(obj));
+  } else {
+    return new Uint8Array(new Buffer(obj));
+  }
+};
+
+module.exports = {
+  crypto_auth_BYTES: 32,
+  crypto_auth_hmacsha256: function (message, key) {
+    message = obj_to_buffer(message);
+    key = obj_to_buffer(key);
+
+    return new Uint8Array(sodiumneon.crypto_auth_hmacsha256(message, key));
+  },
+  crypto_auth_hmacsha256_BYTES: 32,
+  crypto_auth_hmacsha256_KEYBYTES: 32,
+  crypto_auth_KEYBYTES: 32,
+  crypto_hash_BYTES: 64,
+  crypto_scalarmult (secret_key, public_key) {
+    secret_key = obj_to_buffer(secret_key);
+    public_key = obj_to_buffer(public_key);
+
+    return new Uint8Array(sodiumneon.crypto_scalarmult(secret_key, public_key));
+  },
+  crypto_scalarmult_BYTES: 32,
+  crypto_scalarmult_SCALARBYTES: 32,
+  crypto_sign_BYTES: 64,
+  crypto_sign_detached: function (message, secret_key) {
+    message = obj_to_buffer(message);
+    secret_key = obj_to_buffer(secret_key);
+
+    return new Uint8Array(sodiumneon.crypto_sign_detached(message, secret_key));
+  },
+  crypto_sign_ed25519_pk_to_curve25519: function (public_key) {
+    public_key = obj_to_buffer(public_key);
+
+    return new Uint8Array(sodiumneon.crypto_sign_ed25519_pk_to_curve25519(public_key));
+  },
+  crypto_sign_ed25519_sk_to_curve25519: function (secret_key) {
+    secret_key = obj_to_buffer(secret_key);
+
+    return new Uint8Array(sodiumneon.crypto_sign_ed25519_sk_to_curve25519(secret_key));
+  },
+  crypto_sign_keypair: function () {
+    var key_pair = sodiumneon.crypto_sign_keypair();
+
+    return {
+      publicKey: new Uint8Array(key_pair.public_key_buffer),
+      privateKey: new Uint8Array(key_pair.private_key_buffer),
+      keyType: key_pair.key_type,
+    };
+  },
+  crypto_sign_PUBLICKEYBYTES: 32,
+  crypto_sign_SECRETKEYBYTES: 64,
+  crypto_sign_SEEDBYTES: 32,
+  crypto_sign_verify_detached: function (signature, message, public_key) {
+    signature = obj_to_buffer(signature);
+    message = obj_to_buffer(message);
+    public_key = obj_to_buffer(public_key);
+
+    return sodiumneon.crypto_sign_verify_detached(signature, message, public_key);
+  },
+};
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34).Buffer))
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /*
  * Wire
  * Copyright (C) 2016 Wire Swiss GmbH
@@ -444,7 +540,7 @@ module.exports = ProteusError;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -469,11 +565,13 @@ module.exports = ProteusError;
 
 
 
-const CBOR = __webpack_require__(3);
-const ed2curve = __webpack_require__(23);
+const CBOR = __webpack_require__(2);
+const ed2curve = __webpack_require__(21);
 const sodium = __webpack_require__(5);
 
-const ClassUtil = __webpack_require__(2);
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
+
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
@@ -582,7 +680,7 @@ module.exports = KeyPair;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -607,10 +705,12 @@ module.exports = KeyPair;
 
 
 
-const CBOR = __webpack_require__(3);
+const CBOR = __webpack_require__(2);
 const sodium = __webpack_require__(5);
 
-const ClassUtil = __webpack_require__(2);
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
+
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
@@ -689,7 +789,7 @@ module.exports = IdentityKey;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -714,16 +814,16 @@ module.exports = IdentityKey;
 
 
 
-const CBOR = __webpack_require__(3);
+const CBOR = __webpack_require__(2);
 
-const ClassUtil = __webpack_require__(2);
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
 const PublicKey = __webpack_require__(4);
 
 const Message = __webpack_require__(14);
-const SessionTag = __webpack_require__(26);
+const SessionTag = __webpack_require__(25);
 
 /** @module message */
 
@@ -826,7 +926,7 @@ module.exports = CipherMessage;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -853,7 +953,7 @@ module.exports = CipherMessage;
 
 
 
-const ProteusError = __webpack_require__(6);
+const ProteusError = __webpack_require__(7);
 
 /** @module errors */
 
@@ -924,7 +1024,7 @@ module.exports = ProteusError.DecodeError = DecodeError;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -949,7 +1049,7 @@ module.exports = ProteusError.DecodeError = DecodeError;
 
 
 
-const ProteusError = __webpack_require__(6);
+const ProteusError = __webpack_require__(7);
 
 /** @module errors */
 
@@ -1073,7 +1173,7 @@ module.exports = ProteusError.DecryptError = DecryptError;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1098,14 +1198,14 @@ module.exports = ProteusError.DecryptError = DecryptError;
 
 
 
-const CBOR = __webpack_require__(3);
+const CBOR = __webpack_require__(2);
 
-const ClassUtil = __webpack_require__(2);
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const IdentityKey = __webpack_require__(8);
-const KeyPair = __webpack_require__(7);
+const IdentityKey = __webpack_require__(9);
+const KeyPair = __webpack_require__(8);
 const SecretKey = __webpack_require__(22);
 
 /** @module keys */
@@ -1202,7 +1302,7 @@ module.exports = IdentityKeyPair;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1227,13 +1327,230 @@ module.exports = IdentityKeyPair;
 
 
 
-const CBOR = __webpack_require__(3);
+const CBOR = __webpack_require__(2);
 
-const ClassUtil = __webpack_require__(2);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const MacKey = __webpack_require__(16);
+const DecodeError = __webpack_require__(11);
+
+/** @module message */
+
+/**
+ * @class Message
+ * @throws {DontCallConstructor}
+ */
+class Message {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /** @returns {ArrayBuffer} */
+  serialise() {
+    const e = new CBOR.Encoder();
+    if (this instanceof CipherMessage) {
+      e.u8(1);
+    } else if (this instanceof PreKeyMessage) {
+      e.u8(2);
+    } else {
+      throw new TypeError('Unexpected message type', 9);
+    }
+
+    this.encode(e);
+    return e.get_buffer();
+  }
+
+  /**
+   * @param {!ArrayBuffer} buf
+   * @returns {message.CipherMessage|message.PreKeyMessage}
+   */
+  static deserialise(buf) {
+    TypeUtil.assert_is_instance(ArrayBuffer, buf);
+
+    const d = new CBOR.Decoder(buf);
+
+    switch (d.u8()) {
+      case 1:
+        return CipherMessage.decode(d);
+      case 2:
+        return PreKeyMessage.decode(d);
+      default:
+        throw new DecodeError.InvalidType('Unrecognised message type', DecodeError.CODE.CASE_302);
+    }
+  }
+}
+
+module.exports = Message;
+
+// these require lines have to come after the Message definition because otherwise
+// it creates a circular dependency with the message subtypes
+const CipherMessage = __webpack_require__(10);
+const PreKeyMessage = __webpack_require__(15);
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
+
+const ClassUtil = __webpack_require__(3);
+const DontCallConstructor = __webpack_require__(0);
+const TypeUtil = __webpack_require__(1);
+
+const IdentityKey = __webpack_require__(9);
+const PublicKey = __webpack_require__(4);
+
+const CipherMessage = __webpack_require__(10);
+const Message = __webpack_require__(14);
+
+/** @module message */
+
+/**
+ * @extends Message
+ * @throws {DontCallConstructor}
+ */
+class PreKeyMessage extends Message {
+  constructor() {
+    super();
+    throw new DontCallConstructor(this);
+  }
+
+  /**
+   * @param {!number} prekey_id
+   * @param {!keys.PublicKey} base_key
+   * @param {!keys.IdentityKey} identity_key
+   * @param {!message.CipherMessage} message
+   * @returns {PreKeyMessage}
+   */
+  static new(prekey_id, base_key, identity_key, message) {
+    TypeUtil.assert_is_integer(prekey_id);
+    TypeUtil.assert_is_instance(PublicKey, base_key);
+    TypeUtil.assert_is_instance(IdentityKey, identity_key);
+    TypeUtil.assert_is_instance(CipherMessage, message);
+
+    const pkm = ClassUtil.new_instance(PreKeyMessage);
+
+    pkm.prekey_id = prekey_id;
+    pkm.base_key = base_key;
+    pkm.identity_key = identity_key;
+    pkm.message = message;
+
+    Object.freeze(pkm);
+    return pkm;
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    e.object(4);
+    e.u8(0);
+    e.u16(this.prekey_id);
+    e.u8(1);
+    this.base_key.encode(e);
+    e.u8(2);
+    this.identity_key.encode(e);
+    e.u8(3);
+    return this.message.encode(e);
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {PreKeyMessage}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    let prekey_id = null;
+    let base_key = null;
+    let identity_key = null;
+    let message = null;
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          prekey_id = d.u16();
+          break;
+        case 1:
+          base_key = PublicKey.decode(d);
+          break;
+        case 2:
+          identity_key = IdentityKey.decode(d);
+          break;
+        case 3:
+          message = CipherMessage.decode(d);
+          break;
+        default:
+          d.skip();
+      }
+    }
+
+    // checks for missing variables happens in constructor
+    return PreKeyMessage.new(prekey_id, base_key, identity_key, message);
+  }
+}
+
+module.exports = PreKeyMessage;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
+
+const ClassUtil = __webpack_require__(3);
+const DontCallConstructor = __webpack_require__(0);
+const TypeUtil = __webpack_require__(1);
+
+const MacKey = __webpack_require__(17);
 const Message = __webpack_require__(14);
 
 /** @module message */
@@ -1367,7 +1684,7 @@ module.exports = Envelope;
 
 
 /***/ }),
-/* 14 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1392,227 +1709,12 @@ module.exports = Envelope;
 
 
 
-const CBOR = __webpack_require__(3);
-
-const DontCallConstructor = __webpack_require__(0);
-const TypeUtil = __webpack_require__(1);
-
-const DecodeError = __webpack_require__(10);
-
-/** @module message */
-
-/**
- * @class Message
- * @throws {DontCallConstructor}
- */
-class Message {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /** @returns {ArrayBuffer} */
-  serialise() {
-    const e = new CBOR.Encoder();
-    if (this instanceof CipherMessage) {
-      e.u8(1);
-    } else if (this instanceof PreKeyMessage) {
-      e.u8(2);
-    } else {
-      throw new TypeError('Unexpected message type', 9);
-    }
-
-    this.encode(e);
-    return e.get_buffer();
-  }
-
-  /**
-   * @param {!ArrayBuffer} buf
-   * @returns {message.CipherMessage|message.PreKeyMessage}
-   */
-  static deserialise(buf) {
-    TypeUtil.assert_is_instance(ArrayBuffer, buf);
-
-    const d = new CBOR.Decoder(buf);
-
-    switch (d.u8()) {
-      case 1:
-        return CipherMessage.decode(d);
-      case 2:
-        return PreKeyMessage.decode(d);
-      default:
-        throw new DecodeError.InvalidType('Unrecognised message type', DecodeError.CODE.CASE_302);
-    }
-  }
-}
-
-module.exports = Message;
-
-// these require lines have to come after the Message definition because otherwise
-// it creates a circular dependency with the message subtypes
-const CipherMessage = __webpack_require__(9);
-const PreKeyMessage = __webpack_require__(15);
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(3);
-
-const ClassUtil = __webpack_require__(2);
-const DontCallConstructor = __webpack_require__(0);
-const TypeUtil = __webpack_require__(1);
-
-const IdentityKey = __webpack_require__(8);
-const PublicKey = __webpack_require__(4);
-
-const CipherMessage = __webpack_require__(9);
-const Message = __webpack_require__(14);
-
-/** @module message */
-
-/**
- * @extends Message
- * @throws {DontCallConstructor}
- */
-class PreKeyMessage extends Message {
-  constructor() {
-    super();
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!number} prekey_id
-   * @param {!keys.PublicKey} base_key
-   * @param {!keys.IdentityKey} identity_key
-   * @param {!message.CipherMessage} message
-   * @returns {PreKeyMessage}
-   */
-  static new(prekey_id, base_key, identity_key, message) {
-    TypeUtil.assert_is_integer(prekey_id);
-    TypeUtil.assert_is_instance(PublicKey, base_key);
-    TypeUtil.assert_is_instance(IdentityKey, identity_key);
-    TypeUtil.assert_is_instance(CipherMessage, message);
-
-    const pkm = ClassUtil.new_instance(PreKeyMessage);
-
-    pkm.prekey_id = prekey_id;
-    pkm.base_key = base_key;
-    pkm.identity_key = identity_key;
-    pkm.message = message;
-
-    Object.freeze(pkm);
-    return pkm;
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    e.object(4);
-    e.u8(0);
-    e.u16(this.prekey_id);
-    e.u8(1);
-    this.base_key.encode(e);
-    e.u8(2);
-    this.identity_key.encode(e);
-    e.u8(3);
-    return this.message.encode(e);
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {PreKeyMessage}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    let prekey_id = null;
-    let base_key = null;
-    let identity_key = null;
-    let message = null;
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          prekey_id = d.u16();
-          break;
-        case 1:
-          base_key = PublicKey.decode(d);
-          break;
-        case 2:
-          identity_key = IdentityKey.decode(d);
-          break;
-        case 3:
-          message = CipherMessage.decode(d);
-          break;
-        default:
-          d.skip();
-      }
-    }
-
-    // checks for missing variables happens in constructor
-    return PreKeyMessage.new(prekey_id, base_key, identity_key, message);
-  }
-}
-
-module.exports = PreKeyMessage;
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(3);
+const CBOR = __webpack_require__(2);
 const sodium = __webpack_require__(5);
 
-const ClassUtil = __webpack_require__(2);
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
+
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
@@ -1697,7 +1799,7 @@ module.exports = MacKey;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1722,15 +1824,66 @@ module.exports = MacKey;
 
 
 
-const CBOR = __webpack_require__(3);
+const sodium = __webpack_require__(5);
 
-const ClassUtil = __webpack_require__(2);
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
+
+/** @module util */
+
+const MemoryUtil = {
+  /**
+   * @param {!(Uint8Array|ArrayBuffer|Object)} object
+   * @returns {void}
+   */
+  zeroize(object) {
+    if (object instanceof Uint8Array) {
+      sodium.memzero(object);
+    } else if (object instanceof ArrayBuffer) {
+      sodium.memzero(new Uint8Array(object));
+    } else if (typeof object === 'object') {
+      Object.keys(object).map((key) => object[key]).forEach((val) => this.zeroize(val));
+    }
+  },
+};
+
+module.exports = MemoryUtil;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
+
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const DerivedSecrets = __webpack_require__(25);
-const MacKey = __webpack_require__(16);
-const MessageKeys = __webpack_require__(30);
+const DerivedSecrets = __webpack_require__(26);
+const MacKey = __webpack_require__(17);
+const MessageKeys = __webpack_require__(32);
 
 /** @module session */
 
@@ -1819,56 +1972,7 @@ module.exports = ChainKey;
 
 
 /***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const sodium = __webpack_require__(5);
-
-/** @module util */
-
-const MemoryUtil = {
-  /**
-   * @param {!(Uint8Array|ArrayBuffer|Object)} object
-   * @returns {void}
-   */
-  zeroize(object) {
-    if (object instanceof Uint8Array) {
-      sodium.memzero(object);
-    } else if (object instanceof ArrayBuffer) {
-      sodium.memzero(new Uint8Array(object));
-    } else if (typeof object === 'object') {
-      Object.keys(object).map((key) => object[key]).forEach((val) => this.zeroize(val));
-    }
-  },
-};
-
-module.exports = MemoryUtil;
-
-
-/***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1893,7 +1997,7 @@ module.exports = MemoryUtil;
 
 
 
-const ProteusError = __webpack_require__(6);
+const ProteusError = __webpack_require__(7);
 
 /** @module errors */
 
@@ -1952,507 +2056,7 @@ module.exports = ProteusError.InputError = InputError;
 
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(3);
-
-const ClassUtil = __webpack_require__(2);
-const DontCallConstructor = __webpack_require__(0);
-const InputError = __webpack_require__(19);
-const TypeUtil = __webpack_require__(1);
-
-const KeyPair = __webpack_require__(7);
-
-/** @module keys **/
-
-/**
- * @class PreKey
- * @classdesc Pre-generated (and regularly refreshed) pre-keys.
- * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
- * @throws {DontCallConstructor}
- */
-class PreKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /** @type {number} */
-  static get MAX_PREKEY_ID() {
-    return 0xFFFF;
-  }
-
-  /**
-   * @param {!number} pre_key_id
-   * @returns {PreKey} - `this`
-   * @throws {errors.InputError.RangeError}
-   */
-  static new(pre_key_id) {
-    this.validate_pre_key_id(pre_key_id);
-
-    const pk = ClassUtil.new_instance(PreKey);
-
-    pk.version = 1;
-    pk.key_id = pre_key_id;
-    pk.key_pair = KeyPair.new();
-    return pk;
-  }
-
-  static validate_pre_key_id(pre_key_id) {
-    TypeUtil.assert_is_integer(pre_key_id);
-
-    if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
-      const message = `PreKey ID (${pre_key_id}) must be between or equal to 0 and ${PreKey.MAX_PREKEY_ID}.`;
-      throw new InputError.RangeError(message, InputError.CODE.CASE_400);
-    }
-  }
-
-  /** @returns {PreKey} */
-  static last_resort() {
-    return PreKey.new(PreKey.MAX_PREKEY_ID);
-  }
-
-  /**
-   * @param {!number} start
-   * @param {!number} size
-   * @returns {Array<PreKey>}
-   * @throws {errors.InputError.RangeError}
-   */
-  static generate_prekeys(start, size) {
-    this.validate_pre_key_id(start);
-    this.validate_pre_key_id(size);
-
-    if (size === 0) {
-      return [];
-    }
-
-    return [...Array(size).keys()].map((x) => PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
-  }
-
-  /** @returns {ArrayBuffer} */
-  serialise() {
-    const e = new CBOR.Encoder();
-    this.encode(e);
-    return e.get_buffer();
-  }
-
-  /**
-   * @param {!ArrayBuffer} buf
-   * @returns {PreKey}
-   */
-  static deserialise(buf) {
-    TypeUtil.assert_is_instance(ArrayBuffer, buf);
-    return PreKey.decode(new CBOR.Decoder(buf));
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    TypeUtil.assert_is_instance(CBOR.Encoder, e);
-    e.object(3);
-    e.u8(0);
-    e.u8(this.version);
-    e.u8(1);
-    e.u16(this.key_id);
-    e.u8(2);
-    return this.key_pair.encode(e);
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {PreKey}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    const self = ClassUtil.new_instance(PreKey);
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          self.version = d.u8();
-          break;
-        case 1:
-          self.key_id = d.u16();
-          break;
-        case 2:
-          self.key_pair = KeyPair.decode(d);
-          break;
-        default:
-          d.skip();
-      }
-    }
-
-    TypeUtil.assert_is_integer(self.version);
-    TypeUtil.assert_is_integer(self.key_id);
-    TypeUtil.assert_is_instance(KeyPair, self.key_pair);
-
-    return self;
-  }
-}
-
-module.exports = PreKey;
-
-
-/***/ }),
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(3);
-const sodium = __webpack_require__(5);
-
-const ClassUtil = __webpack_require__(2);
-const DontCallConstructor = __webpack_require__(0);
-const TypeUtil = __webpack_require__(1);
-
-const IdentityKey = __webpack_require__(8);
-const IdentityKeyPair = __webpack_require__(12);
-const PreKey = __webpack_require__(20);
-const PreKeyAuth = __webpack_require__(27);
-const PublicKey = __webpack_require__(4);
-
-/** @module keys */
-
-/**
- * @class PreKeyBundle
- * @throws {DontCallConstructor}
- */
-class PreKeyBundle {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!keys.IdentityKey} public_identity_key
-   * @param {!keys.PreKey} prekey
-   * @returns {PreKeyBundle} - `this`
-   */
-  static new(public_identity_key, prekey) {
-    TypeUtil.assert_is_instance(IdentityKey, public_identity_key);
-    TypeUtil.assert_is_instance(PreKey, prekey);
-
-    /** @type {keys.PreyKeyBundle} */
-    const bundle = ClassUtil.new_instance(PreKeyBundle);
-
-    bundle.version = 1;
-    bundle.prekey_id = prekey.key_id;
-    bundle.public_key = prekey.key_pair.public_key;
-    bundle.identity_key = public_identity_key;
-    bundle.signature = null;
-
-    return bundle;
-  }
-
-  /**
-   * @param {!keys.IdentityKeyPair} identity_pair
-   * @param {!keys.PreKey} prekey
-   * @returns {PreKeyBundle}
-   */
-  static signed(identity_pair, prekey) {
-    TypeUtil.assert_is_instance(IdentityKeyPair, identity_pair);
-    TypeUtil.assert_is_instance(PreKey, prekey);
-
-    /** @type {keys.PublicKey} */
-    const ratchet_key = prekey.key_pair.public_key;
-    /** @type {Uint8Array} */
-    const signature = identity_pair.secret_key.sign(ratchet_key.pub_edward);
-
-    /** @type {keys.PreyKeyBundle} */
-    const bundle = ClassUtil.new_instance(PreKeyBundle);
-
-    bundle.version = 1;
-    bundle.prekey_id = prekey.key_id;
-    bundle.public_key = ratchet_key;
-    bundle.identity_key = identity_pair.public_key;
-    bundle.signature = signature;
-
-    return bundle;
-  }
-
-  /** @returns {keys.PreKeyAuth} */
-  verify() {
-    if (!this.signature) {
-      return PreKeyAuth.UNKNOWN;
-    }
-
-    if (this.identity_key.public_key.verify(this.signature, this.public_key.pub_edward)) {
-      return PreKeyAuth.VALID;
-    }
-    return PreKeyAuth.INVALID;
-  }
-
-  /** @returns {ArrayBuffer} */
-  serialise() {
-    const e = new CBOR.Encoder();
-    this.encode(e);
-    return e.get_buffer();
-  }
-
-  /**
-   * @typedef {Object} type_serialised_json
-   * @property {number} id
-   * @property {string} key
-   */
-  /** @returns {type_serialised_json} */
-  serialised_json() {
-    return {
-      'id': this.prekey_id,
-      'key': sodium.to_base64(new Uint8Array(this.serialise()), true),
-    };
-  }
-
-  /**
-   * @param {!ArrayBuffer} buf
-   * @returns {PreKeyBundle}
-   */
-  static deserialise(buf) {
-    TypeUtil.assert_is_instance(ArrayBuffer, buf);
-    return PreKeyBundle.decode(new CBOR.Decoder(buf));
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    TypeUtil.assert_is_instance(CBOR.Encoder, e);
-
-    e.object(5);
-    e.u8(0);
-    e.u8(this.version);
-    e.u8(1);
-    e.u16(this.prekey_id);
-    e.u8(2);
-    this.public_key.encode(e);
-    e.u8(3);
-    this.identity_key.encode(e);
-
-    e.u8(4);
-    if (!this.signature) {
-      return e.null();
-    } else {
-      return e.bytes(this.signature);
-    }
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {PreKeyBundle}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    const self = ClassUtil.new_instance(PreKeyBundle);
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          self.version = d.u8();
-          break;
-        case 1:
-          self.prekey_id = d.u16();
-          break;
-        case 2:
-          self.public_key = PublicKey.decode(d);
-          break;
-        case 3:
-          self.identity_key = IdentityKey.decode(d);
-          break;
-        case 4:
-          self.signature = d.optional(() => new Uint8Array(d.bytes()));
-          break;
-        default:
-          d.skip();
-      }
-    }
-
-    TypeUtil.assert_is_integer(self.version);
-    TypeUtil.assert_is_integer(self.prekey_id);
-    TypeUtil.assert_is_instance(PublicKey, self.public_key);
-    TypeUtil.assert_is_instance(IdentityKey, self.identity_key);
-
-    return self;
-  }
-}
-
-module.exports = PreKeyBundle;
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(3);
-const ed2curve = __webpack_require__(23);
-const sodium = __webpack_require__(5);
-
-const ClassUtil = __webpack_require__(2);
-const DontCallConstructor = __webpack_require__(0);
-const PublicKey = __webpack_require__(4);
-const TypeUtil = __webpack_require__(1);
-
-/** @module keys */
-
-/**
- * @class SecretKey
- * @throws {DontCallConstructor}
- */
-class SecretKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!Uint8Array} sec_edward
-   * @param {!Uint8Array} sec_curve
-   * @returns {SecretKey} - `this`
-   */
-  static new(sec_edward, sec_curve) {
-    TypeUtil.assert_is_instance(Uint8Array, sec_edward);
-    TypeUtil.assert_is_instance(Uint8Array, sec_curve);
-
-    const sk = ClassUtil.new_instance(SecretKey);
-
-    /** @type {Uint8Array} */
-    sk.sec_edward = sec_edward;
-    /** @type {Uint8Array} */
-    sk.sec_curve = sec_curve;
-    return sk;
-  }
-
-  /**
-   * This function can be used to compute a message signature.
-   * @param {!string} message - Message to be signed
-   * @returns {Uint8Array} - A message signature
-   */
-  sign(message) {
-    return sodium.crypto_sign_detached(message, this.sec_edward);
-  }
-
-  /**
-   * This function can be used to compute a shared secret given a user's secret key and another
-   * user's public key.
-   * @param {!keys.PublicKey} public_key - Another user's public key
-   * @returns {Uint8Array} - Array buffer view of the computed shared secret
-   */
-  shared_secret(public_key) {
-    TypeUtil.assert_is_instance(PublicKey, public_key);
-
-    return sodium.crypto_scalarmult(this.sec_curve, public_key.pub_curve);
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    e.object(1);
-    e.u8(0);
-    return e.bytes(this.sec_edward);
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {SecretKey}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    const self = ClassUtil.new_instance(SecretKey);
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          self.sec_edward = new Uint8Array(d.bytes());
-          break;
-        default:
-          d.skip();
-      }
-    }
-
-    TypeUtil.assert_is_instance(Uint8Array, self.sec_edward);
-
-    self.sec_curve = ed2curve.convertSecretKey(self.sec_edward);
-    return self;
-  }
-}
-
-module.exports = SecretKey;
-
-
-/***/ }),
-/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -2464,7 +2068,7 @@ module.exports = SecretKey;
 /* jshint newcap: false */
 (function(root, f) {
   'use strict';
-  if (typeof module !== 'undefined' && module.exports) module.exports = f(__webpack_require__(33));
+  if (typeof module !== 'undefined' && module.exports) module.exports = f(__webpack_require__(42));
   else root.ed2curve = f(root.nacl);
 }(this, function(nacl) {
   'use strict';
@@ -2716,6 +2320,342 @@ module.exports = SecretKey;
 
 
 /***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
+const ed2curve = __webpack_require__(21);
+const sodium = __webpack_require__(5);
+
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
+
+const ClassUtil = __webpack_require__(3);
+const DontCallConstructor = __webpack_require__(0);
+const PublicKey = __webpack_require__(4);
+const TypeUtil = __webpack_require__(1);
+
+/** @module keys */
+
+/**
+ * @class SecretKey
+ * @throws {DontCallConstructor}
+ */
+class SecretKey {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /**
+   * @param {!Uint8Array} sec_edward
+   * @param {!Uint8Array} sec_curve
+   * @returns {SecretKey} - `this`
+   */
+  static new(sec_edward, sec_curve) {
+    TypeUtil.assert_is_instance(Uint8Array, sec_edward);
+    TypeUtil.assert_is_instance(Uint8Array, sec_curve);
+
+    const sk = ClassUtil.new_instance(SecretKey);
+
+    /** @type {Uint8Array} */
+    sk.sec_edward = sec_edward;
+    /** @type {Uint8Array} */
+    sk.sec_curve = sec_curve;
+    return sk;
+  }
+
+  /**
+   * This function can be used to compute a message signature.
+   * @param {!string} message - Message to be signed
+   * @returns {Uint8Array} - A message signature
+   */
+  sign(message) {
+    return sodium.crypto_sign_detached(message, this.sec_edward);
+  }
+
+  /**
+   * This function can be used to compute a shared secret given a user's secret key and another
+   * user's public key.
+   * @param {!keys.PublicKey} public_key - Another user's public key
+   * @returns {Uint8Array} - Array buffer view of the computed shared secret
+   */
+  shared_secret(public_key) {
+    TypeUtil.assert_is_instance(PublicKey, public_key);
+
+    return sodium.crypto_scalarmult(this.sec_curve, public_key.pub_curve);
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    e.object(1);
+    e.u8(0);
+    return e.bytes(this.sec_edward);
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {SecretKey}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    const self = ClassUtil.new_instance(SecretKey);
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          self.sec_edward = new Uint8Array(d.bytes());
+          break;
+        default:
+          d.skip();
+      }
+    }
+
+    TypeUtil.assert_is_instance(Uint8Array, self.sec_edward);
+
+    self.sec_curve = ed2curve.convertSecretKey(self.sec_edward);
+    return self;
+  }
+}
+
+module.exports = SecretKey;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
+const sodium = __webpack_require__(5);
+
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
+
+const ClassUtil = __webpack_require__(3);
+const DontCallConstructor = __webpack_require__(0);
+const TypeUtil = __webpack_require__(1);
+
+const IdentityKey = __webpack_require__(9);
+const IdentityKeyPair = __webpack_require__(13);
+const PreKey = __webpack_require__(24);
+const PreKeyAuth = __webpack_require__(28);
+const PublicKey = __webpack_require__(4);
+
+/** @module keys */
+
+/**
+ * @class PreKeyBundle
+ * @throws {DontCallConstructor}
+ */
+class PreKeyBundle {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /**
+   * @param {!keys.IdentityKey} public_identity_key
+   * @param {!keys.PreKey} prekey
+   * @returns {PreKeyBundle} - `this`
+   */
+  static new(public_identity_key, prekey) {
+    TypeUtil.assert_is_instance(IdentityKey, public_identity_key);
+    TypeUtil.assert_is_instance(PreKey, prekey);
+
+    /** @type {keys.PreyKeyBundle} */
+    const bundle = ClassUtil.new_instance(PreKeyBundle);
+
+    bundle.version = 1;
+    bundle.prekey_id = prekey.key_id;
+    bundle.public_key = prekey.key_pair.public_key;
+    bundle.identity_key = public_identity_key;
+    bundle.signature = null;
+
+    return bundle;
+  }
+
+  /**
+   * @param {!keys.IdentityKeyPair} identity_pair
+   * @param {!keys.PreKey} prekey
+   * @returns {PreKeyBundle}
+   */
+  static signed(identity_pair, prekey) {
+    TypeUtil.assert_is_instance(IdentityKeyPair, identity_pair);
+    TypeUtil.assert_is_instance(PreKey, prekey);
+
+    /** @type {keys.PublicKey} */
+    const ratchet_key = prekey.key_pair.public_key;
+    /** @type {Uint8Array} */
+    const signature = identity_pair.secret_key.sign(ratchet_key.pub_edward);
+
+    /** @type {keys.PreyKeyBundle} */
+    const bundle = ClassUtil.new_instance(PreKeyBundle);
+
+    bundle.version = 1;
+    bundle.prekey_id = prekey.key_id;
+    bundle.public_key = ratchet_key;
+    bundle.identity_key = identity_pair.public_key;
+    bundle.signature = signature;
+
+    return bundle;
+  }
+
+  /** @returns {keys.PreKeyAuth} */
+  verify() {
+    if (!this.signature) {
+      return PreKeyAuth.UNKNOWN;
+    }
+
+    if (this.identity_key.public_key.verify(this.signature, this.public_key.pub_edward)) {
+      return PreKeyAuth.VALID;
+    }
+    return PreKeyAuth.INVALID;
+  }
+
+  /** @returns {ArrayBuffer} */
+  serialise() {
+    const e = new CBOR.Encoder();
+    this.encode(e);
+    return e.get_buffer();
+  }
+
+  /**
+   * @typedef {Object} type_serialised_json
+   * @property {number} id
+   * @property {string} key
+   */
+  /** @returns {type_serialised_json} */
+  serialised_json() {
+    return {
+      'id': this.prekey_id,
+      'key': sodium.to_base64(new Uint8Array(this.serialise()), true),
+    };
+  }
+
+  /**
+   * @param {!ArrayBuffer} buf
+   * @returns {PreKeyBundle}
+   */
+  static deserialise(buf) {
+    TypeUtil.assert_is_instance(ArrayBuffer, buf);
+    return PreKeyBundle.decode(new CBOR.Decoder(buf));
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    TypeUtil.assert_is_instance(CBOR.Encoder, e);
+
+    e.object(5);
+    e.u8(0);
+    e.u8(this.version);
+    e.u8(1);
+    e.u16(this.prekey_id);
+    e.u8(2);
+    this.public_key.encode(e);
+    e.u8(3);
+    this.identity_key.encode(e);
+
+    e.u8(4);
+    if (!this.signature) {
+      return e.null();
+    } else {
+      return e.bytes(this.signature);
+    }
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {PreKeyBundle}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    const self = ClassUtil.new_instance(PreKeyBundle);
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          self.version = d.u8();
+          break;
+        case 1:
+          self.prekey_id = d.u16();
+          break;
+        case 2:
+          self.public_key = PublicKey.decode(d);
+          break;
+        case 3:
+          self.identity_key = IdentityKey.decode(d);
+          break;
+        case 4:
+          self.signature = d.optional(() => new Uint8Array(d.bytes()));
+          break;
+        default:
+          d.skip();
+      }
+    }
+
+    TypeUtil.assert_is_integer(self.version);
+    TypeUtil.assert_is_integer(self.prekey_id);
+    TypeUtil.assert_is_instance(PublicKey, self.public_key);
+    TypeUtil.assert_is_instance(IdentityKey, self.identity_key);
+
+    return self;
+  }
+}
+
+module.exports = PreKeyBundle;
+
+
+/***/ }),
 /* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2741,10 +2681,353 @@ module.exports = SecretKey;
 
 
 
-const CBOR = __webpack_require__(3);
+const CBOR = __webpack_require__(2);
+
+const ClassUtil = __webpack_require__(3);
+const DontCallConstructor = __webpack_require__(0);
+const InputError = __webpack_require__(20);
+const TypeUtil = __webpack_require__(1);
+
+const KeyPair = __webpack_require__(8);
+
+/** @module keys **/
+
+/**
+ * @class PreKey
+ * @classdesc Pre-generated (and regularly refreshed) pre-keys.
+ * A Pre-Shared Key contains the public long-term identity and ephemeral handshake keys for the initial triple DH.
+ * @throws {DontCallConstructor}
+ */
+class PreKey {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /** @type {number} */
+  static get MAX_PREKEY_ID() {
+    return 0xFFFF;
+  }
+
+  /**
+   * @param {!number} pre_key_id
+   * @returns {PreKey} - `this`
+   * @throws {errors.InputError.RangeError}
+   */
+  static new(pre_key_id) {
+    this.validate_pre_key_id(pre_key_id);
+
+    const pk = ClassUtil.new_instance(PreKey);
+
+    pk.version = 1;
+    pk.key_id = pre_key_id;
+    pk.key_pair = KeyPair.new();
+    return pk;
+  }
+
+  static validate_pre_key_id(pre_key_id) {
+    TypeUtil.assert_is_integer(pre_key_id);
+
+    if (pre_key_id < 0 || pre_key_id > PreKey.MAX_PREKEY_ID) {
+      const message = `PreKey ID (${pre_key_id}) must be between or equal to 0 and ${PreKey.MAX_PREKEY_ID}.`;
+      throw new InputError.RangeError(message, InputError.CODE.CASE_400);
+    }
+  }
+
+  /** @returns {PreKey} */
+  static last_resort() {
+    return PreKey.new(PreKey.MAX_PREKEY_ID);
+  }
+
+  /**
+   * @param {!number} start
+   * @param {!number} size
+   * @returns {Array<PreKey>}
+   * @throws {errors.InputError.RangeError}
+   */
+  static generate_prekeys(start, size) {
+    this.validate_pre_key_id(start);
+    this.validate_pre_key_id(size);
+
+    if (size === 0) {
+      return [];
+    }
+
+    return [...Array(size).keys()].map((x) => PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
+  }
+
+  /** @returns {ArrayBuffer} */
+  serialise() {
+    const e = new CBOR.Encoder();
+    this.encode(e);
+    return e.get_buffer();
+  }
+
+  /**
+   * @param {!ArrayBuffer} buf
+   * @returns {PreKey}
+   */
+  static deserialise(buf) {
+    TypeUtil.assert_is_instance(ArrayBuffer, buf);
+    return PreKey.decode(new CBOR.Decoder(buf));
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    TypeUtil.assert_is_instance(CBOR.Encoder, e);
+    e.object(3);
+    e.u8(0);
+    e.u8(this.version);
+    e.u8(1);
+    e.u16(this.key_id);
+    e.u8(2);
+    return this.key_pair.encode(e);
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {PreKey}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    const self = ClassUtil.new_instance(PreKey);
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          self.version = d.u8();
+          break;
+        case 1:
+          self.key_id = d.u16();
+          break;
+        case 2:
+          self.key_pair = KeyPair.decode(d);
+          break;
+        default:
+          d.skip();
+      }
+    }
+
+    TypeUtil.assert_is_integer(self.version);
+    TypeUtil.assert_is_integer(self.key_id);
+    TypeUtil.assert_is_instance(KeyPair, self.key_pair);
+
+    return self;
+  }
+}
+
+module.exports = PreKey;
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
 const sodium = __webpack_require__(5);
 
-const ClassUtil = __webpack_require__(2);
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
+
+const DontCallConstructor = __webpack_require__(0);
+
+const ClassUtil = __webpack_require__(3);
+const TypeUtil = __webpack_require__(1);
+
+const DecodeError = __webpack_require__(11);
+const RandomUtil = __webpack_require__(44);
+
+/** @module message */
+
+/**
+ * @class SessionTag
+ * @throws {DontCallConstructor}
+ */
+class SessionTag {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /** @returns {SessionTag} - `this` */
+  static new() {
+    const st = ClassUtil.new_instance(SessionTag);
+    st.tag = RandomUtil.random_bytes(16);
+    return st;
+  }
+
+  /** @returns {string} */
+  toString() {
+    return sodium.to_hex(this.tag);
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    return e.bytes(this.tag);
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {SessionTag}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    const bytes = new Uint8Array(d.bytes());
+    if (bytes.byteLength !== 16) {
+      throw DecodeError.InvalidArrayLen(`Session tag should be 16 bytes, not ${bytes.byteLength} bytes.`, DecodeError.CODE.CASE_303);
+    }
+
+    const st = ClassUtil.new_instance(SessionTag);
+    st.tag = new Uint8Array(bytes);
+    return st;
+  }
+}
+
+module.exports = SessionTag;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const ClassUtil = __webpack_require__(3);
+const DontCallConstructor = __webpack_require__(0);
+const KeyDerivationUtil = __webpack_require__(47);
+const MemoryUtil = __webpack_require__(18);
+
+const CipherKey = __webpack_require__(27);
+const MacKey = __webpack_require__(17);
+
+/** @module derived */
+
+/**
+ * @class DerivedSecrets
+ * @throws {DontCallConstructor}
+ */
+class DerivedSecrets {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /**
+   * @param {!Array<number>} input
+   * @param {!Uint8Array} salt
+   * @param {!string} info
+   * @returns {DerivedSecrets} - `this`
+   */
+  static kdf(input, salt, info) {
+    const byte_length = 64;
+
+    const output_key_material = KeyDerivationUtil.hkdf(salt, input, info, byte_length);
+
+    const cipher_key = new Uint8Array(output_key_material.buffer.slice(0, 32));
+    const mac_key = new Uint8Array(output_key_material.buffer.slice(32, 64));
+
+    MemoryUtil.zeroize(output_key_material.buffer);
+
+    const ds = ClassUtil.new_instance(DerivedSecrets);
+    /** @type {derived.CipherKey} */
+    ds.cipher_key = CipherKey.new(cipher_key);
+    /** @type {derived.MacKey} */
+    ds.mac_key = MacKey.new(mac_key);
+    return ds;
+  }
+
+  /**
+   * @param {!Array<number>} input - Initial key material (usually the Master Key) in byte array format
+   * @param {!string} info - Key Derivation Data
+   * @returns {DerivedSecrets}
+   */
+  static kdf_without_salt(input, info) {
+    return this.kdf(input, new Uint8Array(0), info);
+  }
+}
+
+module.exports = DerivedSecrets;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
+const sodium = __webpack_require__(5);
+
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
+
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
@@ -2832,178 +3115,7 @@ module.exports = CipherKey;
 
 
 /***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const ClassUtil = __webpack_require__(2);
-const DontCallConstructor = __webpack_require__(0);
-const KeyDerivationUtil = __webpack_require__(39);
-const MemoryUtil = __webpack_require__(18);
-
-const CipherKey = __webpack_require__(24);
-const MacKey = __webpack_require__(16);
-
-/** @module derived */
-
-/**
- * @class DerivedSecrets
- * @throws {DontCallConstructor}
- */
-class DerivedSecrets {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!Array<number>} input
-   * @param {!Uint8Array} salt
-   * @param {!string} info
-   * @returns {DerivedSecrets} - `this`
-   */
-  static kdf(input, salt, info) {
-    const byte_length = 64;
-
-    const output_key_material = KeyDerivationUtil.hkdf(salt, input, info, byte_length);
-
-    const cipher_key = new Uint8Array(output_key_material.buffer.slice(0, 32));
-    const mac_key = new Uint8Array(output_key_material.buffer.slice(32, 64));
-
-    MemoryUtil.zeroize(output_key_material.buffer);
-
-    const ds = ClassUtil.new_instance(DerivedSecrets);
-    /** @type {derived.CipherKey} */
-    ds.cipher_key = CipherKey.new(cipher_key);
-    /** @type {derived.MacKey} */
-    ds.mac_key = MacKey.new(mac_key);
-    return ds;
-  }
-
-  /**
-   * @param {!Array<number>} input - Initial key material (usually the Master Key) in byte array format
-   * @param {!string} info - Key Derivation Data
-   * @returns {DerivedSecrets}
-   */
-  static kdf_without_salt(input, info) {
-    return this.kdf(input, new Uint8Array(0), info);
-  }
-}
-
-module.exports = DerivedSecrets;
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(3);
-const sodium = __webpack_require__(5);
-
-const DontCallConstructor = __webpack_require__(0);
-
-const ClassUtil = __webpack_require__(2);
-const TypeUtil = __webpack_require__(1);
-
-const DecodeError = __webpack_require__(10);
-const RandomUtil = __webpack_require__(40);
-
-/** @module message */
-
-/**
- * @class SessionTag
- * @throws {DontCallConstructor}
- */
-class SessionTag {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /** @returns {SessionTag} - `this` */
-  static new() {
-    const st = ClassUtil.new_instance(SessionTag);
-    st.tag = RandomUtil.random_bytes(16);
-    return st;
-  }
-
-  /** @returns {string} */
-  toString() {
-    return sodium.to_hex(this.tag);
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    return e.bytes(this.tag);
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {SessionTag}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    const bytes = new Uint8Array(d.bytes());
-    if (bytes.byteLength !== 16) {
-      throw DecodeError.InvalidArrayLen(`Session tag should be 16 bytes, not ${bytes.byteLength} bytes.`, DecodeError.CODE.CASE_303);
-    }
-
-    const st = ClassUtil.new_instance(SessionTag);
-    st.tag = new Uint8Array(bytes);
-    return st;
-  }
-}
-
-module.exports = SessionTag;
-
-
-/***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3053,7 +3165,7 @@ module.exports = PreKeyAuth;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3109,7 +3221,7 @@ module.exports = PreKeyStore;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3134,30 +3246,30 @@ module.exports = PreKeyStore;
 
 
 
-const CBOR = __webpack_require__(3);
+const CBOR = __webpack_require__(2);
 
-const ClassUtil = __webpack_require__(2);
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const MemoryUtil = __webpack_require__(18);
 const TypeUtil = __webpack_require__(1);
 
-const DecodeError = __webpack_require__(10);
-const DecryptError = __webpack_require__(11);
-const ProteusError = __webpack_require__(6);
+const DecodeError = __webpack_require__(11);
+const DecryptError = __webpack_require__(12);
+const ProteusError = __webpack_require__(7);
 
-const IdentityKey = __webpack_require__(8);
-const IdentityKeyPair = __webpack_require__(12);
-const KeyPair = __webpack_require__(7);
-const PreKey = __webpack_require__(20);
-const PreKeyBundle = __webpack_require__(21);
+const IdentityKey = __webpack_require__(9);
+const IdentityKeyPair = __webpack_require__(13);
+const KeyPair = __webpack_require__(8);
+const PreKey = __webpack_require__(24);
+const PreKeyBundle = __webpack_require__(23);
 const PublicKey = __webpack_require__(4);
 
-const CipherMessage = __webpack_require__(9);
-const Envelope = __webpack_require__(13);
+const CipherMessage = __webpack_require__(10);
+const Envelope = __webpack_require__(16);
 const PreKeyMessage = __webpack_require__(15);
-const SessionTag = __webpack_require__(26);
+const SessionTag = __webpack_require__(25);
 
-const PreKeyStore = __webpack_require__(28);
+const PreKeyStore = __webpack_require__(29);
 
 /** @module session */
 
@@ -3594,11 +3706,11 @@ class Session {
 
 module.exports = Session;
 
-const SessionState = __webpack_require__(38);
+const SessionState = __webpack_require__(46);
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3623,14 +3735,87 @@ const SessionState = __webpack_require__(38);
 
 
 
-const CBOR = __webpack_require__(3);
+const ProteusError = __webpack_require__(7);
+const TypeUtil = __webpack_require__(1);
 
-const ClassUtil = __webpack_require__(2);
+/** @module util */
+
+/**
+ * Concatenates array buffers (usually 8-bit unsigned).
+ */
+const ArrayUtil = {
+  /**
+   * @param {!Array<ArrayBuffer>} buffers
+   * @returns {Array<ArrayBuffer>}
+   */
+  concatenate_array_buffers(buffers) {
+    TypeUtil.assert_is_instance(Array, buffers);
+
+    return buffers.reduce((a, b) => {
+      const buf = new a.constructor(a.byteLength + b.byteLength);
+      buf.set(a, 0);
+      buf.set(b, a.byteLength);
+      return buf;
+    });
+  },
+
+  /**
+   * @param {!(Array<number>|Uint8Array)} array
+   * @returns {void}
+   * @throws {errors.ProteusError}
+   */
+  assert_is_not_zeros(array) {
+    let only_zeroes = true;
+    for (let val in array) {
+      if (val > 0) {
+        only_zeroes = false;
+        break;
+      }
+    }
+
+    if (only_zeroes === true) {
+      throw new ProteusError('Array consists only of zeroes.', ProteusError.prototype.CODE.CASE_100);
+    }
+  },
+};
+
+module.exports = ArrayUtil;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
+
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const TypeUtil = __webpack_require__(1);
 
-const CipherKey = __webpack_require__(24);
-const MacKey = __webpack_require__(16);
+const CipherKey = __webpack_require__(27);
+const MacKey = __webpack_require__(17);
 
 /** @module session */
 
@@ -3739,7 +3924,7 @@ module.exports = MessageKeys;
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3764,61 +3949,2516 @@ module.exports = MessageKeys;
 
 
 
-const ProteusError = __webpack_require__(6);
-const TypeUtil = __webpack_require__(1);
-
-/** @module util */
-
-/**
- * Concatenates array buffers (usually 8-bit unsigned).
- */
-const ArrayUtil = {
-  /**
-   * @param {!Array<ArrayBuffer>} buffers
-   * @returns {Array<ArrayBuffer>}
-   */
-  concatenate_array_buffers(buffers) {
-    TypeUtil.assert_is_instance(Array, buffers);
-
-    return buffers.reduce((a, b) => {
-      const buf = new a.constructor(a.byteLength + b.byteLength);
-      buf.set(a, 0);
-      buf.set(b, a.byteLength);
-      return buf;
-    });
+module.exports = {
+  errors: {
+    ProteusError: __webpack_require__(7),
+    DecodeError: __webpack_require__(11),
+    DecryptError: __webpack_require__(12),
+    InputError: __webpack_require__(20),
   },
 
-  /**
-   * @param {!(Array<number>|Uint8Array)} array
-   * @returns {void}
-   * @throws {errors.ProteusError}
-   */
-  assert_is_not_zeros(array) {
-    let only_zeroes = true;
-    for (let val in array) {
-      if (val > 0) {
-        only_zeroes = false;
-        break;
-      }
-    }
+  keys: {
+    IdentityKey: __webpack_require__(9),
+    IdentityKeyPair: __webpack_require__(13),
+    KeyPair: __webpack_require__(8),
+    PreKeyAuth: __webpack_require__(28),
+    PreKeyBundle: __webpack_require__(23),
+    PreKey: __webpack_require__(24),
+    PublicKey: __webpack_require__(4),
+    SecretKey: __webpack_require__(22),
+  },
 
-    if (only_zeroes === true) {
-      throw new ProteusError('Array consists only of zeroes.', ProteusError.prototype.CODE.CASE_100);
-    }
+  message: {
+    Message: __webpack_require__(14),
+    CipherMessage: __webpack_require__(10),
+    PreKeyMessage: __webpack_require__(15),
+    Envelope: __webpack_require__(16),
+  },
+
+  session: {
+    PreKeyStore: __webpack_require__(29),
+    Session: __webpack_require__(30),
   },
 };
 
-module.exports = ArrayUtil;
-
 
 /***/ }),
-/* 32 */
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+/* eslint-disable no-proto */
+
+
+
+var base64 = __webpack_require__(36)
+var ieee754 = __webpack_require__(37)
+var isArray = __webpack_require__(38)
+
+exports.Buffer = Buffer
+exports.SlowBuffer = SlowBuffer
+exports.INSPECT_MAX_BYTES = 50
+
+/**
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (most compatible, even IE6)
+ *
+ * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
+ * Opera 11.6+, iOS 4.2+.
+ *
+ * Due to various browser bugs, sometimes the Object implementation will be used even
+ * when the browser supports typed arrays.
+ *
+ * Note:
+ *
+ *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
+ *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ *
+ *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *
+ *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *     incorrect length in some situations.
+
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
+ * get the Object implementation, which is slower but behaves correctly.
+ */
+Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
+  ? global.TYPED_ARRAY_SUPPORT
+  : typedArraySupport()
+
+/*
+ * Export kMaxLength after typed array support is determined.
+ */
+exports.kMaxLength = kMaxLength()
+
+function typedArraySupport () {
+  try {
+    var arr = new Uint8Array(1)
+    arr.__proto__ = {__proto__: Uint8Array.prototype, foo: function () { return 42 }}
+    return arr.foo() === 42 && // typed array instances can be augmented
+        typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
+        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+  } catch (e) {
+    return false
+  }
+}
+
+function kMaxLength () {
+  return Buffer.TYPED_ARRAY_SUPPORT
+    ? 0x7fffffff
+    : 0x3fffffff
+}
+
+function createBuffer (that, length) {
+  if (kMaxLength() < length) {
+    throw new RangeError('Invalid typed array length')
+  }
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = new Uint8Array(length)
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    if (that === null) {
+      that = new Buffer(length)
+    }
+    that.length = length
+  }
+
+  return that
+}
+
+/**
+ * The Buffer constructor returns instances of `Uint8Array` that have their
+ * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
+ * `Uint8Array`, so the returned instances will have all the node `Buffer` methods
+ * and the `Uint8Array` methods. Square bracket notation works as expected -- it
+ * returns a single octet.
+ *
+ * The `Uint8Array` prototype remains unmodified.
+ */
+
+function Buffer (arg, encodingOrOffset, length) {
+  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
+    return new Buffer(arg, encodingOrOffset, length)
+  }
+
+  // Common case.
+  if (typeof arg === 'number') {
+    if (typeof encodingOrOffset === 'string') {
+      throw new Error(
+        'If encoding is specified then the first argument must be a string'
+      )
+    }
+    return allocUnsafe(this, arg)
+  }
+  return from(this, arg, encodingOrOffset, length)
+}
+
+Buffer.poolSize = 8192 // not used by this implementation
+
+// TODO: Legacy, not needed anymore. Remove in next major version.
+Buffer._augment = function (arr) {
+  arr.__proto__ = Buffer.prototype
+  return arr
+}
+
+function from (that, value, encodingOrOffset, length) {
+  if (typeof value === 'number') {
+    throw new TypeError('"value" argument must not be a number')
+  }
+
+  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
+    return fromArrayBuffer(that, value, encodingOrOffset, length)
+  }
+
+  if (typeof value === 'string') {
+    return fromString(that, value, encodingOrOffset)
+  }
+
+  return fromObject(that, value)
+}
+
+/**
+ * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
+ * if value is a number.
+ * Buffer.from(str[, encoding])
+ * Buffer.from(array)
+ * Buffer.from(buffer)
+ * Buffer.from(arrayBuffer[, byteOffset[, length]])
+ **/
+Buffer.from = function (value, encodingOrOffset, length) {
+  return from(null, value, encodingOrOffset, length)
+}
+
+if (Buffer.TYPED_ARRAY_SUPPORT) {
+  Buffer.prototype.__proto__ = Uint8Array.prototype
+  Buffer.__proto__ = Uint8Array
+  if (typeof Symbol !== 'undefined' && Symbol.species &&
+      Buffer[Symbol.species] === Buffer) {
+    // Fix subarray() in ES2016. See: https://github.com/feross/buffer/pull/97
+    Object.defineProperty(Buffer, Symbol.species, {
+      value: null,
+      configurable: true
+    })
+  }
+}
+
+function assertSize (size) {
+  if (typeof size !== 'number') {
+    throw new TypeError('"size" argument must be a number')
+  } else if (size < 0) {
+    throw new RangeError('"size" argument must not be negative')
+  }
+}
+
+function alloc (that, size, fill, encoding) {
+  assertSize(size)
+  if (size <= 0) {
+    return createBuffer(that, size)
+  }
+  if (fill !== undefined) {
+    // Only pay attention to encoding if it's a string. This
+    // prevents accidentally sending in a number that would
+    // be interpretted as a start offset.
+    return typeof encoding === 'string'
+      ? createBuffer(that, size).fill(fill, encoding)
+      : createBuffer(that, size).fill(fill)
+  }
+  return createBuffer(that, size)
+}
+
+/**
+ * Creates a new filled Buffer instance.
+ * alloc(size[, fill[, encoding]])
+ **/
+Buffer.alloc = function (size, fill, encoding) {
+  return alloc(null, size, fill, encoding)
+}
+
+function allocUnsafe (that, size) {
+  assertSize(size)
+  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < size; ++i) {
+      that[i] = 0
+    }
+  }
+  return that
+}
+
+/**
+ * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
+ * */
+Buffer.allocUnsafe = function (size) {
+  return allocUnsafe(null, size)
+}
+/**
+ * Equivalent to SlowBuffer(num), by default creates a non-zero-filled Buffer instance.
+ */
+Buffer.allocUnsafeSlow = function (size) {
+  return allocUnsafe(null, size)
+}
+
+function fromString (that, string, encoding) {
+  if (typeof encoding !== 'string' || encoding === '') {
+    encoding = 'utf8'
+  }
+
+  if (!Buffer.isEncoding(encoding)) {
+    throw new TypeError('"encoding" must be a valid string encoding')
+  }
+
+  var length = byteLength(string, encoding) | 0
+  that = createBuffer(that, length)
+
+  var actual = that.write(string, encoding)
+
+  if (actual !== length) {
+    // Writing a hex string, for example, that contains invalid characters will
+    // cause everything after the first invalid character to be ignored. (e.g.
+    // 'abxxcd' will be treated as 'ab')
+    that = that.slice(0, actual)
+  }
+
+  return that
+}
+
+function fromArrayLike (that, array) {
+  var length = array.length < 0 ? 0 : checked(array.length) | 0
+  that = createBuffer(that, length)
+  for (var i = 0; i < length; i += 1) {
+    that[i] = array[i] & 255
+  }
+  return that
+}
+
+function fromArrayBuffer (that, array, byteOffset, length) {
+  array.byteLength // this throws if `array` is not a valid ArrayBuffer
+
+  if (byteOffset < 0 || array.byteLength < byteOffset) {
+    throw new RangeError('\'offset\' is out of bounds')
+  }
+
+  if (array.byteLength < byteOffset + (length || 0)) {
+    throw new RangeError('\'length\' is out of bounds')
+  }
+
+  if (byteOffset === undefined && length === undefined) {
+    array = new Uint8Array(array)
+  } else if (length === undefined) {
+    array = new Uint8Array(array, byteOffset)
+  } else {
+    array = new Uint8Array(array, byteOffset, length)
+  }
+
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    // Return an augmented `Uint8Array` instance, for best performance
+    that = array
+    that.__proto__ = Buffer.prototype
+  } else {
+    // Fallback: Return an object instance of the Buffer class
+    that = fromArrayLike(that, array)
+  }
+  return that
+}
+
+function fromObject (that, obj) {
+  if (Buffer.isBuffer(obj)) {
+    var len = checked(obj.length) | 0
+    that = createBuffer(that, len)
+
+    if (that.length === 0) {
+      return that
+    }
+
+    obj.copy(that, 0, 0, len)
+    return that
+  }
+
+  if (obj) {
+    if ((typeof ArrayBuffer !== 'undefined' &&
+        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
+      if (typeof obj.length !== 'number' || isnan(obj.length)) {
+        return createBuffer(that, 0)
+      }
+      return fromArrayLike(that, obj)
+    }
+
+    if (obj.type === 'Buffer' && isArray(obj.data)) {
+      return fromArrayLike(that, obj.data)
+    }
+  }
+
+  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
+}
+
+function checked (length) {
+  // Note: cannot use `length < kMaxLength()` here because that fails when
+  // length is NaN (which is otherwise coerced to zero.)
+  if (length >= kMaxLength()) {
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+                         'size: 0x' + kMaxLength().toString(16) + ' bytes')
+  }
+  return length | 0
+}
+
+function SlowBuffer (length) {
+  if (+length != length) { // eslint-disable-line eqeqeq
+    length = 0
+  }
+  return Buffer.alloc(+length)
+}
+
+Buffer.isBuffer = function isBuffer (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function compare (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
+    throw new TypeError('Arguments must be Buffers')
+  }
+
+  if (a === b) return 0
+
+  var x = a.length
+  var y = b.length
+
+  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
+    if (a[i] !== b[i]) {
+      x = a[i]
+      y = b[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+Buffer.isEncoding = function isEncoding (encoding) {
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'latin1':
+    case 'binary':
+    case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
+  }
+}
+
+Buffer.concat = function concat (list, length) {
+  if (!isArray(list)) {
+    throw new TypeError('"list" argument must be an Array of Buffers')
+  }
+
+  if (list.length === 0) {
+    return Buffer.alloc(0)
+  }
+
+  var i
+  if (length === undefined) {
+    length = 0
+    for (i = 0; i < list.length; ++i) {
+      length += list[i].length
+    }
+  }
+
+  var buffer = Buffer.allocUnsafe(length)
+  var pos = 0
+  for (i = 0; i < list.length; ++i) {
+    var buf = list[i]
+    if (!Buffer.isBuffer(buf)) {
+      throw new TypeError('"list" argument must be an Array of Buffers')
+    }
+    buf.copy(buffer, pos)
+    pos += buf.length
+  }
+  return buffer
+}
+
+function byteLength (string, encoding) {
+  if (Buffer.isBuffer(string)) {
+    return string.length
+  }
+  if (typeof ArrayBuffer !== 'undefined' && typeof ArrayBuffer.isView === 'function' &&
+      (ArrayBuffer.isView(string) || string instanceof ArrayBuffer)) {
+    return string.byteLength
+  }
+  if (typeof string !== 'string') {
+    string = '' + string
+  }
+
+  var len = string.length
+  if (len === 0) return 0
+
+  // Use a for loop to avoid recursion
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'ascii':
+      case 'latin1':
+      case 'binary':
+        return len
+      case 'utf8':
+      case 'utf-8':
+      case undefined:
+        return utf8ToBytes(string).length
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return len * 2
+      case 'hex':
+        return len >>> 1
+      case 'base64':
+        return base64ToBytes(string).length
+      default:
+        if (loweredCase) return utf8ToBytes(string).length // assume utf8
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+Buffer.byteLength = byteLength
+
+function slowToString (encoding, start, end) {
+  var loweredCase = false
+
+  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
+  // property of a typed array.
+
+  // This behaves neither like String nor Uint8Array in that we set start/end
+  // to their upper/lower bounds if the value passed is out of range.
+  // undefined is handled specially as per ECMA-262 6th Edition,
+  // Section 13.3.3.7 Runtime Semantics: KeyedBindingInitialization.
+  if (start === undefined || start < 0) {
+    start = 0
+  }
+  // Return early if start > this.length. Done here to prevent potential uint32
+  // coercion fail below.
+  if (start > this.length) {
+    return ''
+  }
+
+  if (end === undefined || end > this.length) {
+    end = this.length
+  }
+
+  if (end <= 0) {
+    return ''
+  }
+
+  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
+  end >>>= 0
+  start >>>= 0
+
+  if (end <= start) {
+    return ''
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Slice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
+// Buffer instances.
+Buffer.prototype._isBuffer = true
+
+function swap (b, n, m) {
+  var i = b[n]
+  b[n] = b[m]
+  b[m] = i
+}
+
+Buffer.prototype.swap16 = function swap16 () {
+  var len = this.length
+  if (len % 2 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 16-bits')
+  }
+  for (var i = 0; i < len; i += 2) {
+    swap(this, i, i + 1)
+  }
+  return this
+}
+
+Buffer.prototype.swap32 = function swap32 () {
+  var len = this.length
+  if (len % 4 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 32-bits')
+  }
+  for (var i = 0; i < len; i += 4) {
+    swap(this, i, i + 3)
+    swap(this, i + 1, i + 2)
+  }
+  return this
+}
+
+Buffer.prototype.swap64 = function swap64 () {
+  var len = this.length
+  if (len % 8 !== 0) {
+    throw new RangeError('Buffer size must be a multiple of 64-bits')
+  }
+  for (var i = 0; i < len; i += 8) {
+    swap(this, i, i + 7)
+    swap(this, i + 1, i + 6)
+    swap(this, i + 2, i + 5)
+    swap(this, i + 3, i + 4)
+  }
+  return this
+}
+
+Buffer.prototype.toString = function toString () {
+  var length = this.length | 0
+  if (length === 0) return ''
+  if (arguments.length === 0) return utf8Slice(this, 0, length)
+  return slowToString.apply(this, arguments)
+}
+
+Buffer.prototype.equals = function equals (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  if (this === b) return true
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function inspect () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max) str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
+  if (!Buffer.isBuffer(target)) {
+    throw new TypeError('Argument must be a Buffer')
+  }
+
+  if (start === undefined) {
+    start = 0
+  }
+  if (end === undefined) {
+    end = target ? target.length : 0
+  }
+  if (thisStart === undefined) {
+    thisStart = 0
+  }
+  if (thisEnd === undefined) {
+    thisEnd = this.length
+  }
+
+  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
+    throw new RangeError('out of range index')
+  }
+
+  if (thisStart >= thisEnd && start >= end) {
+    return 0
+  }
+  if (thisStart >= thisEnd) {
+    return -1
+  }
+  if (start >= end) {
+    return 1
+  }
+
+  start >>>= 0
+  end >>>= 0
+  thisStart >>>= 0
+  thisEnd >>>= 0
+
+  if (this === target) return 0
+
+  var x = thisEnd - thisStart
+  var y = end - start
+  var len = Math.min(x, y)
+
+  var thisCopy = this.slice(thisStart, thisEnd)
+  var targetCopy = target.slice(start, end)
+
+  for (var i = 0; i < len; ++i) {
+    if (thisCopy[i] !== targetCopy[i]) {
+      x = thisCopy[i]
+      y = targetCopy[i]
+      break
+    }
+  }
+
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
+
+// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
+// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
+//
+// Arguments:
+// - buffer - a Buffer to search
+// - val - a string, Buffer, or number
+// - byteOffset - an index into `buffer`; will be clamped to an int32
+// - encoding - an optional encoding, relevant is val is a string
+// - dir - true for indexOf, false for lastIndexOf
+function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
+  // Empty buffer means no match
+  if (buffer.length === 0) return -1
+
+  // Normalize byteOffset
+  if (typeof byteOffset === 'string') {
+    encoding = byteOffset
+    byteOffset = 0
+  } else if (byteOffset > 0x7fffffff) {
+    byteOffset = 0x7fffffff
+  } else if (byteOffset < -0x80000000) {
+    byteOffset = -0x80000000
+  }
+  byteOffset = +byteOffset  // Coerce to Number.
+  if (isNaN(byteOffset)) {
+    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
+    byteOffset = dir ? 0 : (buffer.length - 1)
+  }
+
+  // Normalize byteOffset: negative offsets start from the end of the buffer
+  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
+  if (byteOffset >= buffer.length) {
+    if (dir) return -1
+    else byteOffset = buffer.length - 1
+  } else if (byteOffset < 0) {
+    if (dir) byteOffset = 0
+    else return -1
+  }
+
+  // Normalize val
+  if (typeof val === 'string') {
+    val = Buffer.from(val, encoding)
+  }
+
+  // Finally, search either indexOf (if dir is true) or lastIndexOf
+  if (Buffer.isBuffer(val)) {
+    // Special case: looking for empty string/buffer always fails
+    if (val.length === 0) {
+      return -1
+    }
+    return arrayIndexOf(buffer, val, byteOffset, encoding, dir)
+  } else if (typeof val === 'number') {
+    val = val & 0xFF // Search for a byte value [0-255]
+    if (Buffer.TYPED_ARRAY_SUPPORT &&
+        typeof Uint8Array.prototype.indexOf === 'function') {
+      if (dir) {
+        return Uint8Array.prototype.indexOf.call(buffer, val, byteOffset)
+      } else {
+        return Uint8Array.prototype.lastIndexOf.call(buffer, val, byteOffset)
+      }
+    }
+    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
+  }
+
+  throw new TypeError('val must be string, number or Buffer')
+}
+
+function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
+  var indexSize = 1
+  var arrLength = arr.length
+  var valLength = val.length
+
+  if (encoding !== undefined) {
+    encoding = String(encoding).toLowerCase()
+    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
+        encoding === 'utf16le' || encoding === 'utf-16le') {
+      if (arr.length < 2 || val.length < 2) {
+        return -1
+      }
+      indexSize = 2
+      arrLength /= 2
+      valLength /= 2
+      byteOffset /= 2
+    }
+  }
+
+  function read (buf, i) {
+    if (indexSize === 1) {
+      return buf[i]
+    } else {
+      return buf.readUInt16BE(i * indexSize)
+    }
+  }
+
+  var i
+  if (dir) {
+    var foundIndex = -1
+    for (i = byteOffset; i < arrLength; i++) {
+      if (read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)) {
+        if (foundIndex === -1) foundIndex = i
+        if (i - foundIndex + 1 === valLength) return foundIndex * indexSize
+      } else {
+        if (foundIndex !== -1) i -= i - foundIndex
+        foundIndex = -1
+      }
+    }
+  } else {
+    if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength
+    for (i = byteOffset; i >= 0; i--) {
+      var found = true
+      for (var j = 0; j < valLength; j++) {
+        if (read(arr, i + j) !== read(val, j)) {
+          found = false
+          break
+        }
+      }
+      if (found) return i
+    }
+  }
+
+  return -1
+}
+
+Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
+  return this.indexOf(val, byteOffset, encoding) !== -1
+}
+
+Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
+}
+
+Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
+  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
+}
+
+function hexWrite (buf, string, offset, length) {
+  offset = Number(offset) || 0
+  var remaining = buf.length - offset
+  if (!length) {
+    length = remaining
+  } else {
+    length = Number(length)
+    if (length > remaining) {
+      length = remaining
+    }
+  }
+
+  // must be an even number of digits
+  var strLen = string.length
+  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
+
+  if (length > strLen / 2) {
+    length = strLen / 2
+  }
+  for (var i = 0; i < length; ++i) {
+    var parsed = parseInt(string.substr(i * 2, 2), 16)
+    if (isNaN(parsed)) return i
+    buf[offset + i] = parsed
+  }
+  return i
+}
+
+function utf8Write (buf, string, offset, length) {
+  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+function asciiWrite (buf, string, offset, length) {
+  return blitBuffer(asciiToBytes(string), buf, offset, length)
+}
+
+function latin1Write (buf, string, offset, length) {
+  return asciiWrite(buf, string, offset, length)
+}
+
+function base64Write (buf, string, offset, length) {
+  return blitBuffer(base64ToBytes(string), buf, offset, length)
+}
+
+function ucs2Write (buf, string, offset, length) {
+  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
+}
+
+Buffer.prototype.write = function write (string, offset, length, encoding) {
+  // Buffer#write(string)
+  if (offset === undefined) {
+    encoding = 'utf8'
+    length = this.length
+    offset = 0
+  // Buffer#write(string, encoding)
+  } else if (length === undefined && typeof offset === 'string') {
+    encoding = offset
+    length = this.length
+    offset = 0
+  // Buffer#write(string, offset[, length][, encoding])
+  } else if (isFinite(offset)) {
+    offset = offset | 0
+    if (isFinite(length)) {
+      length = length | 0
+      if (encoding === undefined) encoding = 'utf8'
+    } else {
+      encoding = length
+      length = undefined
+    }
+  // legacy write(string, encoding, offset, length) - remove in v0.13
+  } else {
+    throw new Error(
+      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
+    )
+  }
+
+  var remaining = this.length - offset
+  if (length === undefined || length > remaining) length = remaining
+
+  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
+    throw new RangeError('Attempt to write outside buffer bounds')
+  }
+
+  if (!encoding) encoding = 'utf8'
+
+  var loweredCase = false
+  for (;;) {
+    switch (encoding) {
+      case 'hex':
+        return hexWrite(this, string, offset, length)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Write(this, string, offset, length)
+
+      case 'ascii':
+        return asciiWrite(this, string, offset, length)
+
+      case 'latin1':
+      case 'binary':
+        return latin1Write(this, string, offset, length)
+
+      case 'base64':
+        // Warning: maxLength not taken into account in base64Write
+        return base64Write(this, string, offset, length)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return ucs2Write(this, string, offset, length)
+
+      default:
+        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = ('' + encoding).toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.toJSON = function toJSON () {
+  return {
+    type: 'Buffer',
+    data: Array.prototype.slice.call(this._arr || this, 0)
+  }
+}
+
+function base64Slice (buf, start, end) {
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
+}
+
+function utf8Slice (buf, start, end) {
+  end = Math.min(buf.length, end)
+  var res = []
+
+  var i = start
+  while (i < end) {
+    var firstByte = buf[i]
+    var codePoint = null
+    var bytesPerSequence = (firstByte > 0xEF) ? 4
+      : (firstByte > 0xDF) ? 3
+      : (firstByte > 0xBF) ? 2
+      : 1
+
+    if (i + bytesPerSequence <= end) {
+      var secondByte, thirdByte, fourthByte, tempCodePoint
+
+      switch (bytesPerSequence) {
+        case 1:
+          if (firstByte < 0x80) {
+            codePoint = firstByte
+          }
+          break
+        case 2:
+          secondByte = buf[i + 1]
+          if ((secondByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0x1F) << 0x6 | (secondByte & 0x3F)
+            if (tempCodePoint > 0x7F) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 3:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0xC | (secondByte & 0x3F) << 0x6 | (thirdByte & 0x3F)
+            if (tempCodePoint > 0x7FF && (tempCodePoint < 0xD800 || tempCodePoint > 0xDFFF)) {
+              codePoint = tempCodePoint
+            }
+          }
+          break
+        case 4:
+          secondByte = buf[i + 1]
+          thirdByte = buf[i + 2]
+          fourthByte = buf[i + 3]
+          if ((secondByte & 0xC0) === 0x80 && (thirdByte & 0xC0) === 0x80 && (fourthByte & 0xC0) === 0x80) {
+            tempCodePoint = (firstByte & 0xF) << 0x12 | (secondByte & 0x3F) << 0xC | (thirdByte & 0x3F) << 0x6 | (fourthByte & 0x3F)
+            if (tempCodePoint > 0xFFFF && tempCodePoint < 0x110000) {
+              codePoint = tempCodePoint
+            }
+          }
+      }
+    }
+
+    if (codePoint === null) {
+      // we did not generate a valid codePoint so insert a
+      // replacement char (U+FFFD) and advance only 1 byte
+      codePoint = 0xFFFD
+      bytesPerSequence = 1
+    } else if (codePoint > 0xFFFF) {
+      // encode to utf16 (surrogate pair dance)
+      codePoint -= 0x10000
+      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
+      codePoint = 0xDC00 | codePoint & 0x3FF
+    }
+
+    res.push(codePoint)
+    i += bytesPerSequence
+  }
+
+  return decodeCodePointsArray(res)
+}
+
+// Based on http://stackoverflow.com/a/22747272/680742, the browser with
+// the lowest limit is Chrome, with 0x10000 args.
+// We go 1 magnitude less, for safety
+var MAX_ARGUMENTS_LENGTH = 0x1000
+
+function decodeCodePointsArray (codePoints) {
+  var len = codePoints.length
+  if (len <= MAX_ARGUMENTS_LENGTH) {
+    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
+  }
+
+  // Decode in chunks to avoid "call stack size exceeded".
+  var res = ''
+  var i = 0
+  while (i < len) {
+    res += String.fromCharCode.apply(
+      String,
+      codePoints.slice(i, i += MAX_ARGUMENTS_LENGTH)
+    )
+  }
+  return res
+}
+
+function asciiSlice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i] & 0x7F)
+  }
+  return ret
+}
+
+function latin1Slice (buf, start, end) {
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; ++i) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
+}
+
+function hexSlice (buf, start, end) {
+  var len = buf.length
+
+  if (!start || start < 0) start = 0
+  if (!end || end < 0 || end > len) end = len
+
+  var out = ''
+  for (var i = start; i < end; ++i) {
+    out += toHex(buf[i])
+  }
+  return out
+}
+
+function utf16leSlice (buf, start, end) {
+  var bytes = buf.slice(start, end)
+  var res = ''
+  for (var i = 0; i < bytes.length; i += 2) {
+    res += String.fromCharCode(bytes[i] + bytes[i + 1] * 256)
+  }
+  return res
+}
+
+Buffer.prototype.slice = function slice (start, end) {
+  var len = this.length
+  start = ~~start
+  end = end === undefined ? len : ~~end
+
+  if (start < 0) {
+    start += len
+    if (start < 0) start = 0
+  } else if (start > len) {
+    start = len
+  }
+
+  if (end < 0) {
+    end += len
+    if (end < 0) end = 0
+  } else if (end > len) {
+    end = len
+  }
+
+  if (end < start) end = start
+
+  var newBuf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    newBuf = this.subarray(start, end)
+    newBuf.__proto__ = Buffer.prototype
+  } else {
+    var sliceLen = end - start
+    newBuf = new Buffer(sliceLen, undefined)
+    for (var i = 0; i < sliceLen; ++i) {
+      newBuf[i] = this[i + start]
+    }
+  }
+
+  return newBuf
+}
+
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
+  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
+}
+
+Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    checkOffset(offset, byteLength, this.length)
+  }
+
+  var val = this[offset + --byteLength]
+  var mul = 1
+  while (byteLength > 0 && (mul *= 0x100)) {
+    val += this[offset + --byteLength] * mul
+  }
+
+  return val
+}
+
+Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  return this[offset]
+}
+
+Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
+}
+
+Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
+}
+
+Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
+}
+
+Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+    ((this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    this[offset + 3])
+}
+
+Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100)) {
+    val += this[offset + i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) checkOffset(offset, byteLength, this.length)
+
+  var i = byteLength
+  var mul = 1
+  var val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100)) {
+    val += this[offset + --i] * mul
+  }
+  mul *= 0x80
+
+  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80)) return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
+}
+
+Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
+}
+
+Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+    (this[offset + 1] << 8) |
+    (this[offset + 2] << 16) |
+    (this[offset + 3] << 24)
+}
+
+Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+
+  return (this[offset] << 24) |
+    (this[offset + 1] << 16) |
+    (this[offset + 2] << 8) |
+    (this[offset + 3])
+}
+
+Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
+}
+
+Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
+}
+
+Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
+}
+
+Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
+  if (!noAssert) checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+}
+
+Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var mul = 1
+  var i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  byteLength = byteLength | 0
+  if (!noAssert) {
+    var maxBytes = Math.pow(2, 8 * byteLength) - 1
+    checkInt(this, value, offset, byteLength, maxBytes, 0)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    this[offset + i] = (value / mul) & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
+  }
+}
+
+Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+  }
+}
+
+Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = 0
+  var mul = 1
+  var sub = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i - 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) {
+    var limit = Math.pow(2, 8 * byteLength - 1)
+
+    checkInt(this, value, offset, byteLength, limit - 1, -limit)
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  var sub = 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100)) {
+    if (value < 0 && sub === 0 && this[offset + i + 1] !== 0) {
+      sub = 1
+    }
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+  }
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = (value & 0xff)
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+  } else {
+    objectWriteUInt16(this, value, offset, true)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = (value & 0xff)
+  } else {
+    objectWriteUInt16(this, value, offset, false)
+  }
+  return offset + 2
+}
+
+Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value & 0xff)
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else {
+    objectWriteUInt32(this, value, offset, true)
+  }
+  return offset + 4
+}
+
+Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
+  value = +value
+  offset = offset | 0
+  if (!noAssert) checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = (value & 0xff)
+  } else {
+    objectWriteUInt32(this, value, offset, false)
+  }
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (offset + ext > buf.length) throw new RangeError('Index out of range')
+  if (offset < 0) throw new RangeError('Index out of range')
+}
+
+function writeFloat (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
+  return offset + 4
+}
+
+Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
+  return writeFloat(this, value, offset, false, noAssert)
+}
+
+function writeDouble (buf, value, offset, littleEndian, noAssert) {
+  if (!noAssert) {
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
+  }
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
+  return offset + 8
+}
+
+Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, true, noAssert)
+}
+
+Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
+  return writeDouble(this, value, offset, false, noAssert)
+}
+
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function copy (target, targetStart, start, end) {
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (targetStart >= target.length) targetStart = target.length
+  if (!targetStart) targetStart = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || this.length === 0) return 0
+
+  // Fatal error conditions
+  if (targetStart < 0) {
+    throw new RangeError('targetStart out of bounds')
+  }
+  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length) end = this.length
+  if (target.length - targetStart < end - start) {
+    end = target.length - targetStart + start
+  }
+
+  var len = end - start
+  var i
+
+  if (this === target && start < targetStart && targetStart < end) {
+    // descending copy from end
+    for (i = len - 1; i >= 0; --i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    // ascending copy from start
+    for (i = 0; i < len; ++i) {
+      target[i + targetStart] = this[i + start]
+    }
+  } else {
+    Uint8Array.prototype.set.call(
+      target,
+      this.subarray(start, start + len),
+      targetStart
+    )
+  }
+
+  return len
+}
+
+// Usage:
+//    buffer.fill(number[, offset[, end]])
+//    buffer.fill(buffer[, offset[, end]])
+//    buffer.fill(string[, offset[, end]][, encoding])
+Buffer.prototype.fill = function fill (val, start, end, encoding) {
+  // Handle string cases:
+  if (typeof val === 'string') {
+    if (typeof start === 'string') {
+      encoding = start
+      start = 0
+      end = this.length
+    } else if (typeof end === 'string') {
+      encoding = end
+      end = this.length
+    }
+    if (val.length === 1) {
+      var code = val.charCodeAt(0)
+      if (code < 256) {
+        val = code
+      }
+    }
+    if (encoding !== undefined && typeof encoding !== 'string') {
+      throw new TypeError('encoding must be a string')
+    }
+    if (typeof encoding === 'string' && !Buffer.isEncoding(encoding)) {
+      throw new TypeError('Unknown encoding: ' + encoding)
+    }
+  } else if (typeof val === 'number') {
+    val = val & 255
+  }
+
+  // Invalid ranges are not set to a default, so can range check early.
+  if (start < 0 || this.length < start || this.length < end) {
+    throw new RangeError('Out of range index')
+  }
+
+  if (end <= start) {
+    return this
+  }
+
+  start = start >>> 0
+  end = end === undefined ? this.length : end >>> 0
+
+  if (!val) val = 0
+
+  var i
+  if (typeof val === 'number') {
+    for (i = start; i < end; ++i) {
+      this[i] = val
+    }
+  } else {
+    var bytes = Buffer.isBuffer(val)
+      ? val
+      : utf8ToBytes(new Buffer(val, encoding).toString())
+    var len = bytes.length
+    for (i = 0; i < end - start; ++i) {
+      this[i + start] = bytes[i % len]
+    }
+  }
+
+  return this
+}
+
+// HELPER FUNCTIONS
+// ================
+
+var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
+
+function base64clean (str) {
+  // Node strips out invalid characters like \n and \t from the string, base64-js does not
+  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
+  // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
+  while (str.length % 4 !== 0) {
+    str = str + '='
+  }
+  return str
+}
+
+function stringtrim (str) {
+  if (str.trim) return str.trim()
+  return str.replace(/^\s+|\s+$/g, '')
+}
+
+function toHex (n) {
+  if (n < 16) return '0' + n.toString(16)
+  return n.toString(16)
+}
+
+function utf8ToBytes (string, units) {
+  units = units || Infinity
+  var codePoint
+  var length = string.length
+  var leadSurrogate = null
+  var bytes = []
+
+  for (var i = 0; i < length; ++i) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+      // last char was a lead
+      if (!leadSurrogate) {
+        // no lead yet
+        if (codePoint > 0xDBFF) {
+          // unexpected trail
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        } else if (i + 1 === length) {
+          // unpaired lead
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        leadSurrogate = codePoint
+
+        continue
+      }
+
+      // 2 leads in a row
+      if (codePoint < 0xDC00) {
+        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+        leadSurrogate = codePoint
+        continue
+      }
+
+      // valid surrogate pair
+      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
+    } else if (leadSurrogate) {
+      // valid bmp char, but last char was a lead
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+    }
+
+    leadSurrogate = null
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    } else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else if (codePoint < 0x110000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      )
+    } else {
+      throw new Error('Invalid code point')
+    }
+  }
+
+  return bytes
+}
+
+function asciiToBytes (str) {
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    // Node's code seems to be doing this and not & 0x7F..
+    byteArray.push(str.charCodeAt(i) & 0xFF)
+  }
+  return byteArray
+}
+
+function utf16leToBytes (str, units) {
+  var c, hi, lo
+  var byteArray = []
+  for (var i = 0; i < str.length; ++i) {
+    if ((units -= 2) < 0) break
+
+    c = str.charCodeAt(i)
+    hi = c >> 8
+    lo = c % 256
+    byteArray.push(lo)
+    byteArray.push(hi)
+  }
+
+  return byteArray
+}
+
+function base64ToBytes (str) {
+  return base64.toByteArray(base64clean(str))
+}
+
+function blitBuffer (src, dst, offset, length) {
+  for (var i = 0; i < length; ++i) {
+    if ((i + offset >= dst.length) || (i >= src.length)) break
+    dst[i + offset] = src[i]
+  }
+  return i
+}
+
+function isnan (val) {
+  return val !== val // eslint-disable-line no-self-compare
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(35)))
+
+/***/ }),
+/* 35 */
 /***/ (function(module, exports) {
 
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
 
 
 /***/ }),
-/* 33 */
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.byteLength = byteLength
+exports.toByteArray = toByteArray
+exports.fromByteArray = fromByteArray
+
+var lookup = []
+var revLookup = []
+var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
+
+var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+for (var i = 0, len = code.length; i < len; ++i) {
+  lookup[i] = code[i]
+  revLookup[code.charCodeAt(i)] = i
+}
+
+revLookup['-'.charCodeAt(0)] = 62
+revLookup['_'.charCodeAt(0)] = 63
+
+function placeHoldersCount (b64) {
+  var len = b64.length
+  if (len % 4 > 0) {
+    throw new Error('Invalid string. Length must be a multiple of 4')
+  }
+
+  // the number of equal signs (place holders)
+  // if there are two placeholders, than the two characters before it
+  // represent one byte
+  // if there is only one, then the three characters before it represent 2 bytes
+  // this is just a cheap hack to not do indexOf twice
+  return b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
+}
+
+function byteLength (b64) {
+  // base64 is 4/3 + up to two characters of the original data
+  return b64.length * 3 / 4 - placeHoldersCount(b64)
+}
+
+function toByteArray (b64) {
+  var i, j, l, tmp, placeHolders, arr
+  var len = b64.length
+  placeHolders = placeHoldersCount(b64)
+
+  arr = new Arr(len * 3 / 4 - placeHolders)
+
+  // if there are placeholders, only get up to the last complete 4 chars
+  l = placeHolders > 0 ? len - 4 : len
+
+  var L = 0
+
+  for (i = 0, j = 0; i < l; i += 4, j += 3) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
+    arr[L++] = (tmp >> 16) & 0xFF
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  if (placeHolders === 2) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
+    arr[L++] = tmp & 0xFF
+  } else if (placeHolders === 1) {
+    tmp = (revLookup[b64.charCodeAt(i)] << 10) | (revLookup[b64.charCodeAt(i + 1)] << 4) | (revLookup[b64.charCodeAt(i + 2)] >> 2)
+    arr[L++] = (tmp >> 8) & 0xFF
+    arr[L++] = tmp & 0xFF
+  }
+
+  return arr
+}
+
+function tripletToBase64 (num) {
+  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
+}
+
+function encodeChunk (uint8, start, end) {
+  var tmp
+  var output = []
+  for (var i = start; i < end; i += 3) {
+    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+    output.push(tripletToBase64(tmp))
+  }
+  return output.join('')
+}
+
+function fromByteArray (uint8) {
+  var tmp
+  var len = uint8.length
+  var extraBytes = len % 3 // if we have 1 byte left, pad 2 bytes
+  var output = ''
+  var parts = []
+  var maxChunkLength = 16383 // must be multiple of 3
+
+  // go through the array every three bytes, we'll deal with trailing stuff later
+  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+  }
+
+  // pad the end with zeros, but make sure to not forget the extra bytes
+  if (extraBytes === 1) {
+    tmp = uint8[len - 1]
+    output += lookup[tmp >> 2]
+    output += lookup[(tmp << 4) & 0x3F]
+    output += '=='
+  } else if (extraBytes === 2) {
+    tmp = (uint8[len - 2] << 8) + (uint8[len - 1])
+    output += lookup[tmp >> 10]
+    output += lookup[(tmp >> 4) & 0x3F]
+    output += lookup[(tmp << 2) & 0x3F]
+    output += '='
+  }
+
+  parts.push(output)
+
+  return parts.join('')
+}
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports) {
+
+exports.read = function (buffer, offset, isLE, mLen, nBytes) {
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
+
+  i += d
+
+  e = s & ((1 << (-nBits)) - 1)
+  s >>= (-nBits)
+  nBits += eLen
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  m = e & ((1 << (-nBits)) - 1)
+  e >>= (-nBits)
+  nBits += mLen
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+  if (e === 0) {
+    e = 1 - eBias
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity)
+  } else {
+    m = m + Math.pow(2, mLen)
+    e = e - eBias
+  }
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
+}
+
+exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+
+  value = Math.abs(value)
+
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0
+    e = eMax
+  } else {
+    e = Math.floor(Math.log(value) / Math.LN2)
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--
+      c *= 2
+    }
+    if (e + eBias >= 1) {
+      value += rt / c
+    } else {
+      value += rt * Math.pow(2, 1 - eBias)
+    }
+    if (value * c >= 2) {
+      e++
+      c /= 2
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0
+      e = eMax
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen)
+      e = e + eBias
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
+      e = 0
+    }
+  }
+
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+  e = (e << mLen) | m
+  eLen += mLen
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+  buffer[offset + i - d] |= s * 128
+}
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = Array.isArray || function (arr) {
+  return toString.call(arr) == '[object Array]';
+};
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(40)))
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports) {
+
+function webpackEmptyContext(req) {
+	throw new Error("Cannot find module '" + req + "'.");
+}
+webpackEmptyContext.keys = function() { return []; };
+webpackEmptyContext.resolve = webpackEmptyContext;
+module.exports = webpackEmptyContext;
+webpackEmptyContext.id = 41;
+
+/***/ }),
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function(nacl) {
@@ -6197,7 +8837,7 @@ nacl.setPRNG = function(fn) {
     });
   } else if (true) {
     // Node.js.
-    crypto = __webpack_require__(41);
+    crypto = __webpack_require__(43);
     if (crypto && crypto.randomBytes) {
       nacl.setPRNG(function(x, n) {
         var i, v = crypto.randomBytes(n);
@@ -6212,66 +8852,13 @@ nacl.setPRNG = function(fn) {
 
 
 /***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 43 */
+/***/ (function(module, exports) {
 
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-module.exports = {
-  errors: {
-    ProteusError: __webpack_require__(6),
-    DecodeError: __webpack_require__(10),
-    DecryptError: __webpack_require__(11),
-    InputError: __webpack_require__(19),
-  },
-
-  keys: {
-    IdentityKey: __webpack_require__(8),
-    IdentityKeyPair: __webpack_require__(12),
-    KeyPair: __webpack_require__(7),
-    PreKeyAuth: __webpack_require__(27),
-    PreKeyBundle: __webpack_require__(21),
-    PreKey: __webpack_require__(20),
-    PublicKey: __webpack_require__(4),
-    SecretKey: __webpack_require__(22),
-  },
-
-  message: {
-    Message: __webpack_require__(14),
-    CipherMessage: __webpack_require__(9),
-    PreKeyMessage: __webpack_require__(15),
-    Envelope: __webpack_require__(13),
-  },
-
-  session: {
-    PreKeyStore: __webpack_require__(28),
-    Session: __webpack_require__(29),
-  },
-};
-
+/* (ignored) */
 
 /***/ }),
-/* 35 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6296,200 +8883,37 @@ module.exports = {
 
 
 
-const CBOR = __webpack_require__(3);
+/** @module util */
 
-const ClassUtil = __webpack_require__(2);
-const DontCallConstructor = __webpack_require__(0);
-const TypeUtil = __webpack_require__(1);
+let crypto = (typeof window !== 'undefined') && (window.crypto || window.msCrypto);
+let random_bytes;
 
-const PublicKey = __webpack_require__(4);
-
-const DecryptError = __webpack_require__(11);
-const ProteusError = __webpack_require__(6);
-
-const CipherMessage = __webpack_require__(9);
-const Envelope = __webpack_require__(13);
-
-const ChainKey = __webpack_require__(17);
-const MessageKeys = __webpack_require__(30);
-
-/** @module session */
-
-/**
- * @class RecvChain
- * @throws {DontCallConstructor}
- */
-class RecvChain {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!session.ChainKey} chain_key
-   * @param {!keys.PublicKey} public_key
-   * @returns {message.PreKeyMessage}
-   */
-  static new(chain_key, public_key) {
-    TypeUtil.assert_is_instance(ChainKey, chain_key);
-    TypeUtil.assert_is_instance(PublicKey, public_key);
-
-    const rc = ClassUtil.new_instance(RecvChain);
-    rc.chain_key = chain_key;
-    rc.ratchet_key = public_key;
-    rc.message_keys = [];
-    return rc;
-  }
-
-  /**
-   * @param {!message.Envelope} envelope
-   * @param {!message.CipherMessage} msg
-   * @returns {Uint8Array}
-   */
-  try_message_keys(envelope, msg) {
-    TypeUtil.assert_is_instance(Envelope, envelope);
-    TypeUtil.assert_is_instance(CipherMessage, msg);
-
-    if (this.message_keys[0] && this.message_keys[0].counter > msg.counter) {
-      const message = `Message too old. Counter for oldest staged chain key is '${this.message_keys[0].counter}' while message counter is '${msg.counter}'.`;
-      throw new DecryptError.OutdatedMessage(message, DecryptError.CODE.CASE_208);
-    }
-
-    const idx = this.message_keys.findIndex((mk) => {
-      return mk.counter === msg.counter;
-    });
-
-    if (idx === -1) {
-      throw new DecryptError.DuplicateMessage(null, DecryptError.CODE.CASE_209);
-    }
-
-    const mk = this.message_keys.splice(idx, 1)[0];
-    if (!envelope.verify(mk.mac_key)) {
-      const message = `Envelope verification failed for message with counter behind. Message index is '${msg.counter}' while receive chain index is '${this.chain_key.idx}'.`;
-      throw new DecryptError.InvalidSignature(message, DecryptError.CODE.CASE_210);
-    }
-
-    return mk.decrypt(msg.cipher_text);
-  }
-
-  /**
-   * @param {!message.CipherMessage} msg
-   * @returns {Array<session.ChainKey>|session.MessageKeys}
-   */
-  stage_message_keys(msg) {
-    TypeUtil.assert_is_instance(CipherMessage, msg);
-
-    const num = msg.counter - this.chain_key.idx;
-    if (num > RecvChain.MAX_COUNTER_GAP) {
-      if (this.chain_key.idx === 0) {
-        throw new DecryptError.TooDistantFuture('Skipped too many message at the beginning of a receive chain.', DecryptError.CODE.CASE_211);
-      }
-      throw new DecryptError.TooDistantFuture(`Skipped too many message within a used receive chain. Receive chain counter is '${this.chain_key.idx}'`, DecryptError.CODE.CASE_212);
-    }
-
-    let keys = [];
-    let chk = this.chain_key;
-
-    for (let i = 0; i <= num - 1; i++) {
-      keys.push(chk.message_keys());
-      chk = chk.next();
-    }
-
-    const mk = chk.message_keys();
-    return [chk, mk, keys];
-  }
-
-  /**
-   * @param {!Array<session.MessageKeys>} keys
-   * @returns {void}
-   */
-  commit_message_keys(keys) {
-    TypeUtil.assert_is_instance(Array, keys);
-    keys.map((k) => TypeUtil.assert_is_instance(MessageKeys, k));
-
-    if (keys.length > RecvChain.MAX_COUNTER_GAP) {
-      throw new ProteusError(`Number of message keys (${keys.length}) exceed message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, ProteusError.prototype.CODE.CASE_103);
-    }
-
-    const excess = this.message_keys.length + keys.length - RecvChain.MAX_COUNTER_GAP;
-
-    for (let i = 0; i <= excess - 1; i++) {
-      this.message_keys.shift();
-    }
-
-    keys.map((k) => this.message_keys.push(k));
-
-    if (keys.length > RecvChain.MAX_COUNTER_GAP) {
-      throw new ProteusError(`Skipped message keys which exceed the message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, ProteusError.prototype.CODE.CASE_104);
-    }
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {Array<CBOR.Encoder>}
-   */
-  encode(e) {
-    e.object(3);
-    e.u8(0);
-    this.chain_key.encode(e);
-    e.u8(1);
-    this.ratchet_key.encode(e);
-
-    e.u8(2);
-    e.array(this.message_keys.length);
-    return this.message_keys.map((k) => k.encode(e));
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {RecvChain}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    const self = ClassUtil.new_instance(RecvChain);
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0: {
-          self.chain_key = ChainKey.decode(d);
-          break;
-        }
-        case 1: {
-          self.ratchet_key = PublicKey.decode(d);
-          break;
-        }
-        case 2: {
-          self.message_keys = [];
-
-          let len = d.array();
-          while (len--) {
-            self.message_keys.push(MessageKeys.decode(d));
-          }
-          break;
-        }
-        default: {
-          d.skip();
-        }
-      }
-    }
-
-    TypeUtil.assert_is_instance(ChainKey, self.chain_key);
-    TypeUtil.assert_is_instance(PublicKey, self.ratchet_key);
-    TypeUtil.assert_is_instance(Array, self.message_keys);
-
-    return self;
-  }
+if (crypto) {
+  // browser
+  random_bytes = (len) => {
+    const buffer = new ArrayBuffer(len);
+    const buffer_view = new Uint8Array(buffer);
+    return crypto.getRandomValues(buffer_view);
+  };
+} else {
+  // node
+  crypto = __webpack_require__(45);
+  random_bytes = (len) => {
+    return new Uint8Array(crypto.randomBytes(len));
+  };
 }
 
-/** @type {number} */
-RecvChain.MAX_COUNTER_GAP = 1000;
-
-module.exports = RecvChain;
+module.exports = { random_bytes };
 
 
 /***/ }),
-/* 36 */
+/* 45 */
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6514,246 +8938,34 @@ module.exports = RecvChain;
 
 
 
-const CBOR = __webpack_require__(3);
-
-const ClassUtil = __webpack_require__(2);
-const DontCallConstructor = __webpack_require__(0);
-const TypeUtil = __webpack_require__(1);
-
-const ChainKey = __webpack_require__(17);
-const CipherKey = __webpack_require__(24);
-const DerivedSecrets = __webpack_require__(25);
-const KeyPair = __webpack_require__(7);
-const PublicKey = __webpack_require__(4);
-
-/** @module session */
-
-/**
- * @class RootKey
- * @throws {DontCallConstructor}
- */
-class RootKey {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  /**
-   * @param {!derived.CipherKey} cipher_key - Cipher key generated by derived secrets
-   * @returns {RootKey}
-   */
-  static from_cipher_key(cipher_key) {
-    TypeUtil.assert_is_instance(CipherKey, cipher_key);
-
-    const rk = ClassUtil.new_instance(RootKey);
-    rk.key = cipher_key;
-    return rk;
-  }
-
-  /**
-   * @param {!keys.KeyPair} ours - Our key pair
-   * @param {!keys.PublicKey} theirs - Their public key
-   * @returns {Array<RootKey|session.ChainKey>}
-   */
-  dh_ratchet(ours, theirs) {
-    TypeUtil.assert_is_instance(KeyPair, ours);
-    TypeUtil.assert_is_instance(PublicKey, theirs);
-
-    const secret = ours.secret_key.shared_secret(theirs);
-    const derived_secrets = DerivedSecrets.kdf(secret, this.key.key, 'dh_ratchet');
-
-    return [
-      RootKey.from_cipher_key(derived_secrets.cipher_key),
-      ChainKey.from_mac_key(derived_secrets.mac_key, 0),
-    ];
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    e.object(1);
-    e.u8(0);
-    return this.key.encode(e);
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {RootKey}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-
-    let cipher_key = null;
-
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          cipher_key = CipherKey.decode(d);
-          break;
-        default:
-          d.skip();
-      }
-    }
-    return RootKey.from_cipher_key(cipher_key);
-  }
-}
-
-module.exports = RootKey;
-
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(3);
-
-const ClassUtil = __webpack_require__(2);
-const DontCallConstructor = __webpack_require__(0);
-const TypeUtil = __webpack_require__(1);
-
-const ChainKey = __webpack_require__(17);
-const KeyPair = __webpack_require__(7);
-
-/** @module session */
-
-/**
- * @class SendChain
- * @throws {DontCallConstructor}
- */
-class SendChain {
-  constructor() {
-    throw new DontCallConstructor(this);
-  }
-
-  static new(chain_key, keypair) {
-    TypeUtil.assert_is_instance(ChainKey, chain_key);
-    TypeUtil.assert_is_instance(KeyPair, keypair);
-
-    const sc = ClassUtil.new_instance(SendChain);
-    sc.chain_key = chain_key;
-    sc.ratchet_key = keypair;
-    return sc;
-  }
-
-  /**
-   * @param {!CBOR.Encoder} e
-   * @returns {CBOR.Encoder}
-   */
-  encode(e) {
-    e.object(2);
-    e.u8(0);
-    this.chain_key.encode(e);
-    e.u8(1);
-    return this.ratchet_key.encode(e);
-  }
-
-  /**
-   * @param {!CBOR.Decoder} d
-   * @returns {SendChain}
-   */
-  static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
-    const self = ClassUtil.new_instance(SendChain);
-    const nprops = d.object();
-    for (let i = 0; i <= nprops - 1; i++) {
-      switch (d.u8()) {
-        case 0:
-          self.chain_key = ChainKey.decode(d);
-          break;
-        case 1:
-          self.ratchet_key = KeyPair.decode(d);
-          break;
-        default:
-          d.skip();
-      }
-    }
-    TypeUtil.assert_is_instance(ChainKey, self.chain_key);
-    TypeUtil.assert_is_instance(KeyPair, self.ratchet_key);
-    return self;
-  }
-}
-
-module.exports = SendChain;
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
- * Wire
- * Copyright (C) 2016 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/.
- *
- */
-
-
-
-const CBOR = __webpack_require__(3);
+const CBOR = __webpack_require__(2);
 
 const ArrayUtil = __webpack_require__(31);
-const ClassUtil = __webpack_require__(2);
+const ClassUtil = __webpack_require__(3);
 const DontCallConstructor = __webpack_require__(0);
 const MemoryUtil = __webpack_require__(18);
 const TypeUtil = __webpack_require__(1);
 
-const DecryptError = __webpack_require__(11);
+const DecryptError = __webpack_require__(12);
 
-const DerivedSecrets = __webpack_require__(25);
+const DerivedSecrets = __webpack_require__(26);
 
-const IdentityKey = __webpack_require__(8);
-const IdentityKeyPair = __webpack_require__(12);
-const KeyPair = __webpack_require__(7);
-const PreKeyBundle = __webpack_require__(21);
+const IdentityKey = __webpack_require__(9);
+const IdentityKeyPair = __webpack_require__(13);
+const KeyPair = __webpack_require__(8);
+const PreKeyBundle = __webpack_require__(23);
 const PublicKey = __webpack_require__(4);
 
-const CipherMessage = __webpack_require__(9);
-const Envelope = __webpack_require__(13);
+const CipherMessage = __webpack_require__(10);
+const Envelope = __webpack_require__(16);
 const PreKeyMessage = __webpack_require__(15);
-const SessionTag = __webpack_require__(26);
+const SessionTag = __webpack_require__(25);
 
-const ChainKey = __webpack_require__(17);
-const RecvChain = __webpack_require__(35);
-const RootKey = __webpack_require__(36);
-const SendChain = __webpack_require__(37);
-const Session = __webpack_require__(29);
+const ChainKey = __webpack_require__(19);
+const RecvChain = __webpack_require__(48);
+const RootKey = __webpack_require__(49);
+const SendChain = __webpack_require__(50);
+const Session = __webpack_require__(30);
 
 /** @module session */
 
@@ -7032,7 +9244,7 @@ module.exports = SessionState;
 
 
 /***/ }),
-/* 39 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7058,6 +9270,8 @@ module.exports = SessionState;
 
 
 const sodium = __webpack_require__(5);
+
+if (typeof window === 'undefined') try { Object.assign(sodium, __webpack_require__(6)); } catch (e) { /**/ }
 
 const ArrayUtil = __webpack_require__(31);
 const MemoryUtil = __webpack_require__(18);
@@ -7149,7 +9363,7 @@ module.exports = KeyDerivationUtil;
 
 
 /***/ }),
-/* 40 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7174,34 +9388,409 @@ module.exports = KeyDerivationUtil;
 
 
 
-/** @module util */
+const CBOR = __webpack_require__(2);
 
-let crypto = (typeof window !== 'undefined') && (window.crypto || window.msCrypto);
-let random_bytes;
+const ClassUtil = __webpack_require__(3);
+const DontCallConstructor = __webpack_require__(0);
+const TypeUtil = __webpack_require__(1);
 
-if (crypto) {
-  // browser
-  random_bytes = (len) => {
-    const buffer = new ArrayBuffer(len);
-    const buffer_view = new Uint8Array(buffer);
-    return crypto.getRandomValues(buffer_view);
-  };
-} else {
-  // node
-  crypto = __webpack_require__(32);
-  random_bytes = (len) => {
-    return new Uint8Array(crypto.randomBytes(len));
-  };
+const PublicKey = __webpack_require__(4);
+
+const DecryptError = __webpack_require__(12);
+const ProteusError = __webpack_require__(7);
+
+const CipherMessage = __webpack_require__(10);
+const Envelope = __webpack_require__(16);
+
+const ChainKey = __webpack_require__(19);
+const MessageKeys = __webpack_require__(32);
+
+/** @module session */
+
+/**
+ * @class RecvChain
+ * @throws {DontCallConstructor}
+ */
+class RecvChain {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /**
+   * @param {!session.ChainKey} chain_key
+   * @param {!keys.PublicKey} public_key
+   * @returns {message.PreKeyMessage}
+   */
+  static new(chain_key, public_key) {
+    TypeUtil.assert_is_instance(ChainKey, chain_key);
+    TypeUtil.assert_is_instance(PublicKey, public_key);
+
+    const rc = ClassUtil.new_instance(RecvChain);
+    rc.chain_key = chain_key;
+    rc.ratchet_key = public_key;
+    rc.message_keys = [];
+    return rc;
+  }
+
+  /**
+   * @param {!message.Envelope} envelope
+   * @param {!message.CipherMessage} msg
+   * @returns {Uint8Array}
+   */
+  try_message_keys(envelope, msg) {
+    TypeUtil.assert_is_instance(Envelope, envelope);
+    TypeUtil.assert_is_instance(CipherMessage, msg);
+
+    if (this.message_keys[0] && this.message_keys[0].counter > msg.counter) {
+      const message = `Message too old. Counter for oldest staged chain key is '${this.message_keys[0].counter}' while message counter is '${msg.counter}'.`;
+      throw new DecryptError.OutdatedMessage(message, DecryptError.CODE.CASE_208);
+    }
+
+    const idx = this.message_keys.findIndex((mk) => {
+      return mk.counter === msg.counter;
+    });
+
+    if (idx === -1) {
+      throw new DecryptError.DuplicateMessage(null, DecryptError.CODE.CASE_209);
+    }
+
+    const mk = this.message_keys.splice(idx, 1)[0];
+    if (!envelope.verify(mk.mac_key)) {
+      const message = `Envelope verification failed for message with counter behind. Message index is '${msg.counter}' while receive chain index is '${this.chain_key.idx}'.`;
+      throw new DecryptError.InvalidSignature(message, DecryptError.CODE.CASE_210);
+    }
+
+    return mk.decrypt(msg.cipher_text);
+  }
+
+  /**
+   * @param {!message.CipherMessage} msg
+   * @returns {Array<session.ChainKey>|session.MessageKeys}
+   */
+  stage_message_keys(msg) {
+    TypeUtil.assert_is_instance(CipherMessage, msg);
+
+    const num = msg.counter - this.chain_key.idx;
+    if (num > RecvChain.MAX_COUNTER_GAP) {
+      if (this.chain_key.idx === 0) {
+        throw new DecryptError.TooDistantFuture('Skipped too many message at the beginning of a receive chain.', DecryptError.CODE.CASE_211);
+      }
+      throw new DecryptError.TooDistantFuture(`Skipped too many message within a used receive chain. Receive chain counter is '${this.chain_key.idx}'`, DecryptError.CODE.CASE_212);
+    }
+
+    let keys = [];
+    let chk = this.chain_key;
+
+    for (let i = 0; i <= num - 1; i++) {
+      keys.push(chk.message_keys());
+      chk = chk.next();
+    }
+
+    const mk = chk.message_keys();
+    return [chk, mk, keys];
+  }
+
+  /**
+   * @param {!Array<session.MessageKeys>} keys
+   * @returns {void}
+   */
+  commit_message_keys(keys) {
+    TypeUtil.assert_is_instance(Array, keys);
+    keys.map((k) => TypeUtil.assert_is_instance(MessageKeys, k));
+
+    if (keys.length > RecvChain.MAX_COUNTER_GAP) {
+      throw new ProteusError(`Number of message keys (${keys.length}) exceed message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, ProteusError.prototype.CODE.CASE_103);
+    }
+
+    const excess = this.message_keys.length + keys.length - RecvChain.MAX_COUNTER_GAP;
+
+    for (let i = 0; i <= excess - 1; i++) {
+      this.message_keys.shift();
+    }
+
+    keys.map((k) => this.message_keys.push(k));
+
+    if (keys.length > RecvChain.MAX_COUNTER_GAP) {
+      throw new ProteusError(`Skipped message keys which exceed the message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, ProteusError.prototype.CODE.CASE_104);
+    }
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {Array<CBOR.Encoder>}
+   */
+  encode(e) {
+    e.object(3);
+    e.u8(0);
+    this.chain_key.encode(e);
+    e.u8(1);
+    this.ratchet_key.encode(e);
+
+    e.u8(2);
+    e.array(this.message_keys.length);
+    return this.message_keys.map((k) => k.encode(e));
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {RecvChain}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    const self = ClassUtil.new_instance(RecvChain);
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0: {
+          self.chain_key = ChainKey.decode(d);
+          break;
+        }
+        case 1: {
+          self.ratchet_key = PublicKey.decode(d);
+          break;
+        }
+        case 2: {
+          self.message_keys = [];
+
+          let len = d.array();
+          while (len--) {
+            self.message_keys.push(MessageKeys.decode(d));
+          }
+          break;
+        }
+        default: {
+          d.skip();
+        }
+      }
+    }
+
+    TypeUtil.assert_is_instance(ChainKey, self.chain_key);
+    TypeUtil.assert_is_instance(PublicKey, self.ratchet_key);
+    TypeUtil.assert_is_instance(Array, self.message_keys);
+
+    return self;
+  }
 }
 
-module.exports = { random_bytes };
+/** @type {number} */
+RecvChain.MAX_COUNTER_GAP = 1000;
+
+module.exports = RecvChain;
 
 
 /***/ }),
-/* 41 */
-/***/ (function(module, exports) {
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/* (ignored) */
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
+
+const ClassUtil = __webpack_require__(3);
+const DontCallConstructor = __webpack_require__(0);
+const TypeUtil = __webpack_require__(1);
+
+const ChainKey = __webpack_require__(19);
+const CipherKey = __webpack_require__(27);
+const DerivedSecrets = __webpack_require__(26);
+const KeyPair = __webpack_require__(8);
+const PublicKey = __webpack_require__(4);
+
+/** @module session */
+
+/**
+ * @class RootKey
+ * @throws {DontCallConstructor}
+ */
+class RootKey {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  /**
+   * @param {!derived.CipherKey} cipher_key - Cipher key generated by derived secrets
+   * @returns {RootKey}
+   */
+  static from_cipher_key(cipher_key) {
+    TypeUtil.assert_is_instance(CipherKey, cipher_key);
+
+    const rk = ClassUtil.new_instance(RootKey);
+    rk.key = cipher_key;
+    return rk;
+  }
+
+  /**
+   * @param {!keys.KeyPair} ours - Our key pair
+   * @param {!keys.PublicKey} theirs - Their public key
+   * @returns {Array<RootKey|session.ChainKey>}
+   */
+  dh_ratchet(ours, theirs) {
+    TypeUtil.assert_is_instance(KeyPair, ours);
+    TypeUtil.assert_is_instance(PublicKey, theirs);
+
+    const secret = ours.secret_key.shared_secret(theirs);
+    const derived_secrets = DerivedSecrets.kdf(secret, this.key.key, 'dh_ratchet');
+
+    return [
+      RootKey.from_cipher_key(derived_secrets.cipher_key),
+      ChainKey.from_mac_key(derived_secrets.mac_key, 0),
+    ];
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    e.object(1);
+    e.u8(0);
+    return this.key.encode(e);
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {RootKey}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+
+    let cipher_key = null;
+
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          cipher_key = CipherKey.decode(d);
+          break;
+        default:
+          d.skip();
+      }
+    }
+    return RootKey.from_cipher_key(cipher_key);
+  }
+}
+
+module.exports = RootKey;
+
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/*
+ * Wire
+ * Copyright (C) 2016 Wire Swiss GmbH
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/.
+ *
+ */
+
+
+
+const CBOR = __webpack_require__(2);
+
+const ClassUtil = __webpack_require__(3);
+const DontCallConstructor = __webpack_require__(0);
+const TypeUtil = __webpack_require__(1);
+
+const ChainKey = __webpack_require__(19);
+const KeyPair = __webpack_require__(8);
+
+/** @module session */
+
+/**
+ * @class SendChain
+ * @throws {DontCallConstructor}
+ */
+class SendChain {
+  constructor() {
+    throw new DontCallConstructor(this);
+  }
+
+  static new(chain_key, keypair) {
+    TypeUtil.assert_is_instance(ChainKey, chain_key);
+    TypeUtil.assert_is_instance(KeyPair, keypair);
+
+    const sc = ClassUtil.new_instance(SendChain);
+    sc.chain_key = chain_key;
+    sc.ratchet_key = keypair;
+    return sc;
+  }
+
+  /**
+   * @param {!CBOR.Encoder} e
+   * @returns {CBOR.Encoder}
+   */
+  encode(e) {
+    e.object(2);
+    e.u8(0);
+    this.chain_key.encode(e);
+    e.u8(1);
+    return this.ratchet_key.encode(e);
+  }
+
+  /**
+   * @param {!CBOR.Decoder} d
+   * @returns {SendChain}
+   */
+  static decode(d) {
+    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+    const self = ClassUtil.new_instance(SendChain);
+    const nprops = d.object();
+    for (let i = 0; i <= nprops - 1; i++) {
+      switch (d.u8()) {
+        case 0:
+          self.chain_key = ChainKey.decode(d);
+          break;
+        case 1:
+          self.ratchet_key = KeyPair.decode(d);
+          break;
+        default:
+          d.skip();
+      }
+    }
+    TypeUtil.assert_is_instance(ChainKey, self.chain_key);
+    TypeUtil.assert_is_instance(KeyPair, self.ratchet_key);
+    return self;
+  }
+}
+
+module.exports = SendChain;
+
 
 /***/ })
 /******/ ]);
