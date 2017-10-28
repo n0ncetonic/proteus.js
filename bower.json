@@ -16,8 +16,6 @@
     "typings"
   ],
   "license": "GPL-3.0",
-  "main": [
-    "dist/window/proteus.js"
-  ],
+  "main": ["dist/window/proteus.js"],
   "name": "wire-webapp-proteus"
 }

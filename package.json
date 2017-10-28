@@ -29,13 +29,13 @@
   },
   "lint-staged": {
     "*.js": ["eslint -c .eslintrc.yaml --fix", "git add"],
-    "*.json": ["prettier --print-width=200 --write", "git add"]
+    "*.json": ["prettier --write", "git add"]
   },
   "scripts": {
     "dist": "bower install && webpack --progress",
-    "fix:config": "prettier --print-width=200 --ignore-path .gitignore --write '**/*.json'",
+    "fix:config": "prettier --ignore-path .gitignore --write '**/*.json'",
     "fix:script": "npm run test:script -- --fix",
-    "fix": "npm run fix:script && npm run fix:config && npm run fix:style",
+    "fix": "npm run fix:script && npm run fix:config",
     "lint": "eslint src/",
     "postversion": "git push && git push --tags",
     "precommit": "lint-staged",
