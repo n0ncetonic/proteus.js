@@ -73,11 +73,12 @@ class RecvChain {
     TypeUtil.assert_is_instance(CipherMessage, msg);
 
     if (this.message_keys[0] && this.message_keys[0].counter > msg.counter) {
-      const message = `Message too old. Counter for oldest staged chain key is '${this.message_keys[0].counter}' while message counter is '${msg.counter}'.`;
+      const message = `Message too old. Counter for oldest staged chain key is '${this.message_keys[0]
+        .counter}' while message counter is '${msg.counter}'.`;
       throw new DecryptError.OutdatedMessage(message, DecryptError.CODE.CASE_208);
     }
 
-    const idx = this.message_keys.findIndex((mk) => {
+    const idx = this.message_keys.findIndex(mk => {
       return mk.counter === msg.counter;
     });
 
@@ -87,7 +88,8 @@ class RecvChain {
 
     const mk = this.message_keys.splice(idx, 1)[0];
     if (!envelope.verify(mk.mac_key)) {
-      const message = `Envelope verification failed for message with counter behind. Message index is '${msg.counter}' while receive chain index is '${this.chain_key.idx}'.`;
+      const message = `Envelope verification failed for message with counter behind. Message index is '${msg.counter}' while receive chain index is '${this
+        .chain_key.idx}'.`;
       throw new DecryptError.InvalidSignature(message, DecryptError.CODE.CASE_210);
     }
 
@@ -104,12 +106,18 @@ class RecvChain {
     const num = msg.counter - this.chain_key.idx;
     if (num > RecvChain.MAX_COUNTER_GAP) {
       if (this.chain_key.idx === 0) {
-        throw new DecryptError.TooDistantFuture('Skipped too many message at the beginning of a receive chain.', DecryptError.CODE.CASE_211);
+        throw new DecryptError.TooDistantFuture(
+          'Skipped too many message at the beginning of a receive chain.',
+          DecryptError.CODE.CASE_211
+        );
       }
-      throw new DecryptError.TooDistantFuture(`Skipped too many message within a used receive chain. Receive chain counter is '${this.chain_key.idx}'`, DecryptError.CODE.CASE_212);
+      throw new DecryptError.TooDistantFuture(
+        `Skipped too many message within a used receive chain. Receive chain counter is '${this.chain_key.idx}'`,
+        DecryptError.CODE.CASE_212
+      );
     }
 
-    let keys = [];
+    const keys = [];
     let chk = this.chain_key;
 
     for (let i = 0; i <= num - 1; i++) {
@@ -127,10 +135,13 @@ class RecvChain {
    */
   commit_message_keys(keys) {
     TypeUtil.assert_is_instance(Array, keys);
-    keys.map((k) => TypeUtil.assert_is_instance(MessageKeys, k));
+    keys.map(k => TypeUtil.assert_is_instance(MessageKeys, k));
 
     if (keys.length > RecvChain.MAX_COUNTER_GAP) {
-      throw new ProteusError(`Number of message keys (${keys.length}) exceed message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, ProteusError.prototype.CODE.CASE_103);
+      throw new ProteusError(
+        `Number of message keys (${keys.length}) exceed message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`,
+        ProteusError.prototype.CODE.CASE_103
+      );
     }
 
     const excess = this.message_keys.length + keys.length - RecvChain.MAX_COUNTER_GAP;
@@ -139,10 +150,13 @@ class RecvChain {
       this.message_keys.shift();
     }
 
-    keys.map((k) => this.message_keys.push(k));
+    keys.map(k => this.message_keys.push(k));
 
     if (keys.length > RecvChain.MAX_COUNTER_GAP) {
-      throw new ProteusError(`Skipped message keys which exceed the message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, ProteusError.prototype.CODE.CASE_104);
+      throw new ProteusError(
+        `Skipped message keys which exceed the message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`,
+        ProteusError.prototype.CODE.CASE_104
+      );
     }
   }
 
@@ -159,7 +173,7 @@ class RecvChain {
 
     e.u8(2);
     e.array(this.message_keys.length);
-    return this.message_keys.map((k) => k.encode(e));
+    return this.message_keys.map(k => k.encode(e));
   }
 
   /**

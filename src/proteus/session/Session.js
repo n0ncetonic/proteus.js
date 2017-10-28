@@ -79,7 +79,7 @@ class Session {
    * @returns {Promise<Session>}
    */
   static init_from_prekey(local_identity, remote_pkbundle) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       TypeUtil.assert_is_instance(IdentityKeyPair, local_identity);
       TypeUtil.assert_is_instance(PreKeyBundle, remote_pkbundle);
 
@@ -118,13 +118,15 @@ class Session {
       const pkmsg = (() => {
         if (envelope.message instanceof CipherMessage) {
           throw new DecryptError.InvalidMessage(
-            'Can\'t initialise a session from a CipherMessage.', DecryptError.CODE.CASE_201
+            "Can't initialise a session from a CipherMessage.",
+            DecryptError.CODE.CASE_201
           );
         } else if (envelope.message instanceof PreKeyMessage) {
           return envelope.message;
         } else {
           throw new DecryptError.InvalidMessage(
-            'Unknown message format: The message is neither a "CipherMessage" nor a "PreKeyMessage".', DecryptError.CODE.CASE_202
+            'Unknown message format: The message is neither a "CipherMessage" nor a "PreKeyMessage".',
+            DecryptError.CODE.CASE_202
           );
         }
       })();
@@ -136,19 +138,29 @@ class Session {
       session.pending_prekey = null;
       session.session_states = {};
 
-      return session._new_state(prekey_store, pkmsg).then((state) => {
-        const plain = state.decrypt(envelope, pkmsg.message);
-        session._insert_session_state(pkmsg.message.session_tag, state);
+      return session
+        ._new_state(prekey_store, pkmsg)
+        .then(state => {
+          const plain = state.decrypt(envelope, pkmsg.message);
+          session._insert_session_state(pkmsg.message.session_tag, state);
 
-        if (pkmsg.prekey_id < PreKey.MAX_PREKEY_ID) {
-          MemoryUtil.zeroize(prekey_store.prekeys[pkmsg.prekey_id]);
-          return prekey_store.remove(pkmsg.prekey_id).then(() => resolve([session, plain])).catch((error) => {
-            reject(new DecryptError.PrekeyNotFound(`Could not delete PreKey: ${error.message}`, DecryptError.CODE.CASE_203));
-          });
-        } else {
+          if (pkmsg.prekey_id < PreKey.MAX_PREKEY_ID) {
+            MemoryUtil.zeroize(prekey_store.prekeys[pkmsg.prekey_id]);
+            return prekey_store
+              .remove(pkmsg.prekey_id)
+              .then(() => resolve([session, plain]))
+              .catch(error => {
+                reject(
+                  new DecryptError.PrekeyNotFound(
+                    `Could not delete PreKey: ${error.message}`,
+                    DecryptError.CODE.CASE_203
+                  )
+                );
+              });
+          }
           return resolve([session, plain]);
-        }
-      }).catch(reject);
+        })
+        .catch(reject);
     });
   }
 
@@ -160,7 +172,7 @@ class Session {
    * @throws {errors.ProteusError}
    */
   _new_state(pre_key_store, pre_key_message) {
-    return pre_key_store.get_prekey(pre_key_message.prekey_id).then((pre_key) => {
+    return pre_key_store.get_prekey(pre_key_message.prekey_id).then(pre_key => {
       if (pre_key) {
         return SessionState.init_as_bob(
           this.local_identity,
@@ -190,8 +202,8 @@ class Session {
 
       this.session_states[tag] = {
         idx: this.counter,
-        tag: tag,
         state: state,
+        tag: tag,
       };
       this.counter++;
     }
@@ -200,7 +212,7 @@ class Session {
       this.session_tag = tag;
     }
 
-    const obj_size = (obj) => Object.keys(obj).length;
+    const obj_size = obj => Object.keys(obj).length;
 
     if (obj_size(this.session_states) < Session.MAX_SESSION_STATES) {
       return;
@@ -216,9 +228,11 @@ class Session {
    * @private
    */
   _evict_oldest_session_state() {
-    const oldest = Object.keys(this.session_states).filter((obj) => obj.toString() !== this.session_tag).reduce((lowest, obj, index) => {
-      return this.session_states[obj].idx < this.session_states[lowest].idx ? obj.toString() : lowest;
-    });
+    const oldest = Object.keys(this.session_states)
+      .filter(obj => obj.toString() !== this.session_tag)
+      .reduce((lowest, obj, index) => {
+        return this.session_states[obj].idx < this.session_states[lowest].idx ? obj.toString() : lowest;
+      });
 
     MemoryUtil.zeroize(this.session_states[oldest]);
     delete this.session_states[oldest];
@@ -238,16 +252,17 @@ class Session {
       const state = this.session_states[this.session_tag];
 
       if (!state) {
-        return reject(new ProteusError(
-          `Could not find session for tag '${(this.session_tag || '').toString()}'.`, ProteusError.prototype.CODE.CASE_102
-        ));
+        return reject(
+          new ProteusError(
+            `Could not find session for tag '${(this.session_tag || '').toString()}'.`,
+            ProteusError.prototype.CODE.CASE_102
+          )
+        );
       }
 
-      return resolve(state.state.encrypt(
-        this.local_identity.public_key,
-        this.pending_prekey,
-        this.session_tag, plaintext
-      ));
+      return resolve(
+        state.state.encrypt(this.local_identity.public_key, this.pending_prekey, this.session_tag, plaintext)
+      );
     });
   }
 
@@ -258,7 +273,7 @@ class Session {
    * @throws {errors.DecryptError}
    */
   decrypt(prekey_store, envelope) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       TypeUtil.assert_is_instance(PreKeyStore, prekey_store);
       TypeUtil.assert_is_instance(Envelope, envelope);
 
@@ -273,9 +288,8 @@ class Session {
           throw new DecryptError.RemoteIdentityChanged(message, DecryptError.CODE.CASE_204);
         }
         return resolve(this._decrypt_prekey_message(envelope, msg, prekey_store));
-      } else {
-        throw new DecryptError('Unknown message type.', DecryptError.CODE.CASE_200);
       }
+      throw new DecryptError('Unknown message type.', DecryptError.CODE.CASE_200);
     });
   }
 
@@ -288,25 +302,26 @@ class Session {
    * @throws {errors.DecryptError}
    */
   _decrypt_prekey_message(envelope, msg, prekey_store) {
-    return Promise.resolve().then(() => this._decrypt_cipher_message(envelope, msg.message)).catch((error) => {
-      if (error instanceof DecryptError.InvalidSignature
-        || error instanceof DecryptError.InvalidMessage) {
-        return this._new_state(prekey_store, msg).then((state) => {
-          const plaintext = state.decrypt(envelope, msg.message);
+    return Promise.resolve()
+      .then(() => this._decrypt_cipher_message(envelope, msg.message))
+      .catch(error => {
+        if (error instanceof DecryptError.InvalidSignature || error instanceof DecryptError.InvalidMessage) {
+          return this._new_state(prekey_store, msg).then(state => {
+            const plaintext = state.decrypt(envelope, msg.message);
 
-          if (msg.prekey_id !== PreKey.MAX_PREKEY_ID) {
-            MemoryUtil.zeroize(prekey_store.prekeys[msg.prekey_id]);
-            prekey_store.remove(msg.prekey_id);
-          }
+            if (msg.prekey_id !== PreKey.MAX_PREKEY_ID) {
+              MemoryUtil.zeroize(prekey_store.prekeys[msg.prekey_id]);
+              prekey_store.remove(msg.prekey_id);
+            }
 
-          this._insert_session_state(msg.message.session_tag, state);
-          this.pending_prekey = null;
+            this._insert_session_state(msg.message.session_tag, state);
+            this.pending_prekey = null;
 
-          return plaintext;
-        });
-      }
-      throw error;
-    });
+            return plaintext;
+          });
+        }
+        throw error;
+      });
   }
 
   /**
@@ -318,7 +333,10 @@ class Session {
   _decrypt_cipher_message(envelope, msg) {
     let state = this.session_states[msg.session_tag];
     if (!state) {
-      throw new DecryptError.InvalidMessage(`Local session not found for message session tag '${msg.session_tag}'.`, DecryptError.CODE.CASE_205);
+      throw new DecryptError.InvalidMessage(
+        `Local session not found for message session tag '${msg.session_tag}'.`,
+        DecryptError.CODE.CASE_205
+      );
     }
 
     // serialise and de-serialise for a deep clone
@@ -385,7 +403,7 @@ class Session {
     e.u8(5);
     e.object(Object.keys(this.session_states).length);
 
-    for (let i in this.session_states) {
+    for (const i in this.session_states) {
       const state = this.session_states[i];
       state.tag.encode(e);
       state.state.encode(e);
@@ -455,8 +473,8 @@ class Session {
             const tag = SessionTag.decode(d);
             self.session_states[tag] = {
               idx: i,
-              tag: tag,
               state: SessionState.decode(d),
+              tag: tag,
             };
           }
           break;

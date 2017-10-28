@@ -43,7 +43,7 @@ class PreKey {
 
   /** @type {number} */
   static get MAX_PREKEY_ID() {
-    return 0xFFFF;
+    return 0xffff;
   }
 
   /**
@@ -90,7 +90,7 @@ class PreKey {
       return [];
     }
 
-    return [...Array(size).keys()].map((x) => PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
+    return [...Array(size).keys()].map(x => PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
   }
 
   /** @returns {ArrayBuffer} */

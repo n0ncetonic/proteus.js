@@ -66,10 +66,7 @@ class RootKey {
     const secret = ours.secret_key.shared_secret(theirs);
     const derived_secrets = DerivedSecrets.kdf(secret, this.key.key, 'dh_ratchet');
 
-    return [
-      RootKey.from_cipher_key(derived_secrets.cipher_key),
-      ChainKey.from_mac_key(derived_secrets.mac_key, 0),
-    ];
+    return [RootKey.from_cipher_key(derived_secrets.cipher_key), ChainKey.from_mac_key(derived_secrets.mac_key, 0)];
   }
 
   /**

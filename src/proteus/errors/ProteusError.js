@@ -33,10 +33,10 @@ const ProteusError = (function() {
     this.code = code;
     this.message = message;
     this.name = this.constructor.name;
-    this.stack = (new Error).stack;
+    this.stack = new Error().stack;
   };
 
-  func.prototype = new Error;
+  func.prototype = new Error();
   func.prototype.constructor = func;
   func.prototype.CODE = {
     CASE_100: 100,

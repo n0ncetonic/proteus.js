@@ -28,7 +28,40 @@ describe('Mac Key', () => {
 
     const authentication_code = mac_key.sign(message);
 
-    const expected = new Uint8Array([67, 82, 178, 110, 51, 254, 13, 118, 154, 137, 34, 166, 186, 41, 0, 65, 9, 240, 22, 136, 226, 106, 204, 158, 108, 179, 71, 229, 165, 175, 196, 218]);
+    const expected = new Uint8Array([
+      67,
+      82,
+      178,
+      110,
+      51,
+      254,
+      13,
+      118,
+      154,
+      137,
+      34,
+      166,
+      186,
+      41,
+      0,
+      65,
+      9,
+      240,
+      22,
+      136,
+      226,
+      106,
+      204,
+      158,
+      108,
+      179,
+      71,
+      229,
+      165,
+      175,
+      196,
+      218,
+    ]);
 
     assert.deepEqual(authentication_code, expected);
   });

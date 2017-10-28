@@ -22,17 +22,12 @@
 describe('HMAC-based Key Derivation Function', () => {
   it('concatenates buffers together', () => {
     assert.deepEqual(
-      Proteus.util.ArrayUtil.concatenate_array_buffers([
-        new Uint8Array([1, 2, 3])
-      ]),
+      Proteus.util.ArrayUtil.concatenate_array_buffers([new Uint8Array([1, 2, 3])]),
       new Uint8Array([1, 2, 3])
     );
 
     assert.deepEqual(
-      Proteus.util.ArrayUtil.concatenate_array_buffers([
-        new Uint8Array([1, 2, 3]),
-        new Uint8Array([4, 5, 6])
-      ]),
+      Proteus.util.ArrayUtil.concatenate_array_buffers([new Uint8Array([1, 2, 3]), new Uint8Array([4, 5, 6])]),
       new Uint8Array([1, 2, 3, 4, 5, 6])
     );
 
@@ -40,7 +35,7 @@ describe('HMAC-based Key Derivation Function', () => {
       Proteus.util.ArrayUtil.concatenate_array_buffers([
         new Uint8Array([1, 2, 3]),
         new Uint8Array([4, 5, 6]),
-        new Uint8Array([7, 8, 9])
+        new Uint8Array([7, 8, 9]),
       ]),
       new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9])
     );
@@ -50,7 +45,7 @@ describe('HMAC-based Key Derivation Function', () => {
         new Uint8Array([1, 2, 3]),
         new Uint8Array([4, 5, 6]),
         new Uint8Array([7, 8, 9]),
-        new Uint8Array([10, 11, 12])
+        new Uint8Array([10, 11, 12]),
       ]),
       new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
     );

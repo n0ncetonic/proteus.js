@@ -83,8 +83,8 @@ class LocalIdentityChanged extends DecodeError {
 }
 
 Object.assign(DecodeError, {
-  InvalidType,
   InvalidArrayLen,
+  InvalidType,
   LocalIdentityChanged,
 });
 

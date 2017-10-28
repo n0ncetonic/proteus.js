@@ -23,7 +23,6 @@
 
 /** @class PreKeyAuth */
 class PreKeyAuth {
-
   /** @type {string} */
   static get INVALID() {
     return 'Invalid';

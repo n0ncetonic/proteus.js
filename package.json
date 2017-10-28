@@ -42,7 +42,7 @@
     "preversion": "yarn lint && yarn test && yarn types",
     "start": "node dist/index.js",
     "test:node": "mocha -s 30000 -t 30000 --recursive test/harness.js test --trace-warnings",
-    "test:script": "eslint -c .eslintrc.yaml --ignore-path .gitignore **/*.js",
+    "test:script": "eslint -c .eslintrc.yaml --ignore-path .gitignore \"{src,test}/**/*.js\"",
     "test": "yarn dist && yarn test:script && yarn test:node",
     "types": "jsdoc --verbose --pedantic --configure jsdoc.json src/ && node replace.js",
     "version": "yarn dist && git add dist/**/*"

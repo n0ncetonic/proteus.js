@@ -21,7 +21,7 @@
 
 describe('Public Key', () => {
   it('should reject shared secrets at the point of infinity', () => {
-    const emptyCurve = new Uint8Array([1].concat(Array.from({length:30})))
+    const emptyCurve = new Uint8Array([1].concat(Array.from({length: 30})));
     const alice_keypair = Proteus.keys.KeyPair.new();
     const bob_keypair = Proteus.keys.KeyPair.new();
 

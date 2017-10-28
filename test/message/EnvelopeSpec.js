@@ -38,10 +38,10 @@ describe('Envelope', () => {
 
   it('should encapsulate a PreKeyMessage', () => {
     const msg = Proteus.message.PreKeyMessage.new(
-      42, bk, ik,
-      Proteus.message.CipherMessage.new(
-        tg, 42, 43, rk, new Uint8Array([1, 2, 3, 4])
-      )
+      42,
+      bk,
+      ik,
+      Proteus.message.CipherMessage.new(tg, 42, 43, rk, new Uint8Array([1, 2, 3, 4]))
     );
 
     const env = Proteus.message.Envelope.new(mk, msg);
@@ -50,10 +50,10 @@ describe('Envelope', () => {
 
   it('should encode to and decode from CBOR', () => {
     const msg = Proteus.message.PreKeyMessage.new(
-      42, bk, ik,
-      Proteus.message.CipherMessage.new(
-        tg, 42, 43, rk, new Uint8Array([1, 2, 3, 4])
-      )
+      42,
+      bk,
+      ik,
+      Proteus.message.CipherMessage.new(tg, 42, 43, rk, new Uint8Array([1, 2, 3, 4]))
     );
 
     const env = Proteus.message.Envelope.new(mk, msg);

@@ -37,9 +37,6 @@ describe('KeyPair', () => {
   it('computes a Diffie-Hellman shared secret', () => {
     const a = Proteus.keys.KeyPair.new();
     const b = Proteus.keys.KeyPair.new();
-    assert.deepEqual(
-      a.secret_key.shared_secret(b.public_key),
-      b.secret_key.shared_secret(a.public_key)
-    );
+    assert.deepEqual(a.secret_key.shared_secret(b.public_key), b.secret_key.shared_secret(a.public_key));
   });
 });

@@ -100,9 +100,7 @@ describe('PreKey', () => {
       assert(pk_copy.key_id === pk.key_id);
       assert(pk_copy.key_pair.public_key.fingerprint() === pk.key_pair.public_key.fingerprint());
 
-      assert(
-        sodium.to_hex(new Uint8Array(pk_bytes)) === sodium.to_hex(new Uint8Array(pk_copy.serialise()))
-      );
+      assert(sodium.to_hex(new Uint8Array(pk_bytes)) === sodium.to_hex(new Uint8Array(pk_copy.serialise())));
     });
   });
 });

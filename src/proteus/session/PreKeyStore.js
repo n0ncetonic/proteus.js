@@ -22,8 +22,7 @@
 /** @module session */
 
 /** @class PreKeyStore */
-function PreKeyStore() {
-}
+function PreKeyStore() {}
 
 /** @type {Array<number>} */
 PreKeyStore.prekeys = [];
@@ -33,7 +32,7 @@ PreKeyStore.prekeys = [];
  * @returns {void}
  * @throws {Error}
  */
-PreKeyStore.prototype.get_prekey = function (prekey_id) {
+PreKeyStore.prototype.get_prekey = function(prekey_id) {
   throw Error('Virtual function unimplemented');
 };
 
@@ -42,7 +41,7 @@ PreKeyStore.prototype.get_prekey = function (prekey_id) {
  * @returns {void}
  * @throws {Error}
  */
-PreKeyStore.prototype.remove = function (prekey_id) {
+PreKeyStore.prototype.remove = function(prekey_id) {
   throw Error('Virtual function unimplemented');
 };
 

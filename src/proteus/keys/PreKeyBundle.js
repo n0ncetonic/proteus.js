@@ -117,8 +117,8 @@ class PreKeyBundle {
   /** @returns {type_serialised_json} */
   serialised_json() {
     return {
-      'id': this.prekey_id,
-      'key': sodium.to_base64(new Uint8Array(this.serialise()), true),
+      id: this.prekey_id,
+      key: sodium.to_base64(new Uint8Array(this.serialise()), true),
     };
   }
 
@@ -151,9 +151,8 @@ class PreKeyBundle {
     e.u8(4);
     if (!this.signature) {
       return e.null();
-    } else {
-      return e.bytes(this.signature);
     }
+    return e.bytes(this.signature);
   }
 
   /**

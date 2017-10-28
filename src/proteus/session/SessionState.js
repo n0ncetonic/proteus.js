@@ -139,11 +139,9 @@ class SessionState {
   ratchet(ratchet_key) {
     const new_ratchet = KeyPair.new();
 
-    const [recv_root_key, recv_chain_key] =
-      this.root_key.dh_ratchet(this.send_chain.ratchet_key, ratchet_key);
+    const [recv_root_key, recv_chain_key] = this.root_key.dh_ratchet(this.send_chain.ratchet_key, ratchet_key);
 
-    const [send_root_key, send_chain_key] =
-      recv_root_key.dh_ratchet(new_ratchet, ratchet_key);
+    const [send_root_key, send_chain_key] = recv_root_key.dh_ratchet(new_ratchet, ratchet_key);
 
     const recv_chain = RecvChain.new(recv_chain_key, ratchet_key);
     const send_chain = SendChain.new(send_chain_key, new_ratchet);
@@ -206,9 +204,7 @@ class SessionState {
     TypeUtil.assert_is_instance(Envelope, envelope);
     TypeUtil.assert_is_instance(CipherMessage, msg);
 
-    let idx = this.recv_chains.findIndex(
-      (c) => c.ratchet_key.fingerprint() === msg.ratchet_key.fingerprint()
-    );
+    let idx = this.recv_chains.findIndex(c => c.ratchet_key.fingerprint() === msg.ratchet_key.fingerprint());
 
     if (idx === -1) {
       this.ratchet(msg.ratchet_key);
@@ -222,18 +218,24 @@ class SessionState {
       const mks = rc.chain_key.message_keys();
 
       if (!envelope.verify(mks.mac_key)) {
-        throw new DecryptError.InvalidSignature(`Envelope verification failed for message with counters in sync at '${msg.counter}'`, DecryptError.CODE.CASE_206);
+        throw new DecryptError.InvalidSignature(
+          `Envelope verification failed for message with counters in sync at '${msg.counter}'`,
+          DecryptError.CODE.CASE_206
+        );
       }
 
       const plain = mks.decrypt(msg.cipher_text);
       rc.chain_key = rc.chain_key.next();
       return plain;
-
     } else if (msg.counter > rc.chain_key.idx) {
       const [chk, mk, mks] = rc.stage_message_keys(msg);
 
       if (!envelope.verify(mk.mac_key)) {
-        throw new DecryptError.InvalidSignature(`Envelope verification failed for message with counter ahead. Message index is '${msg.counter}' while receive chain index is '${rc.chain_key.idx}'.`, DecryptError.CODE.CASE_207);
+        throw new DecryptError.InvalidSignature(
+          `Envelope verification failed for message with counter ahead. Message index is '${msg.counter}' while receive chain index is '${rc
+            .chain_key.idx}'.`,
+          DecryptError.CODE.CASE_207
+        );
       }
 
       const plain = mk.decrypt(msg.cipher_text);
@@ -265,7 +267,7 @@ class SessionState {
     e.object(4);
     e.u8(0);
     e.array(this.recv_chains.length);
-    this.recv_chains.map((rch) => rch.encode(e));
+    this.recv_chains.map(rch => rch.encode(e));
     e.u8(1);
     this.send_chain.encode(e);
     e.u8(2);

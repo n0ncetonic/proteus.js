@@ -24,7 +24,7 @@ const ProteusError = require('./ProteusError');
 /** @module errors */
 
 const _extend = function(child, parent) {
-  for (let key in parent) {
+  for (const key in parent) {
     if ({}.hasOwnProperty.call(parent, key)) child[key] = parent[key];
   }
   const ctor = function() {
@@ -46,7 +46,8 @@ const DontCallConstructor = (function(superClass) {
 
   function func(_instance) {
     this._instance = _instance;
-    func.__super__.constructor.call(this,
+    func.__super__.constructor.call(
+      this,
       `Instead of 'new {this._instance.constructor.name}', use '${this._instance.constructor.name}.new'.`
     );
   }

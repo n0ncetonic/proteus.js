@@ -23,26 +23,26 @@ describe('MemoryUtil', () => {
   describe('zeroize', () => {
     it('zeroizes an ArrayBuffer', () => {
       const buffer_random = new ArrayBuffer(32);
-      new Uint8Array(buffer_random).fill((Math.random() * 10) + 1);
+      new Uint8Array(buffer_random).fill(Math.random() * 10 + 1);
 
       Proteus.util.MemoryUtil.zeroize(buffer_random);
-      new Uint8Array(buffer_random).every((value) => assert.strictEqual(value, 0));
+      new Uint8Array(buffer_random).every(value => assert.strictEqual(value, 0));
     });
 
     it('zeroizes an Uint8Array', () => {
-      const array_random = Uint8Array.from({length: 32}, () => (Math.random() * 10) + 1);
+      const array_random = Uint8Array.from({length: 32}, () => Math.random() * 10 + 1);
 
       assert.lengthOf(array_random, 32);
       Proteus.util.MemoryUtil.zeroize(array_random);
-      array_random.every((value) => assert.strictEqual(value, 0));
+      array_random.every(value => assert.strictEqual(value, 0));
     });
 
     it('deeply zeroizes a KeyPair', () => {
       const key_pair = Proteus.keys.KeyPair.new();
 
       Proteus.util.MemoryUtil.zeroize(key_pair);
-      key_pair.secret_key.sec_edward.every((value) => assert.strictEqual(value, 0));
-      key_pair.secret_key.sec_curve.every((value) => assert.strictEqual(value, 0));
+      key_pair.secret_key.sec_edward.every(value => assert.strictEqual(value, 0));
+      key_pair.secret_key.sec_curve.every(value => assert.strictEqual(value, 0));
     });
   });
 });

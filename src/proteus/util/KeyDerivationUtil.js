@@ -38,7 +38,7 @@ const KeyDerivationUtil = {
    * @returns {Uint8Array} - Output Keying Material (OKM)
    */
   hkdf(salt, input, info, length) {
-    const convert_type = (value) => {
+    const convert_type = value => {
       if (typeof value === 'string') {
         return sodium.from_string(value);
       }
@@ -58,7 +58,7 @@ const KeyDerivationUtil = {
      * @param {*} received_salt
      * @returns {Uint8Array}
      */
-    const salt_to_key = (received_salt) => {
+    const salt_to_key = received_salt => {
       const keybytes = sodium.crypto_auth_hmacsha256_KEYBYTES;
       if (received_salt.length > keybytes) {
         return sodium.crypto_hash_sha256(received_salt);
@@ -85,7 +85,7 @@ const KeyDerivationUtil = {
      * @returns {Uint8Array}
      */
     const expand = (tag, received_info, received_length) => {
-      let num_blocks = Math.ceil(received_length / HASH_LEN);
+      const num_blocks = Math.ceil(received_length / HASH_LEN);
       let hmac = new Uint8Array(0);
       let result = new Uint8Array(0);
 

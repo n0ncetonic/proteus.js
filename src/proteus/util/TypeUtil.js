@@ -34,12 +34,15 @@ const TypeUtil = {
     if (!Array.isArray(classes)) {
       classes = [classes];
     }
-    if (classes.some((k) => inst instanceof k || (inst && inst.prototype instanceof k))) {
+    if (classes.some(k => inst instanceof k || (inst && inst.prototype instanceof k))) {
       return;
     }
-    const valid_types = classes.map((k) => `'${k.name}'`).join(' or ');
+    const valid_types = classes.map(k => `'${k.name}'`).join(' or ');
     if (inst) {
-      throw new InputError.TypeError(`Expected one of ${valid_types}, got '${inst.constructor.name}'.`, InputError.CODE.CASE_401);
+      throw new InputError.TypeError(
+        `Expected one of ${valid_types}, got '${inst.constructor.name}'.`,
+        InputError.CODE.CASE_401
+      );
     }
     throw new InputError.TypeError(`Expected one of ${valid_types}, got '${String(inst)}'.`, InputError.CODE.CASE_402);
   },

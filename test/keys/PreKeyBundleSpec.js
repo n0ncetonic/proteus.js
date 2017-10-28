@@ -54,9 +54,7 @@ describe('PreKeyBundle', () => {
     assert(pkb_copy.identity_key.fingerprint() === bundle.identity_key.fingerprint());
     assert(pkb_copy.signature === bundle.signature);
 
-    assert(
-      sodium.to_hex(new Uint8Array(pkb_bytes)) === sodium.to_hex(new Uint8Array(pkb_copy.serialise()))
-    );
+    assert(sodium.to_hex(new Uint8Array(pkb_bytes)) === sodium.to_hex(new Uint8Array(pkb_copy.serialise())));
   });
 
   it('should serialise and deserialise a signed bundle', () => {
@@ -77,9 +75,7 @@ describe('PreKeyBundle', () => {
     assert(pkb_copy.identity_key.fingerprint() === bundle.identity_key.fingerprint());
     assert(sodium.to_hex(pkb_copy.signature) === sodium.to_hex(bundle.signature));
 
-    assert(
-      sodium.to_hex(new Uint8Array(pkb_bytes)) === sodium.to_hex(new Uint8Array(pkb_copy.serialise()))
-    );
+    assert(sodium.to_hex(new Uint8Array(pkb_bytes)) === sodium.to_hex(new Uint8Array(pkb_copy.serialise())));
   });
 
   it('should generate a serialised JSON format', () => {

@@ -34,7 +34,9 @@ const MemoryUtil = {
     } else if (object instanceof ArrayBuffer) {
       sodium.memzero(new Uint8Array(object));
     } else if (typeof object === 'object') {
-      Object.keys(object).map((key) => object[key]).forEach((val) => this.zeroize(val));
+      Object.keys(object)
+        .map(key => object[key])
+        .forEach(val => this.zeroize(val));
     }
   },
 };

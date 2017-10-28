@@ -29,6 +29,25 @@ const TypeUtil = require('../util/TypeUtil');
  */
 const ArrayUtil = {
   /**
+   * @param {!(Array<number>|Uint8Array)} array
+   * @returns {void}
+   * @throws {errors.ProteusError}
+   */
+  assert_is_not_zeros(array) {
+    let only_zeroes = true;
+    for (const val in array) {
+      if (val > 0) {
+        only_zeroes = false;
+        break;
+      }
+    }
+
+    if (only_zeroes === true) {
+      throw new ProteusError('Array consists only of zeroes.', ProteusError.prototype.CODE.CASE_100);
+    }
+  },
+
+  /**
    * @param {!Array<ArrayBuffer>} buffers
    * @returns {Array<ArrayBuffer>}
    */
@@ -41,25 +60,6 @@ const ArrayUtil = {
       buf.set(b, a.byteLength);
       return buf;
     });
-  },
-
-  /**
-   * @param {!(Array<number>|Uint8Array)} array
-   * @returns {void}
-   * @throws {errors.ProteusError}
-   */
-  assert_is_not_zeros(array) {
-    let only_zeroes = true;
-    for (let val in array) {
-      if (val > 0) {
-        only_zeroes = false;
-        break;
-      }
-    }
-
-    if (only_zeroes === true) {
-      throw new ProteusError('Array consists only of zeroes.', ProteusError.prototype.CODE.CASE_100);
-    }
   },
 };
 
