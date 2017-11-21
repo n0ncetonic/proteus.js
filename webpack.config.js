@@ -27,26 +27,24 @@ module.exports = {
   entry: {
     filename: `${__dirname}/${pkg.main}`,
   },
+  externals: {
+    'libsodium-wrappers-sumo': 'sodium',
+    'wire-webapp-cbor': 'CBOR',
+  },
+  node: {
+    crypto: 'empty',
+    fs: 'empty',
+  },
   output: {
     filename: 'proteus.js',
     library: 'Proteus',
     libraryTarget: 'var',
     path: `${__dirname}/dist/window`,
   },
-  node: {
-    fs: 'empty',
-    crypto: 'empty',
-  },
-  externals: {
-    'libsodium-wrappers-sumo': 'sodium',
-    'wire-webapp-cbor': 'CBOR',
-  },
-  plugins: [
-    new webpack.BannerPlugin(`${pkg.name} v${pkg.version}`),
-  ],
   performance: {
+    hints: 'warning',
     maxAssetSize: 100,
     maxEntrypointSize: 300,
-    hints: 'warning',
   },
+  plugins: [new webpack.BannerPlugin(`${pkg.name} v${pkg.version}`)],
 };

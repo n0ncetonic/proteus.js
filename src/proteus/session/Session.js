@@ -284,7 +284,9 @@ class Session {
         const actual_fingerprint = msg.identity_key.fingerprint();
         const expected_fingerprint = this.remote_identity.fingerprint();
         if (actual_fingerprint !== expected_fingerprint) {
-          const message = `Fingerprints do not match: We expected '${expected_fingerprint}', but received '${actual_fingerprint}'.`;
+          const message = `Fingerprints do not match: We expected '${expected_fingerprint}', but received '${
+            actual_fingerprint
+          }'.`;
           throw new DecryptError.RemoteIdentityChanged(message, DecryptError.CODE.CASE_204);
         }
         return resolve(this._decrypt_prekey_message(envelope, msg, prekey_store));

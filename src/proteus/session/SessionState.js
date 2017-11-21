@@ -232,8 +232,9 @@ class SessionState {
 
       if (!envelope.verify(mk.mac_key)) {
         throw new DecryptError.InvalidSignature(
-          `Envelope verification failed for message with counter ahead. Message index is '${msg.counter}' while receive chain index is '${rc
-            .chain_key.idx}'.`,
+          `Envelope verification failed for message with counter ahead. Message index is '${
+            msg.counter
+          }' while receive chain index is '${rc.chain_key.idx}'.`,
           DecryptError.CODE.CASE_207
         );
       }

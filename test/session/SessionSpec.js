@@ -41,8 +41,7 @@ class TestStore extends Proteus.session.PreKeyStore {
 
 const assert_init_from_message = (ident, store, message, expected) => {
   return new Promise((resolve, reject) => {
-    Proteus.session.Session
-      .init_from_message(ident, store, message)
+    Proteus.session.Session.init_from_message(ident, store, message)
       .then(messageArray => {
         const [session, message] = messageArray;
         assert.strictEqual(sodium.to_string(message), expected);
@@ -111,8 +110,7 @@ describe('Session', () => {
     let ping_bob_2 = null;
     let pong_alice = null;
 
-    Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
 
@@ -200,8 +198,7 @@ describe('Session', () => {
     let alice = null;
     let bob = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob!');
@@ -256,8 +253,7 @@ describe('Session', () => {
 
     let ciphertexts = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob!');
@@ -331,8 +327,7 @@ describe('Session', () => {
     let hello_bob2 = null;
     let hello_bob3 = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return Promise.all(['Hello Bob1!', 'Hello Bob2!', 'Hello Bob3!'].map(text => alice.encrypt(text)));
@@ -379,8 +374,7 @@ describe('Session', () => {
     let hello_bob = null;
     let hello_alice = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob!');
@@ -448,8 +442,7 @@ describe('Session', () => {
     let echo_alice1 = null;
     let echo_alice2 = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob!');
@@ -534,8 +527,7 @@ describe('Session', () => {
     let bob = null;
     let hello_bob = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob!');
@@ -583,8 +575,7 @@ describe('Session', () => {
     let bob = null;
     let hello_bob = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob!');
@@ -680,8 +671,7 @@ describe('Session', () => {
     let hello_again0 = null;
     let hello_again1 = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob!');
@@ -813,8 +803,7 @@ describe('Session', () => {
     let hello_bob2 = null;
     let hello_bob3 = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob1!');
@@ -862,8 +851,7 @@ describe('Session', () => {
     let alice = null;
     let bob = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle)
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle)
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob1!');
@@ -906,8 +894,7 @@ describe('Session', () => {
     let bob = null;
     let hello_bob = null;
 
-    return Proteus.session.Session
-      .init_from_prekey(alice_ident, bob_bundle(1, bob_store))
+    return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle(1, bob_store))
       .then(session => {
         alice = session;
         return alice.encrypt('Hello Bob!');
@@ -920,8 +907,7 @@ describe('Session', () => {
 
         return Promise.all(
           Array.from({length: Proteus.session.Session.MAX_SESSION_STATES}, (obj, index) => {
-            return Proteus.session.Session
-              .init_from_prekey(alice_ident, bob_bundle(index + 2, bob_store))
+            return Proteus.session.Session.init_from_prekey(alice_ident, bob_bundle(index + 2, bob_store))
               .then(session => {
                 alice = session;
                 return alice.encrypt('Hello Bob!');

@@ -8,16 +8,16 @@
   "devDependencies": {
     "bower": "1.8.2",
     "chai": "4.1.2",
-    "eslint-config-prettier": "2.6.0",
+    "eslint-config-prettier": "2.8.0",
     "eslint-plugin-prettier": "2.3.1",
-    "eslint": "4.10.0",
+    "eslint": "4.11.0",
     "husky": "0.14.3",
     "jsdoc": "3.5.5",
-    "lint-staged": "4.3.0",
+    "lint-staged": "5.0.0",
     "mocha": "2.5.3",
-    "prettier": "1.7.4",
+    "prettier": "1.8.2",
     "tsd-jsdoc": "dcodeio/tsd-jsdoc#fe76c4dc071b00bb549d3af7a3bad8c555999e81",
-    "webpack": "3.7.1"
+    "webpack": "3.8.1"
   },
   "homepage": "https://github.com/wireapp/proteus.js",
   "license": "GPL-3.0",
@@ -28,21 +28,22 @@
     "url": "git://github.com/wireapp/proteus.js.git"
   },
   "lint-staged": {
-    "*.js": ["eslint -c .eslintrc.yaml --fix", "git add"],
-    "*.json": ["prettier --write", "git add"]
+    "*.js": ["eslint --fix", "git add"],
+    "*.json": ["prettier --write", "git add"],
+    "*.md": ["prettier --write", "git add"]
   },
   "scripts": {
     "dist": "bower install && webpack --progress",
-    "fix:config": "prettier --ignore-path .gitignore --write '**/*.json'",
+    "fix:config": "prettier --ignore-path .gitignore --write \"**/*.json\"",
+    "fix:docs": "prettier --ignore-path .gitignore --write \"**/*.md\"",
     "fix:script": "npm run test:script -- --fix",
-    "fix": "npm run fix:script && npm run fix:config",
-    "lint": "eslint src/",
+    "fix": "yarn fix:config && yarn fix:docs && yarn fix:script",
     "postversion": "git push && git push --tags",
     "precommit": "lint-staged",
-    "preversion": "yarn lint && yarn test && yarn types",
+    "preversion": "yarn test && yarn types",
     "start": "node dist/index.js",
     "test:node": "mocha -s 30000 -t 30000 --recursive test/harness.js test --trace-warnings",
-    "test:script": "eslint -c .eslintrc.yaml --ignore-path .gitignore \"{src,test}/**/*.js\"",
+    "test:script": "eslint --ignore-path .gitignore \"{src,test}/**/*.js\" \"*.js\"",
     "test": "yarn dist && yarn test:script && yarn test:node",
     "types": "jsdoc --verbose --pedantic --configure jsdoc.json src/ && node replace.js",
     "version": "yarn dist && git add dist/**/*"
