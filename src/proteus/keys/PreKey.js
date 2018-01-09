@@ -90,7 +90,7 @@ class PreKey {
       return [];
     }
 
-    return [...Array(size).keys()].map((x) => PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
+    return [...Array(size).keys()].map(async (x) => await PreKey.new((start + x) % PreKey.MAX_PREKEY_ID));
   }
 
   /** @returns {ArrayBuffer} */

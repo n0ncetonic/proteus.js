@@ -21,8 +21,8 @@
 
 'use strict';
 
-describe('Envelope', () => {
-  it('async', async () => {
+describe('Envelope', async () => {
+  //it('', async () => {
     const mac_key = Proteus.derived.MacKey.new(new Uint8Array(32).fill(1));
 
     const bob_kp = await Proteus.keys.KeyPair.new();
@@ -82,5 +82,5 @@ describe('Envelope', () => {
         assert.instanceOf(error, RangeError);
       }
     });
-  });
+  //});
 });
