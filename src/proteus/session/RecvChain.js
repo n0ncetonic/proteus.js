@@ -53,8 +53,8 @@ class RecvChain {
    * @returns {message.PreKeyMessage}
    */
   static new(chain_key, public_key) {
-    TypeUtil.assert_is_instance(ChainKey, chain_key);
-    TypeUtil.assert_is_instance(PublicKey, public_key);
+    //TypeUtil.assert_is_instance(ChainKey, chain_key);
+    //TypeUtil.assert_is_instance(PublicKey, public_key);
 
     const rc = ClassUtil.new_instance(RecvChain);
     rc.chain_key = chain_key;
@@ -69,8 +69,8 @@ class RecvChain {
    * @returns {Uint8Array}
    */
   try_message_keys(envelope, msg) {
-    TypeUtil.assert_is_instance(Envelope, envelope);
-    TypeUtil.assert_is_instance(CipherMessage, msg);
+    //TypeUtil.assert_is_instance(Envelope, envelope);
+    //TypeUtil.assert_is_instance(CipherMessage, msg);
 
     if (this.message_keys[0] && this.message_keys[0].counter > msg.counter) {
       const message = `Message too old. Counter for oldest staged chain key is '${this.message_keys[0].counter}' while message counter is '${msg.counter}'.`;
@@ -99,7 +99,7 @@ class RecvChain {
    * @returns {Array<session.ChainKey>|session.MessageKeys}
    */
   stage_message_keys(msg) {
-    TypeUtil.assert_is_instance(CipherMessage, msg);
+    //TypeUtil.assert_is_instance(CipherMessage, msg);
 
     const num = msg.counter - this.chain_key.idx;
     if (num > RecvChain.MAX_COUNTER_GAP) {
@@ -126,8 +126,8 @@ class RecvChain {
    * @returns {void}
    */
   commit_message_keys(keys) {
-    TypeUtil.assert_is_instance(Array, keys);
-    keys.map((k) => TypeUtil.assert_is_instance(MessageKeys, k));
+    //TypeUtil.assert_is_instance(Array, keys);
+    //keys.map((k) => TypeUtil.assert_is_instance(MessageKeys, k));
 
     if (keys.length > RecvChain.MAX_COUNTER_GAP) {
       throw new ProteusError(`Number of message keys (${keys.length}) exceed message chain counter gap (${RecvChain.MAX_COUNTER_GAP}).`, ProteusError.prototype.CODE.CASE_103);
@@ -167,7 +167,7 @@ class RecvChain {
    * @returns {RecvChain}
    */
   static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+    //TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
     const self = ClassUtil.new_instance(RecvChain);
 
@@ -197,9 +197,9 @@ class RecvChain {
       }
     }
 
-    TypeUtil.assert_is_instance(ChainKey, self.chain_key);
-    TypeUtil.assert_is_instance(PublicKey, self.ratchet_key);
-    TypeUtil.assert_is_instance(Array, self.message_keys);
+    //TypeUtil.assert_is_instance(ChainKey, self.chain_key);
+    //TypeUtil.assert_is_instance(PublicKey, self.ratchet_key);
+    //TypeUtil.assert_is_instance(Array, self.message_keys);
 
     return self;
   }

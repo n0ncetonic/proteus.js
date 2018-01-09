@@ -20,53 +20,58 @@
 'use strict';
 
 describe('Message', () => {
-  const fake_pubkey = (byte) => {
-    const pub_edward = new Uint8Array(32);
-    pub_edward.fill(byte);
-    const pub_curve = sodium.crypto_sign_ed25519_pk_to_curve25519(pub_edward);
+  it('async', async () => {
+    const fake_pubkey = async (byte) => {
+      await _sodium.ready;
+      const sodium = _sodium;
 
-    return Proteus.keys.PublicKey.new(pub_edward, pub_curve);
-  };
+      const pub_edward = new Uint8Array(32);
+      pub_edward.fill(byte);
+      const pub_curve = sodium.crypto_sign_ed25519_pk_to_curve25519(pub_edward);
 
-  const bk = fake_pubkey(0xFF);
-  const ik = Proteus.keys.IdentityKey.new(fake_pubkey(0xA0));
-  const rk = fake_pubkey(0xF0);
+      return Proteus.keys.PublicKey.new(pub_edward, pub_curve);
+    };
 
-  const st = Proteus.message.SessionTag.new();
-  st.tag.fill(42);
+    const bk = await fake_pubkey(0xFF);
+    const ik = await Proteus.keys.IdentityKey.new(fake_pubkey(0xA0));
+    const rk = await fake_pubkey(0xF0);
 
-  it('should serialise and deserialise a CipherMessage correctly', () => {
-    const expected = '01a500502a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a010c020d03a1005820f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0044a0102030405060708090a';
+    const st = Proteus.message.SessionTag.new();
+    st.tag.fill(42);
 
-    const msg = Proteus.message.CipherMessage.new(
-      st, 12, 13, rk, new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    );
+    it('should serialise and deserialise a CipherMessage correctly', async () => {
+      const expected = '01a500502a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a010c020d03a1005820f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0044a0102030405060708090a';
 
-    const bytes = new Uint8Array(msg.serialise());
-    assert(expected === sodium.to_hex(bytes).toLowerCase());
+      const msg = Proteus.message.CipherMessage.new(
+        st, 12, 13, rk, new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+      );
 
-    const deserialised = Proteus.message.Message.deserialise(bytes.buffer);
-    assert(deserialised.constructor === Proteus.message.CipherMessage);
-    assert(deserialised.ratchet_key.fingerprint() === rk.fingerprint());
-  });
+      const bytes = new Uint8Array(msg.serialise());
+      assert(expected === _sodium.to_hex(bytes).toLowerCase());
 
-  it('should serialise a PreKeyMessage correctly', () => {
-    const expected = '02a400181801a1005820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff02a100a1005820a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a003a500502a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a010c020d03a1005820f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0044a0102030405060708090a';
+      const deserialised = Proteus.message.Message.deserialise(bytes.buffer);
+      assert(deserialised.constructor === Proteus.message.CipherMessage);
+      assert(deserialised.ratchet_key.fingerprint() === rk.fingerprint());
+    });
 
-    const cmsg = Proteus.message.CipherMessage.new(
-      st, 12, 13, rk, new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    );
-    const pkmsg = Proteus.message.PreKeyMessage.new(24, bk, ik, cmsg);
+    it('should serialise a PreKeyMessage correctly', async () => {
+      const expected = '02a400181801a1005820ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff02a100a1005820a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a003a500502a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a010c020d03a1005820f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0044a0102030405060708090a';
 
-    const bytes = new Uint8Array(pkmsg.serialise());
-    assert(expected === sodium.to_hex(bytes).toLowerCase());
+      const cmsg = Proteus.message.CipherMessage.new(
+        st, 12, 13, rk, new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+      );
+      const pkmsg = Proteus.message.PreKeyMessage.new(24, bk, ik, cmsg);
 
-    const deserialised = Proteus.message.Message.deserialise(bytes.buffer);
-    assert(deserialised.constructor === Proteus.message.PreKeyMessage);
+      const bytes = new Uint8Array(pkmsg.serialise());
+      assert(expected === _sodium.to_hex(bytes).toLowerCase());
 
-    assert(deserialised.base_key.fingerprint() === bk.fingerprint());
-    assert(deserialised.identity_key.fingerprint() === ik.fingerprint());
+      const deserialised = Proteus.message.Message.deserialise(bytes.buffer);
+      assert(deserialised.constructor === Proteus.message.PreKeyMessage);
 
-    assert(deserialised.message.ratchet_key.fingerprint() === rk.fingerprint());
+      assert(deserialised.base_key.fingerprint() === bk.fingerprint());
+      assert(deserialised.identity_key.fingerprint() === ik.fingerprint());
+
+      assert(deserialised.message.ratchet_key.fingerprint() === rk.fingerprint());
+    });
   });
 });

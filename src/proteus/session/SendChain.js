@@ -40,8 +40,8 @@ class SendChain {
   }
 
   static new(chain_key, keypair) {
-    TypeUtil.assert_is_instance(ChainKey, chain_key);
-    TypeUtil.assert_is_instance(KeyPair, keypair);
+    //TypeUtil.assert_is_instance(ChainKey, chain_key);
+    //TypeUtil.assert_is_instance(KeyPair, keypair);
 
     const sc = ClassUtil.new_instance(SendChain);
     sc.chain_key = chain_key;
@@ -66,7 +66,7 @@ class SendChain {
    * @returns {SendChain}
    */
   static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+    //TypeUtil.assert_is_instance(CBOR.Decoder, d);
     const self = ClassUtil.new_instance(SendChain);
     const nprops = d.object();
     for (let i = 0; i <= nprops - 1; i++) {
@@ -81,8 +81,8 @@ class SendChain {
           d.skip();
       }
     }
-    TypeUtil.assert_is_instance(ChainKey, self.chain_key);
-    TypeUtil.assert_is_instance(KeyPair, self.ratchet_key);
+    //TypeUtil.assert_is_instance(ChainKey, self.chain_key);
+    //TypeUtil.assert_is_instance(KeyPair, self.ratchet_key);
     return self;
   }
 }

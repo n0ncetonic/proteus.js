@@ -44,8 +44,8 @@ class PublicKey {
    * @returns {PublicKey} - `this`
    */
   static new(pub_edward, pub_curve) {
-    TypeUtil.assert_is_instance(Uint8Array, pub_edward);
-    TypeUtil.assert_is_instance(Uint8Array, pub_curve);
+    //TypeUtil.assert_is_instance(Uint8Array, pub_edward);
+    //TypeUtil.assert_is_instance(Uint8Array, pub_curve);
 
     /** @type {PublicKey} */
     const pk = ClassUtil.new_instance(PublicKey);
@@ -65,7 +65,7 @@ class PublicKey {
    * @returns {boolean} - `true` if the signature is valid, `false` otherwise.
    */
   verify(signature, message) {
-    TypeUtil.assert_is_instance(Uint8Array, signature);
+    //TypeUtil.assert_is_instance(Uint8Array, signature);
     return sodium.crypto_sign_verify_detached(signature, message, this.pub_edward);
   }
 
@@ -89,7 +89,7 @@ class PublicKey {
    * @returns {PublicKey}
    */
   static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+    //TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
     const self = ClassUtil.new_instance(PublicKey);
 
@@ -104,7 +104,7 @@ class PublicKey {
       }
     }
 
-    TypeUtil.assert_is_instance(Uint8Array, self.pub_edward);
+    //TypeUtil.assert_is_instance(Uint8Array, self.pub_edward);
 
     self.pub_curve = ed2curve.convertPublicKey(self.pub_edward);
     return self;

@@ -42,7 +42,7 @@ const KeyDerivationUtil = {
       if (typeof value === 'string') {
         return sodium.from_string(value);
       }
-      TypeUtil.assert_is_instance(Uint8Array, value);
+      //TypeUtil.assert_is_instance(Uint8Array, value);
       return value;
     };
 

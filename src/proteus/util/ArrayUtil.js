@@ -33,7 +33,7 @@ const ArrayUtil = {
    * @returns {Array<ArrayBuffer>}
    */
   concatenate_array_buffers(buffers) {
-    TypeUtil.assert_is_instance(Array, buffers);
+    //TypeUtil.assert_is_instance(Array, buffers);
 
     return buffers.reduce((a, b) => {
       const buf = new a.constructor(a.byteLength + b.byteLength);

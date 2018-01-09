@@ -21,23 +21,47 @@
 
 describe('PreKey', () => {
   describe('Generation', () => {
-    it('should generate new PreKeys', () => {
-      let pk = Proteus.keys.PreKey.new(0);
-      pk = Proteus.keys.PreKey.last_resort();
+    it('should generate new PreKeys', async () => {
+      let pk = await Proteus.keys.PreKey.new(0);
+      pk = await Proteus.keys.PreKey.last_resort();
       assert(pk.key_id === Proteus.keys.PreKey.MAX_PREKEY_ID);
     });
 
-    it('should reject invalid PreKey IDs', () => {
-      assert.throws(() => Proteus.keys.PreKey.new(undefined));
-      assert.throws(() => Proteus.keys.PreKey.new('foo'));
-      assert.throws(() => Proteus.keys.PreKey.new(-1));
-      assert.throws(() => Proteus.keys.PreKey.new(65537));
-      assert.throws(() => Proteus.keys.PreKey.new(4242.42));
+    it('should reject invalid PreKey IDs', async done => {
+      try {
+        await Proteus.keys.PreKey.new(undefined);
+      } catch (error) {
+        assert.instanceOf(error, TypeError);
+      }
+
+      try {
+        assert.throws(async () => await Proteus.keys.PreKey.new(-1));
+      } catch (error) {
+        assert.instanceOf(error, TypeError);
+      }
+
+      try {
+        assert.throws(async () => await Proteus.keys.PreKey.new('foo'));
+      } catch (error) {
+        assert.instanceOf(error, TypeError);
+      }
+
+      try {
+        assert.throws(async () => await Proteus.keys.PreKey.new(65537));
+      } catch (error) {
+        assert.instanceOf(error, TypeError);
+      }
+
+      try {
+        assert.throws(async () => await Proteus.keys.PreKey.new(4242.42));
+      } catch (error) {
+        assert.instanceOf(error, TypeError);
+      }
     });
 
-    it('throws errors with error codes', () => {
+    it('throws errors with error codes', async () => {
       try {
-        Proteus.keys.PreKey.new(Proteus.keys.PreKey.MAX_PREKEY_ID + 1);
+        await Proteus.keys.PreKey.new(Proteus.keys.PreKey.MAX_PREKEY_ID + 1);
       } catch (error) {
         assert.instanceOf(error, Proteus.errors.InputError.RangeError);
         assert.strictEqual(error.code, Proteus.errors.InputError.CODE.CASE_400);
@@ -91,8 +115,8 @@ describe('PreKey', () => {
   });
 
   describe('Serialisation', () => {
-    it('should serialise and deserialise correctly', () => {
-      const pk = Proteus.keys.PreKey.new(0);
+    it('should serialise and deserialise correctly', async () => {
+      const pk = await Proteus.keys.PreKey.new(0);
       const pk_bytes = pk.serialise();
       const pk_copy = Proteus.keys.PreKey.deserialise(pk_bytes);
 
@@ -100,9 +124,7 @@ describe('PreKey', () => {
       assert(pk_copy.key_id === pk.key_id);
       assert(pk_copy.key_pair.public_key.fingerprint() === pk.key_pair.public_key.fingerprint());
 
-      assert(
-        sodium.to_hex(new Uint8Array(pk_bytes)) === sodium.to_hex(new Uint8Array(pk_copy.serialise()))
-      );
+      assert(sodium.to_hex(new Uint8Array(pk_bytes)) === sodium.to_hex(new Uint8Array(pk_copy.serialise())));
     });
   });
 });

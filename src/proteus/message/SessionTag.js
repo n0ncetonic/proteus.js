@@ -66,7 +66,7 @@ class SessionTag {
    * @returns {SessionTag}
    */
   static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+    //TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
     const bytes = new Uint8Array(d.bytes());
     if (bytes.byteLength !== 16) {

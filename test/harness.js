@@ -2,6 +2,7 @@ process.env.NODE_PATH = './src';
 require('module').Module._initPaths();
 
 assert = require('chai').assert;
+expect = require('chai').expect
 
 global.sodium = require('libsodium-wrappers-sumo');
 

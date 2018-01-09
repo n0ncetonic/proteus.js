@@ -44,9 +44,4 @@ module.exports = {
   plugins: [
     new webpack.BannerPlugin(`${pkg.name} v${pkg.version}`),
   ],
-  performance: {
-    maxAssetSize: 100,
-    maxEntrypointSize: 300,
-    hints: 'warning',
-  },
 };

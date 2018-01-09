@@ -46,7 +46,7 @@ class IdentityKey {
    * @returns {IdentityKey} - `this`
    */
   static new(public_key) {
-    TypeUtil.assert_is_instance(PublicKey, public_key);
+    //TypeUtil.assert_is_instance(PublicKey, public_key);
 
     const key = ClassUtil.new_instance(IdentityKey);
     key.public_key = public_key;
@@ -78,7 +78,7 @@ class IdentityKey {
    * @returns {IdentityKey}
    */
   static decode(d) {
-    TypeUtil.assert_is_instance(CBOR.Decoder, d);
+    //TypeUtil.assert_is_instance(CBOR.Decoder, d);
 
     let public_key = null;
 
